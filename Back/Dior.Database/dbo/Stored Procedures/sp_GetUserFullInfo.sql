@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[sp_GetUserFullInfo]
 AS
 BEGIN
-    SELECT 
+    SELECT
         u.ID                   AS UserId,
         u.TeamId,
         u.Username,
@@ -9,19 +9,19 @@ BEGIN
         u.LastName,
         u.Email,
         u.Phone,
-        a.BadgePhysicalNumber,
-        t.Name                  AS TeamName,
-        STRING_AGG(r.Name, ', ') AS Roles,
-        u.IsActive              AS IsActive,
+        a.badgePhysicalNumber  AS BadgePhysicalNumber, -- Corrigé
+        t.Name                 AS TeamName,
+        STRING_AGG(r.name, ', ') AS Roles,
+        u.IsActive,
         u.LastEditAt,
         u.LastEditBy
-    FROM [USER] u
-    LEFT JOIN [USER_ACCESS] ua ON ua.UserId = u.ID
-    LEFT JOIN [ACCESS] a ON a.ID = ua.AccessId
-    LEFT JOIN [TEAM] t ON t.ID = u.TeamId
-    LEFT JOIN [USER_ROLE] ur ON ur.UserId = u.ID
-    LEFT JOIN [ROLE_DEFINITION] r ON r.ID = ur.RoleDefinitionId
-    GROUP BY 
+    FROM [dbo].[User] u -- Corrigé
+    LEFT JOIN [dbo].[UserAccess] ua ON ua.UserId = u.ID -- Corrigé
+    LEFT JOIN [dbo].[Access] a ON a.Id = ua.AccessId -- Corrigé
+    LEFT JOIN [dbo].[Team] t ON t.Id = u.TeamId -- Corrigé
+    LEFT JOIN [dbo].[UserRole] ur ON ur.UserId = u.ID -- Corrigé
+    LEFT JOIN [dbo].[RoleDefinition] r ON r.Id = ur.RoleDefinitionId -- Corrigé
+    GROUP BY
         u.ID,
         u.TeamId,
         u.Username,
@@ -29,9 +29,9 @@ BEGIN
         u.LastName,
         u.Email,
         u.Phone,
-        a.BadgePhysicalNumber,
+        a.badgePhysicalNumber,
         t.Name,
         u.IsActive,
         u.LastEditAt,
         u.LastEditBy;
-END 
+END

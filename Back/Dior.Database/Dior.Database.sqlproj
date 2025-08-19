@@ -71,9 +71,6 @@
   <ItemGroup>
     <Build Include="dbo\User Defined Types\UserType.sql" />
     <Build Include="dbo\User Defined Types\UT_BigIntTable.sql" />
-    <Build Include="dbo\Tables\USER_ACCESS_COMPETENCY.sql" />
-    <Build Include="dbo\Tables\USER_ACCESS.sql" />
-    <Build Include="dbo\Tables\ROLE_DEFINITION_PRIVILEGE.sql" />
     <Build Include="dbo\Tables\ROLE_DEFINITION.sql" />
     <Build Include="dbo\Tables\ACCESS_COMPETENCY.sql" />
     <Build Include="dbo\Tables\ACCESS.sql" />
@@ -140,6 +137,11 @@
     <Build Include="dbo\Stored Procedures\GetAccessCompetencyList.sql" />
     <Build Include="dbo\Tables\PASSWORD_HISTORY.sql" />
     <Build Include="dbo\Stored Procedures\sp_AddUser.sql" />
+    <Build Include="dbo\Tables\UserAccessCompetency.sql" />
+    <Build Include="dbo\Tables\UserAccess.sql" />
+    <Build Include="dbo\Tables\RoleDefinitionPrivilege.sql" />
+    <Build Include="dbo\Tables\Payslips.sql" />
+    <Build Include="dbo\Tables\Messages.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Dior.Database.refactorlog" />
