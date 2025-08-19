@@ -1,0 +1,16 @@
+/* Styles de base pour le chat-room, responsive et adaptés à Tailwind (si activé) */
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+/* Fallback si Tailwind non activé */
+@media (max-width: 640px) {
+  .max-w-lg {
+    max-width: 100% !important;
+  }
+  .p-4 {
+    padding: 1rem !important;
+  }
+}

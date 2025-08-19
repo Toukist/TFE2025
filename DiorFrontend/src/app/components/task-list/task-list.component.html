@@ -1,0 +1,6 @@
+<ng-container *ngIf="canViewTasks; else noAccess">
+  <p>Liste des tâches</p>
+</ng-container>
+<ng-template #noAccess>
+  <p class="text-red-500">Vous n'avez pas les droits pour voir cette section.</p>
+</ng-template>

@@ -1,0 +1,243 @@
+/* Layout principal admin */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #2c3e50;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+  padding: 1.5rem 1rem;
+  border-bottom: 1px solid #34495e;
+  background-color: #34495e;
+  
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ecf0f1;
+  }
+}
+
+.sidebar-nav {
+  padding: 1rem 0;
+  
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    
+    li {
+      margin: 0;
+        .nav-link {
+        display: block;
+        padding: 0.75rem 1.5rem;
+        color: #bdc3c7;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+        
+        &:hover {
+          background-color: #34495e;
+          color: #ecf0f1;
+          border-left-color: #3498db;
+        }
+        
+        &.active {
+          background-color: #3498db;
+          color: white;
+          border-left-color: #2980b9;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+/* Zone de contenu principal */
+.main-content {
+  flex: 1;
+  margin-left: 250px;
+  padding: 1.5rem 2rem 2rem 2rem; /* Padding en haut pour éviter que le contenu colle */
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  
+  /* Ajout d'un léger border-radius pour un look moderne */
+  border-top-left-radius: 1rem;
+  
+  /* Animation fluide lors du chargement */
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+  }
+  
+  .main-content {
+    margin-left: 200px;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .admin-layout {
+    flex-direction: column;
+  }
+}
+
+.admin-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  position: relative;
+}
+
+.notification-wrapper {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  
+  &:hover {
+    background-color: #e9ecef;
+  }
+  
+  i {
+    font-size: 1.2rem;
+    color: #6c757d;
+  }
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  min-width: 18px;
+  text-align: center;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  min-width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.notification-item {
+  padding: 0.75rem;
+  border-bottom: 1px solid #f8f9fa;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover {
+    background-color: #f8f9fa;
+  }
+}
+
+.text-gray-400 {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.empty {
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* 🔹 AJOUT: Styles pour les boutons d'actions admin */
+.admin-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1rem;
+  
+  .btn {
+    padding: 0.375rem 0.75rem;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    
+    &.btn-primary {
+      background-color: #007bff;
+      color: white;
+      
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+    
+    &.btn-secondary {
+      background-color: #6c757d;
+      color: white;
+      
+      &:hover {
+        background-color: #545b62;
+      }
+    }
+    
+    &.btn-warning {
+      background-color: #ffc107;
+      color: #212529;
+      
+      &:hover {
+        background-color: #e0a800;
+      }
+    }
+  }
+}

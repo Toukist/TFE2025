@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="7b9af584-5c6b-4792-9ba5-06faa1eb5dfb" ChangeDateTime="07/15/2024 10:28:07">
+    <Property Name="ElementName" Value="[dbo].[User].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[User]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ID" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c918741a-3a1c-4f2c-bb0c-a7ed9b33a16e" ChangeDateTime="07/19/2024 11:03:06">
+    <Property Name="ElementName" Value="[dbo].[PK_ChoiceList]" />
+    <Property Name="ElementType" Value="SqlPrimaryKeyConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[ChoiceList]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[PK_ChoiceList]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="574de6fe-8149-42af-82cd-8ec236b05ef5" ChangeDateTime="07/19/2024 12:28:25">
+    <Property Name="ElementName" Value="[dbo].[Choice].[ChoiceList]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Choice]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ChoiceListID" />
+  </Operation>
+</Operations>

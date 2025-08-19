@@ -1,0 +1,38 @@
+.user-management {
+  display: flex;
+  gap: 2rem;
+}
+.user-list {
+  min-width: 220px;
+  border-right: 1px solid #eee;
+  padding-right: 1rem;
+}
+.user-list ul {
+  list-style: none;
+  padding: 0;
+}
+.user-list li {
+  cursor: pointer;
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.user-list li.selected {
+  font-weight: bold;
+  color: #1976d2;
+}
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 320px;
+}
+.user-form input, .user-form select {
+  padding: 0.3rem;
+  font-size: 1rem;
+}
+.user-form button {
+  margin-top: 1rem;
+  align-self: flex-start;
+}

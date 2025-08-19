@@ -1,0 +1,27 @@
+<div class="admin-layout">
+  <main class="main-content">
+    <!-- Zone de contenu optimisée sans sidebar ni navbar latérale -->
+    <div class="notification-container">
+      <button (click)="toggleDropdown()" class="notification-bell">
+        🔔 @if (hasUnreadNotifications) {
+          <span class="badge">{{ unreadNotificationsCount }}</span>
+        }
+      </button>
+      @if (showNotif) {
+        <div class="notif-dropdown">
+          @for (notif of notifications; track notif.id) {
+            <div>
+              <p [class.unread]="!notif.isRead">{{ notif.message }}</p>
+              @if (!notif.isRead) {
+                <button (click)="markAsRead(notif.id)">Marquer comme lu</button>
+              }
+            </div>
+          } @empty {
+            <div class="empty">Aucune notification</div>
+          }
+        </div>
+      }
+    </div>
+    <router-outlet></router-outlet>
+  </main>
+</div>

@@ -1,0 +1,31 @@
+/* Styles pour contract-list */
+
+/* Styles simples et responsive pour la liste des contrats */
+:host {
+  display: block;
+  width: 100%;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th, td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 1rem;
+}
+th {
+  background: #f3f4f6;
+}
+@media (max-width: 640px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+  th, td {
+    padding: 0.5rem;
+    border: none;
+  }
+  tr {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+}

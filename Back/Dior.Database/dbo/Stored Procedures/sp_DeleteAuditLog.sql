@@ -1,0 +1,6 @@
+﻿CREATE PROCEDURE sp_DeleteAuditLog
+    @id INT
+AS
+BEGIN
+    DELETE FROM AUDIT_LOG WHERE id = @id
+END

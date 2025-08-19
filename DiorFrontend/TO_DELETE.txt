@@ -1,0 +1,5 @@
+src/app/components/navbar/navbar.component.ts
+src/app/components/navbar/navbar.component.html
+src/app/components/navbar/navbar.component.new.html
+src/app/components/navbar/navbar.component.css
+src/app/admin/admin-navbar.component.ts

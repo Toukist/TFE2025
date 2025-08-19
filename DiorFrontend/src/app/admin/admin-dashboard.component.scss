@@ -1,0 +1,156 @@
+/* Layout principal admin */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #2c3e50;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+  padding: 1.5rem 1rem;
+  border-bottom: 1px solid #34495e;
+  background-color: #34495e;
+  
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ecf0f1;
+  }
+}
+
+.sidebar-nav {
+  padding: 1rem 0;
+  
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    
+    li {
+      margin: 0;
+        .nav-link {
+        display: block;
+        padding: 0.75rem 1.5rem;
+        color: #bdc3c7;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+        
+        &:hover {
+          background-color: #34495e;
+          color: #ecf0f1;
+          border-left-color: #3498db;
+        }
+        
+        &.active {
+          background-color: #3498db;
+          color: #fff;
+          border-left-color: #fff;
+        }
+      }
+    }
+  }
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 250px;
+  padding: 2rem;
+}
+
+.notification-container {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-bell {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  position: relative;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  min-width: 18px;
+  text-align: center;
+}
+
+.notif-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+  
+  > div {
+    padding: 0.75rem;
+    border-bottom: 1px solid #f8f9fa;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  p {
+    margin: 0 0 0.5rem 0;
+    
+    &.unread {
+      font-weight: bold;
+    }
+  }
+  
+  button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+}
+
+.empty {
+  color: #6c757d;
+  font-style: italic;
+}

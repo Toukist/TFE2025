@@ -1,0 +1,55 @@
+/* Fichier de style créé automatiquement pour corriger l'erreur Angular */
+
+.rapports-layout {
+  min-height: 100vh;
+}
+.sidebar {
+  width: 260px;
+}
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+.preview-section {
+  margin-bottom: 2rem;
+}
+.charts-preview {
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.history-section {
+  margin-top: 2rem;
+}
+.status-ok {
+  color: #43a047;
+  font-weight: bold;
+}
+.status-waiting {
+  color: #fbc02d;
+  font-weight: bold;
+}
+.history-table {
+  width: 100%;
+  th, td {
+    padding: 0.5rem 1rem;
+    text-align: left;
+  }
+}
+@media (max-width: 900px) {
+  .sidebar {
+    width: 100px;
+    min-width: 80px;
+  }
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .charts-preview {
+    min-height: 200px;
+  }
+}

@@ -1,0 +1,111 @@
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow">
+  <!-- En-tête -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold flex items-center gap-2 mb-1">
+      <span class="text-blue-600">👥</span> Gestion des Accès Utilisateurs
+    </h1>
+    <p class="text-gray-500">Sélectionnez un utilisateur pour gérer ses compétences d'accès</p>
+  </div>
+
+  <!-- Message d'erreur global -->
+  <div *ngIf="errorMessage" class="bg-red-50 text-red-700 border border-red-200 rounded p-2 mb-4 flex items-center gap-2">
+    <span>❌</span>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Section de sélection d'utilisateur -->
+  <div class="mb-8">
+    <h2 class="text-lg font-semibold flex items-center gap-2 mb-2">
+      <span class="text-blue-500">🔍</span> Sélection de l'utilisateur
+    </h2>
+    <!-- Loader pour les utilisateurs -->
+    <div *ngIf="isLoadingUsers" class="flex flex-col items-center justify-center h-24">
+      <span class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600 mb-2"></span>
+      <p class="text-gray-500">Chargement des utilisateurs...</p>
+    </div>
+    <!-- Interface de sélection -->
+    <div *ngIf="!isLoadingUsers">
+      <!-- Barre de recherche -->
+      <div class="mb-4 flex gap-2 items-center">
+        <input type="text" class="border border-gray-300 rounded px-3 py-2 w-full" placeholder="Rechercher un utilisateur par nom..." [formControl]="searchControl">
+        <button *ngIf="searchControl.value" (click)="searchControl.setValue('')" class="px-2 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">×</button>
+      </div>
+      <!-- Sélection directe -->
+      <div class="mb-4">
+        <label for="user-select" class="block text-sm font-medium mb-1">Ou sélectionner directement :</label>
+        <div class="relative">
+          <select id="user-select" class="border border-gray-300 rounded px-3 py-2 w-full" [formControl]="userSelectControl">
+            <option value="">-- Choisir un utilisateur --</option>
+            <option *ngFor="let user of users; trackBy: trackByUser" [value]="user.id">
+              {{ getFullUserName(user) }} ({{ user.name }})
+            </option>
+          </select>
+          <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">▼</span>
+        </div>
+      </div>
+      <!-- Liste des utilisateurs filtrés -->
+      <div *ngIf="searchControl.value && filteredUsers.length > 0">
+        <h3 class="text-base font-semibold mb-2">Résultats de recherche :</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="border rounded p-3 flex items-center justify-between hover:bg-blue-50 cursor-pointer transition"
+            *ngFor="let user of filteredUsers; trackBy: trackByUser"
+            (click)="selectUserFromList(user)"
+            (keyup.enter)="selectUserFromList(user)"
+            (keyup.space)="selectUserFromList(user)"
+            tabindex="0"
+            role="button"
+            [attr.aria-label]="'Sélectionner l\'utilisateur ' + getFullUserName(user)">
+            <div>
+              <h4 class="font-semibold">{{ getFullUserName(user) }}</h4>
+              <p class="text-xs text-gray-400"></p>
+              <span [ngClass]="user.isActive ? 'text-green-600 font-semibold' : 'text-gray-400'">
+                {{ user.isActive ? 'Actif' : 'Inactif' }}
+              </span>
+            </div>
+            <span class="text-gray-400">→</span>
+          </div>
+        </div>
+      </div>
+      <!-- Message si aucun résultat -->
+      <div *ngIf="searchControl.value && filteredUsers.length === 0" class="text-gray-400 text-center py-4">Aucun utilisateur trouvé.</div>
+    </div>
+  </div>
+
+  <!-- Section de gestion des compétences -->
+  <div class="competency-management-section" *ngIf="selectedUser">
+    <div class="selected-user-header">
+      <div class="user-details">
+        <h2 class="section-title">
+          <i class="icon-key"></i>
+          Compétences d'accès
+        </h2>
+        <div class="selected-user-info">
+          <h3 class="selected-user-name">{{ getFullUserName(selectedUser) }}</h3>
+          <p class="selected-user-meta">
+            <span class="username">{{ '@' + selectedUser.name }}</span>
+            <span class="status" [class.active]="selectedUser.isActive">
+              {{ selectedUser.isActive ? 'Actif' : 'Inactif' }}
+            </span>
+          </p>
+        </div>
+      </div>
+      <button class="clear-selection-btn" (click)="clearSelection()">
+        <i class="icon-close"></i>
+        Changer d'utilisateur
+      </button>
+    </div>
+
+    <!-- Composant de gestion des compétences -->
+    <app-access-competency-manager
+      [userId]="selectedUser.id"
+      [userName]="getFullUserName(selectedUser)">
+    </app-access-competency-manager>
+  </div>
+
+  <!-- Message si aucun utilisateur sélectionné -->
+  <div class="no-selection" *ngIf="!selectedUser && !isLoadingUsers">
+    <i class="icon-user-select"></i>
+    <h3>Aucun utilisateur sélectionné</h3>
+    <p>Veuillez sélectionner un utilisateur pour gérer ses compétences d'accès.</p>
+  </div>
+</div>

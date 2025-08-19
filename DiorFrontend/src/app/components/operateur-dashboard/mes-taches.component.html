@@ -1,0 +1,24 @@
+<h2 class="text-xl font-bold mb-4">Tâches assignées</h2>
+
+<div class="task-board grid grid-cols-3 gap-4">
+  <div class="column">
+    <h3 class="font-semibold text-blue-700">À faire</h3>
+    <div *ngFor="let task of getTasksByStatus('A faire')">
+      <app-tache-card [task]="task"></app-tache-card>
+    </div>
+  </div>
+
+  <div class="column">
+    <h3 class="font-semibold text-yellow-700">En cours</h3>
+    <div *ngFor="let task of getTasksByStatus('En cours')">
+      <app-tache-card [task]="task"></app-tache-card>
+    </div>
+  </div>
+
+  <div class="column">
+    <h3 class="font-semibold text-green-700">Terminées</h3>
+    <div *ngFor="let task of getTasksByStatus('Terminé')">
+      <app-tache-card [task]="task"></app-tache-card>
+    </div>
+  </div>
+</div>

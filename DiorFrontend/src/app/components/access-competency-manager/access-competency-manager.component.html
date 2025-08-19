@@ -1,0 +1,170 @@
+<!-- CONTEXTE :
+Composant Angular pour gérer les AccessCompetencies d'un utilisateur.
+La classe TS est complète, exposant :
+- userAccessCompetencies[] à afficher
+- availableCompetencies[] pour le select
+- addCompetency(), removeCompetency()
+- isLoading, isAdding, errorMessage, successMessage
+
+OBJECTIF :
+Template HTML Angular fonctionnel et moderne avec gestion d'état complète
+-->
+
+<div class="access-competency-manager">
+  <!-- En-tête avec informations utilisateur -->
+  <div class="header">
+    <h2 class="title">
+      <i class="icon-key"></i>
+      Gestion des Compétences d'Accès
+    </h2>
+    <p class="subtitle" *ngIf="userName">
+      Utilisateur : <strong>{{ userName }}</strong>
+    </p>
+  </div>
+
+  <!-- Zone de messages (erreurs et succès) -->
+  <div class="messages" *ngIf="errorMessage || successMessage">
+    <div class="alert alert-error" *ngIf="errorMessage" role="alert">
+      <i class="icon-error" aria-hidden="true"></i>
+      <span>{{ errorMessage }}</span>
+      <button 
+        type="button" 
+        class="close-btn" 
+        (click)="clearMessages()"
+        aria-label="Fermer le message d'erreur">
+        ×
+      </button>
+    </div>
+    
+    <div class="alert alert-success" *ngIf="successMessage" role="alert">
+      <i class="icon-success" aria-hidden="true"></i>
+      <span>{{ successMessage }}</span>
+      <button 
+        type="button" 
+        class="close-btn" 
+        (click)="clearMessages()"
+        aria-label="Fermer le message de succès">
+        ×
+      </button>
+    </div>
+  </div>
+
+  <!-- Indicateur de chargement global -->
+  <div class="loading-container" *ngIf="isLoading" role="status" aria-live="polite">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Chargement des données...</p>
+  </div>
+
+  <!-- Contenu principal (masqué pendant le chargement) -->
+  <div class="content" *ngIf="!isLoading">
+    
+    <!-- Section d'ajout de compétence -->
+    <section class="add-section" aria-labelledby="add-section-title">
+      <h3 id="add-section-title" class="section-title">
+        <i class="icon-plus" aria-hidden="true"></i>
+        Ajouter une Compétence
+      </h3>
+      
+      <div class="add-form">
+        <div class="form-group">
+          <label for="competency-select" class="form-label">
+            Sélectionner une compétence à attribuer
+          </label>
+          
+          <div class="select-container">
+            <select 
+              id="competency-select"
+              class="form-select"
+              [formControl]="selectedCompetencyControl"
+              [disabled]="isAdding || availableCompetencies.length === 0"
+              required
+              aria-describedby="competency-help">
+              <option value="" disabled>-- Choisir une compétence --</option>              <option 
+                *ngFor="let competency of availableCompetencies; trackBy: trackByAvailableCompetency" 
+                [value]="competency.id"
+                [title]="competency.name">
+                {{ competency.name }}
+              </option>
+            </select>
+            <i class="select-arrow" aria-hidden="true"></i>
+          </div>
+          
+          <small id="competency-help" class="form-text">
+            Seules les compétences non encore attribuées sont affichées
+          </small>
+        </div>
+          <button 
+          type="button"
+          class="btn btn-primary"
+          (click)="addCompetency()"
+          [disabled]="!selectedCompetencyControl.value || isAdding || availableCompetencies.length === 0"
+          [attr.aria-label]="isAdding ? 'Ajout en cours...' : 'Ajouter la compétence sélectionnée'">
+          
+          <span *ngIf="!isAdding" class="btn-content">
+            <i class="icon-plus" aria-hidden="true"></i>
+            Ajouter
+          </span>
+          
+          <span *ngIf="isAdding" class="btn-content loading-text" aria-live="polite">
+            <div class="mini-spinner" aria-hidden="true"></div>
+            Ajout en cours...
+          </span>        </button>
+      </div>
+
+      <!-- Message si aucune compétence disponible -->
+      <div class="no-competencies" *ngIf="availableCompetencies.length === 0 && !isLoading" role="status">
+        <i class="icon-info" aria-hidden="true"></i>
+        <p>Toutes les compétences disponibles ont déjà été attribuées à cet utilisateur.</p>
+      </div>
+    </section>
+
+    <!-- Section des compétences attribuées -->
+    <section class="assigned-section" aria-labelledby="assigned-section-title">
+      <h3 id="assigned-section-title" class="section-title">
+        <i class="icon-list" aria-hidden="true"></i>
+        Compétences Attribuées
+        <span class="count-badge" [attr.aria-label]="userAccessCompetencies.length + ' compétences attribuées'">
+          {{ userAccessCompetencies.length }}
+        </span>
+      </h3>
+
+      <!-- État vide -->
+      <div class="empty-state" *ngIf="userAccessCompetencies.length === 0" role="status">
+        <i class="icon-empty" aria-hidden="true"></i>
+        <h4>Aucune compétence attribuée</h4>
+        <p>Cet utilisateur n'a encore aucune compétence d'accès attribuée.</p>
+      </div>
+
+      <!-- Grille des compétences attribuées -->
+      <div 
+        class="competencies-grid" 
+        *ngIf="userAccessCompetencies.length > 0"
+        role="list"
+        [attr.aria-label]="userAccessCompetencies.length + ' compétences attribuées'">
+        
+        <article 
+          class="competency-card"
+          *ngFor="let competency of userAccessCompetencies; trackBy: trackByCompetency"
+          role="listitem">
+          
+          <!-- En-tête de la carte -->
+          <header class="card-header">
+            <h4 class="competency-name">{{ competency.competencyName }}</h4>
+            <button 
+              type="button"
+              class="btn-remove"
+              (click)="removeCompetency(competency)"
+              [attr.aria-label]="'Supprimer la compétence ' + competency.competencyName"
+              [title]="'Supprimer la compétence ' + competency.competencyName">
+              <i class="icon-trash" aria-hidden="true"></i>
+            </button>
+          </header>
+
+          <!-- Corps de la carte -->
+          <div class="card-body">
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,344 @@
+.choix-role-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.header h1 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 300;
+}
+
+.welcome-message {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.role-card {
+  background: #fff;
+  border: 2px solid #ecf0f1;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.role-card:hover {
+  border-color: #3498db;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(52, 152, 219, 0.15);
+}
+
+.role-card:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.role-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.role-name {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.role-description {
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  min-height: 3rem;
+}
+
+.select-button {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.select-button:hover {
+  background: #2980b9;
+}
+
+.footer {
+  text-align: center;
+}
+
+.logout-button {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background: #c0392b;
+}
+
+/* Nouveaux styles pour les améliorations */
+.info-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.info-icon {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+}
+
+.info-text {
+  flex: 1;
+  text-align: left;
+}
+
+.role-card.highlighted {
+  border-color: #f39c12;
+  background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%);
+}
+
+.role-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.role-badge {
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  color: white;
+}
+
+.role-badge.badge-admin {
+  background: #e74c3c;
+}
+
+.role-badge.badge-administrateur {
+  background: #e74c3c;
+}
+
+.role-badge.badge-manager {
+  background: #27ae60;
+}
+
+.role-badge.badge-gestionnaire {
+  background: #27ae60;
+}
+
+.role-badge.badge-editor {
+  background: #9b59b6;
+}
+
+.role-badge.badge-editeur {
+  background: #9b59b6;
+}
+
+.role-badge.badge-user {
+  background: #3498db;
+}
+
+.role-badge.badge-utilisateur {
+  background: #3498db;
+}
+
+.role-badge.badge-viewer {
+  background: #95a5a6;
+}
+
+.role-badge.badge-lecteur {
+  background: #95a5a6;
+}
+
+.permissions-preview {
+  margin: 1rem 0;
+  text-align: left;
+}
+
+.permission-item {
+  font-size: 0.8rem;
+  color: #27ae60;
+  margin: 0.25rem 0;
+  display: flex;
+  align-items: center;
+}
+
+.btn-icon {
+  margin-right: 0.5rem;
+}
+
+.select-button.btn-admin {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.select-button.btn-admin:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+}
+
+.select-button.btn-manager {
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+}
+
+.select-button.btn-manager:hover {
+  background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
+}
+
+.select-button.btn-editor {
+  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.select-button.btn-editor:hover {
+  background: linear-gradient(135deg, #8e44ad 0%, #7d3c98 100%);
+}
+
+.select-button.btn-user {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.select-button.btn-user:hover {
+  background: linear-gradient(135deg, #2980b9 0%, #2471a3 100%);
+}
+
+.select-button.btn-viewer {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+}
+
+.select-button.btn-viewer:hover {
+  background: linear-gradient(135deg, #7f8c8d 0%, #6c7b7d 100%);
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.back-button {
+  background: #95a5a6;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background: #7f8c8d;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .choix-role-container {
+    padding: 1rem;
+  }
+  
+  .roles-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .footer-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .back-button, .logout-button {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* Animations */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.role-card {
+  animation: slideInUp 0.6s ease forwards;
+}
+
+.role-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.role-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.role-card:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+/* Mode sombre pour les cartes admin */
+.role-card[data-role="admin"], 
+.role-card[data-role="administrateur"] {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: white;
+}
+
+.role-card[data-role="admin"] .role-description,
+.role-card[data-role="administrateur"] .role-description {
+  color: #bdc3c7;
+}
+
+.role-card[data-role="admin"] .permission-item,
+.role-card[data-role="administrateur"] .permission-item {
+  color: #2ecc71;
+}

@@ -1,0 +1,252 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5; // Un gris clair industriel
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.choix-role-container {
+  background-color: #ffffff;
+  padding: 2.5rem;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 900px; // Limite la largeur pour les grands écrans
+}
+
+.choix-role-header {
+  margin-bottom: 2.5rem;
+  .title {
+    font-size: 2.2rem;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .subtitle {
+    font-size: 1.1rem;
+    color: #666;
+  }
+}
+
+.loading-indicator, .error-message, .no-roles-message {
+  padding: 2rem;
+  .spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #007bff; // Couleur primaire
+    animation: spin 1s ease infinite;
+    margin: 0 auto 1rem;
+  }
+  p {
+    font-size: 1.1rem;
+    color: #555;
+  }
+  .fa-solid {
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+  }
+}
+
+.error-message {
+  color: #dc3545; // Rouge pour les erreurs
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  padding: 1rem;
+  .btn-primary {
+    margin-top: 1rem;
+  }
+}
+.no-roles-message {
+  color: #004085; // Bleu pour info
+  background-color: #cce5ff;
+  border: 1px solid #b8daff;
+  border-radius: 4px;
+  padding: 1rem;
+   .btn-secondary {
+    margin-top: 1rem;
+  }
+}
+
+
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.role-card {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &:hover, &:focus {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    border-left-width: 5px;
+  }
+
+  &:focus {
+    outline: 2px solid #007bff; // Focus visible
+    outline-offset: 2px;
+  }
+
+  .role-icon {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0,0,0,0.05); // Léger fond pour l'icône
+  }
+
+  .role-name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+
+  .role-description {
+    font-size: 0.9rem;
+    color: #777;
+    flex-grow: 1; // Permet aux cartes d'avoir la même hauteur si les descriptions varient
+    margin-bottom: 1rem;
+  }
+  
+  .role-select-indicator {
+    position: absolute;
+    bottom: 1rem;
+    right: 1.5rem;
+    font-size: 1.2rem;
+    opacity: 0.7;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  &:hover .role-select-indicator {
+    opacity: 1;
+    transform: translateX(3px);
+  }
+
+  // Couleurs spécifiques par rôle (exemple)
+  &.role-admin { border-left-color: #dc3545; .role-icon { color: #dc3545; } }
+  &.role-manager { border-left-color: #ffc107; .role-icon { color: #ffc107; } }
+  &.role-rh { border-left-color: #17a2b8; .role-icon { color: #17a2b8; } }
+  &.role-operateur { border-left-color: #28a745; .role-icon { color: #28a745; } }
+  &.role-user { border-left-color: #6c757d; .role-icon { color: #6c757d; } }
+  &.role-default { border-left-color: #007bff; .role-icon { color: #007bff; } }
+}
+
+.choix-role-footer {
+  margin-top: 2rem;
+  .logout-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    i {
+      font-size: 1rem;
+    }
+  }
+}
+
+// Styles pour les boutons (similaire à Bootstrap pour la cohérence)
+.btn {
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+  &:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+  }
+}
+
+.btn-secondary {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+  &:hover {
+    background-color: #545b62;
+    border-color: #545b62;
+  }
+}
+
+.btn-outline-secondary {
+  color: #6c757d;
+  border-color: #6c757d;
+  &:hover {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+  }
+}
+
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .choix-role-container {
+    padding: 1.5rem;
+  }
+  .choix-role-header {
+    .title { font-size: 1.8rem; }
+    .subtitle { font-size: 1rem; }
+  }
+  .roles-grid {
+    grid-template-columns: 1fr; // Une seule colonne sur mobile
+    gap: 1rem;
+  }
+  .role-card {
+    padding: 1rem;
+    .role-icon { font-size: 2.2rem; width: 60px; height: 60px; }
+    .role-name { font-size: 1.1rem; }
+  }
+}

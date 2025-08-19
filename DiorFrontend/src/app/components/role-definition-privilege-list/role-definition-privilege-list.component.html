@@ -1,0 +1,144 @@
+<div class="role-definition-privilege-list">
+  <h2>Associations Rôle/Privilège</h2>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Rôle</th>
+        <th>Privilège</th>
+        <th>Lecture</th>
+        <th>Ajout</th>
+        <th>Modification</th>
+        <th>Status</th>
+        <th>Exécution</th>
+        <th>Statut</th>
+        <th>Dernière modif par</th>
+        <th>Dernière modif le</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of itemList">
+        <td>{{ item.id }}</td>
+        <td>{{ getRoleName(item.roleDefinitionId) }}</td>
+        <td>{{ getPrivilegeName(item.privilegeId) }}</td>        <td>{{ item.isRead ? 'Oui' : 'Non' }}</td>
+        <td>{{ item.isAdd ? 'Oui' : 'Non' }}</td>
+        <td>{{ item.isModify ? 'Oui' : 'Non' }}</td>
+        <td>{{ item.isStatus ? 'Oui' : 'Non' }}</td>
+        <td>{{ item.isExecution ? 'Oui' : 'Non' }}</td>
+        <td>{{ item.isActive ? 'Actif' : 'Inactif' }}</td>
+        <td>{{ item.lastEditBy }}</td>
+        <td>{{ item.lastEditAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>
+          <button (click)="selectItem(item)">Modifier</button>
+          <button (click)="deleteItem(item.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Ajouter une association</h3>
+  <form (ngSubmit)="addItem()" #addForm="ngForm">    <div class="form-group">
+      <label for="roleSelect">Rôle:</label>
+      <select id="roleSelect" [(ngModel)]="newItem.roleDefinitionId" name="roleDefinitionId" required>
+        <option [ngValue]="undefined" disabled>-- Sélectionner un rôle --</option>
+        <option *ngFor="let role of roleList" [ngValue]="role.id">{{ role.name }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="privilegeSelect">Privilège:</label>
+      <select id="privilegeSelect" [(ngModel)]="newItem.privilegeId" name="privilegeId" required>
+        <option [ngValue]="undefined" disabled>-- Sélectionner un privilège --</option>
+        <option *ngFor="let privilege of privilegeList" [ngValue]="privilege.id">{{ privilege.name }}</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <span>Droits:</span>
+      <div class="permissions-grid">
+        <label>
+          <input type="checkbox" [(ngModel)]="newItem.isRead" name="isRead"> Lecture
+        </label>
+        <label>
+          <input type="checkbox" [(ngModel)]="newItem.isAdd" name="isAdd"> Ajout
+        </label>
+        <label>
+          <input type="checkbox" [(ngModel)]="newItem.isModify" name="isModify"> Modification
+        </label>
+        <label>
+          <input type="checkbox" [(ngModel)]="newItem.isStatus" name="isStatus"> Status
+        </label>
+        <label>
+          <input type="checkbox" [(ngModel)]="newItem.isExecution" name="isExecution"> Exécution
+        </label>
+      </div>
+    </div>    <div class="form-group checkbox-group">
+      <label>
+        <input type="checkbox" [(ngModel)]="newItem.isActive" name="isActive"> Actif
+      </label>
+    </div>
+    
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <div *ngIf="selectedItem">
+    <h3>Modifier une association</h3>
+    <form (ngSubmit)="updateItem()" #editForm="ngForm">      <div class="form-group">
+        <label for="editRdpId">ID:</label>
+        <input type="number" id="editRdpId" [(ngModel)]="selectedItem.id" name="editId" disabled>
+      </div>
+
+      <div class="form-group">
+        <label for="editRoleSelect">Rôle:</label>
+        <select id="editRoleSelect" [(ngModel)]="selectedItem.roleDefinitionId" name="editRoleDefinitionId" required>
+          <option *ngFor="let role of roleList" [ngValue]="role.id">{{ role.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="editPrivilegeSelect">Privilège:</label>
+        <select id="editPrivilegeSelect" [(ngModel)]="selectedItem.privilegeId" name="editPrivilegeId" required>
+          <option *ngFor="let privilege of privilegeList" [ngValue]="privilege.id">{{ privilege.name }}</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <span>Droits:</span>
+        <div class="permissions-grid">
+          <label>
+            <input type="checkbox" [(ngModel)]="selectedItem.isRead" name="editIsRead"> Lecture
+          </label>
+          <label>
+            <input type="checkbox" [(ngModel)]="selectedItem.isAdd" name="editIsAdd"> Ajout
+          </label>
+          <label>
+            <input type="checkbox" [(ngModel)]="selectedItem.isModify" name="editIsModify"> Modification
+          </label>
+          <label>
+            <input type="checkbox" [(ngModel)]="selectedItem.isStatus" name="editIsStatus"> Status
+          </label>
+          <label>
+            <input type="checkbox" [(ngModel)]="selectedItem.isExecution" name="editIsExecution"> Exécution
+          </label>
+        </div>
+      </div>      <div class="form-group checkbox-group">
+        <label>
+          <input type="checkbox" [(ngModel)]="selectedItem.isActive" name="editIsActive"> Actif
+        </label>
+      </div>
+      <div class="form-group">
+        <label for="editRdpLastEditBy">Dernière modif par:</label>
+        <input type="text" id="editRdpLastEditBy" [(ngModel)]="selectedItem.lastEditBy" name="editLastEditBy" disabled>
+      </div>
+      
+      <div class="form-group">
+        <label for="editRdpLastEditAt">Dernière modif le:</label>
+        <input type="text" id="editRdpLastEditAt" [(ngModel)]="selectedItem.lastEditAt" name="editLastEditAt" disabled>
+      </div>
+      
+      <button type="submit">Enregistrer</button>
+      <button type="button" (click)="cancelEdit()">Annuler</button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+<!-- rh-dashboard.component.html -->
+<div class="rh-dashboard-container">
+  <header class="dashboard-header">
+    <h1>Tableau de Bord RH</h1>
+    <p>Vue d'ensemble des indicateurs clés des ressources humaines.</p>
+    
+    <!-- Menu de navigation RH -->
+    <nav class="rh-navigation">
+      <a routerLink="/rh" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">🏠 Dashboard</a>
+      <a routerLink="/rh/personnel" routerLinkActive="active">👥 Personnel</a>
+      <a routerLink="/rh/planification" routerLinkActive="active">📅 Planification</a>
+      <a routerLink="/rh/formation" routerLinkActive="active">🎓 Formation</a>
+      <a routerLink="/rh/evaluations" routerLinkActive="active">⭐ Évaluations</a>
+    </nav>
+  </header>
+
+  <!-- Contenu principal avec router-outlet -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

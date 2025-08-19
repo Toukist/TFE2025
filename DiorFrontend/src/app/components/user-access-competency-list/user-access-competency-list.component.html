@@ -1,0 +1,100 @@
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow">
+  <h2 class="text-2xl font-bold mb-4">Associations Utilisateur/Compétence d'accès</h2>
+  
+  <div *ngIf="error" class="bg-red-50 text-red-700 border border-red-200 rounded p-2 mb-4">
+    <p>{{ error }}</p>
+  </div>
+  
+  <div *ngIf="loading" class="text-gray-500 italic mb-4">
+    Chargement en cours...
+  </div>
+  
+  <table class="min-w-full bg-white border border-gray-200 rounded-lg mb-6">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="px-4 py-2 text-left">ID</th>
+        <th class="px-4 py-2 text-left">Badge utilisateur</th>
+        <th class="px-4 py-2 text-left">Compétence d'accès</th>
+        <th class="px-4 py-2 text-left">Dernière modif par</th>
+        <th class="px-4 py-2 text-left">Dernière modif le</th>
+        <th class="px-4 py-2 text-left">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of itemList" class="border-b last:border-b-0">
+        <td class="px-4 py-2">{{ item.id }}</td>
+        <td class="px-4 py-2">{{ getUserAccessIdentifier(item.userAccessId) }}</td>
+        <td class="px-4 py-2">{{ getAccessCompetencyName(item.accessCompetencyId) }}</td>
+        <td class="px-4 py-2">{{ item.lastEditBy || '-' }}</td>
+        <td class="px-4 py-2">{{ item.lastEditAt ? (item.lastEditAt | date:'dd/MM/yyyy HH:mm') : '-' }}</td>
+        <td class="px-4 py-2 flex gap-2">
+          <button class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200 transition" (click)="selectItem(item)">Modifier</button>
+          <button class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition" (click)="deleteItem(item.id)">Supprimer</button>
+        </td>
+      </tr>
+      <tr *ngIf="itemList.length === 0 && !loading">
+        <td colspan="6" class="text-gray-400 text-center py-8">Aucune association trouvée</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="mb-8">
+    <h3 class="text-lg font-semibold mb-2">Ajouter une association</h3>
+    <form (ngSubmit)="addItem()" #addForm="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mb-4">
+      <div>
+        <label for="userAccessId" class="block text-sm font-medium mb-1">Badge utilisateur <span class="text-red-500">*</span></label>
+        <select id="userAccessId" [(ngModel)]="newItem.userAccessId" name="userAccessId" required class="border border-gray-300 rounded px-3 py-2 w-full">
+          <option [ngValue]="undefined" disabled>Sélectionnez un badge</option>
+          <option *ngFor="let ua of userAccessList" [ngValue]="ua.id">
+            ID:{{ ua.id }} (User:{{ ua.userId }})
+          </option>
+        </select>
+      </div>
+      
+      <div>
+        <label for="accessCompetencyId" class="block text-sm font-medium mb-1">Compétence d'accès <span class="text-red-500">*</span></label>
+        <select id="accessCompetencyId" [(ngModel)]="newItem.accessCompetencyId" name="accessCompetencyId" required class="border border-gray-300 rounded px-3 py-2 w-full">
+          <option [ngValue]="undefined" disabled>Sélectionnez une compétence</option>
+          <option *ngFor="let ac of accessCompetencyList" [ngValue]="ac.id">
+            {{ ac.name }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="col-span-2 flex gap-4 mt-2">
+        <button type="submit" [disabled]="!addForm.form.valid || loading" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+          Ajouter
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="selectedItem" class="mb-8">
+    <h3 class="text-lg font-semibold mb-2">Modifier une association</h3>
+    <form (ngSubmit)="updateItem()" #editForm="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mb-4">
+      <div>
+        <label for="editUserAccessId" class="block text-sm font-medium mb-1">Badge utilisateur <span class="text-red-500">*</span></label>
+        <select id="editUserAccessId" [(ngModel)]="selectedItem.userAccessId" name="editUserAccessId" required class="border border-gray-300 rounded px-3 py-2 w-full">
+          <option *ngFor="let ua of userAccessList" [ngValue]="ua.id">
+            ID:{{ ua.id }} (User:{{ ua.userId }})
+          </option>
+        </select>
+      </div>
+      
+      <div>
+        <label for="editAccessCompetencyId" class="block text-sm font-medium mb-1">Compétence d'accès <span class="text-red-500">*</span></label>
+        <select id="editAccessCompetencyId" [(ngModel)]="selectedItem.accessCompetencyId" name="editAccessCompetencyId" required class="border border-gray-300 rounded px-3 py-2 w-full">
+          <option *ngFor="let ac of accessCompetencyList" [ngValue]="ac.id">
+            {{ ac.name }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="col-span-2 flex gap-4 mt-2">
+        <button type="submit" [disabled]="!editForm.form.valid || loading" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+          Enregistrer
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

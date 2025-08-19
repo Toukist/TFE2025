@@ -1,0 +1,46 @@
+<ng-container *ngIf="canViewContracts; else noAccess">
+  <div>
+    <h2>Liste des contrats</h2>
+    <div class="mb-4 flex flex-col sm:flex-row sm:items-center gap-2">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Recherche nom ou ID..."
+        class="mb-2 border px-2 py-1 rounded"
+      />
+      <input
+        type="file"
+        (change)="onFileUpload($event)"
+        accept=".pdf,.docx"
+        class="mb-2"
+      />
+    </div>
+    <table class="min-w-full border text-sm">
+      <thead>
+        <tr>
+          <th>Nom du fichier</th>
+          <th>Date upload</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let contract of filteredContracts">
+          <td>
+            <a *ngIf="contract.fileUrl" [href]="contract.fileUrl" target="_blank" class="text-blue-600 underline">{{ contract.fileName }}</a>
+            <span *ngIf="!contract.fileUrl">{{ contract.fileName }}</span>
+          </td>
+          <td>{{ contract.uploadedAt | date:'short' }}</td>
+          <td>
+            <button (click)="onDelete(contract.id)">🗑️</button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredContracts.length === 0">
+          <td colspan="3">Aucun contrat</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-container>
+<ng-template #noAccess>
+  <p class="text-red-500">Vous n'avez pas les droits pour voir cette section.</p>
+</ng-template>

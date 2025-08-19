@@ -1,0 +1,28 @@
+<div class="relative inline-block">
+  <button mat-icon-button (click)="toggleList()">
+    <mat-icon>notifications</mat-icon>
+    <span *ngIf="unreadCount > 0" class="badge">{{ unreadCount }}</span>
+  </button>
+  <div *ngIf="showList" class="notification-dropdown">
+    <mat-list *ngIf="notifications.length > 0">
+      <mat-list-item *ngFor="let notification of notifications">
+        <div class="w-full flex justify-between items-center">
+          <div>
+            <p class="font-semibold" [class.text-gray-500]="notification.isRead">{{ notification.type }}</p>
+            <p>{{ notification.message }}</p>
+            <small>{{ notification.createdAt | date:'short' }}</small>
+          </div>
+          <div>
+            <button mat-icon-button color="primary" (click)="markAsRead(notification.id)" [disabled]="notification.isRead">
+              <mat-icon>check_circle</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteNotification(notification.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-list-item>
+    </mat-list>
+    <p *ngIf="notifications.length === 0" class="text-gray-500 italic">Aucune notification</p>
+  </div>
+</div>

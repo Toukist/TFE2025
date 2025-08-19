@@ -1,0 +1,105 @@
+<h2 class="text-2xl font-bold mb-4">Suivi de production</h2>
+<!-- Section KPI Dashboard -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+  <div class="bg-blue-50 rounded-lg p-4 flex flex-col items-center">
+    <span class="text-3xl mb-2">🏭</span>
+    <div class="text-xl font-bold">{{ kpi.production.current | number }}/{{ kpi.production.target | number }}</div>
+    <div class="text-gray-500 text-sm">Production actuelle</div>
+  </div>
+  <div class="bg-green-50 rounded-lg p-4 flex flex-col items-center">
+    <span class="text-3xl mb-2">⚡</span>
+    <div class="text-xl font-bold">{{ kpi.oee }}%</div>
+    <div class="text-gray-500 text-sm">OEE</div>
+  </div>
+  <div class="bg-yellow-50 rounded-lg p-4 flex flex-col items-center">
+    <span class="text-3xl mb-2">⏱️</span>
+    <div class="text-xl font-bold">{{ kpi.downtime }}</div>
+    <div class="text-gray-500 text-sm">Temps d'arrêt</div>
+  </div>
+  <div class="bg-purple-50 rounded-lg p-4 flex flex-col items-center">
+    <span class="text-3xl mb-2">✅</span>
+    <div class="text-xl font-bold">{{ kpi.quality }}%</div>
+    <div class="text-gray-500 text-sm">Qualité</div>
+  </div>
+</div>
+<!-- Section Monitoring des lignes -->
+<div class="mb-8">
+  <h3 class="text-lg font-semibold mb-2">Monitoring des lignes</h3>
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="px-4 py-2">Ligne</th>
+          <th class="px-4 py-2">Machine</th>
+          <th class="px-4 py-2">Statut</th>
+          <th class="px-4 py-2">Production</th>
+          <th class="px-4 py-2">Objectif</th>
+          <th class="px-4 py-2">Équipe</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let element of lines" class="border-b last:border-b-0">
+          <td class="px-4 py-2">{{ element.line }}</td>
+          <td class="px-4 py-2">{{ element.machine }}</td>
+          <td class="px-4 py-2 flex items-center gap-2">
+            <span class="inline-block w-3 h-3 rounded-full" [ngClass]="statusColor(element.status)"></span>
+            {{ element.status }}
+          </td>
+          <td class="px-4 py-2">{{ element.production }}</td>
+          <td class="px-4 py-2">{{ element.target }}</td>
+          <td class="px-4 py-2">{{ element.team }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!-- Section Graphiques de performance -->
+<div class="mb-8">
+  <h3 class="text-lg font-semibold mb-2">Performance</h3>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">
+      <ngx-charts-line-chart
+        [results]="productionChartNgx"
+        [scheme]="'vivid'"
+        [xAxis]="true"
+        [yAxis]="true"
+        [legend]="true"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxisLabel]="'Heure'"
+        [yAxisLabel]="'Production'"
+        [animations]="true">
+      </ngx-charts-line-chart>
+      <div class="text-xs text-gray-400 mt-2">Production horaire (8h)</div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">
+      <ngx-gauge
+        [value]="kpi.oee"
+        [type]="'arch'"
+        [label]="'OEE'"
+        [append]="'%'"
+        [thick]="10"
+        [min]="0"
+        [max]="100"
+        [foregroundColor]="'#1976d2'"
+        [backgroundColor]="'#e0e0e0'">
+      </ngx-gauge>
+      <div class="text-xs text-gray-400 mt-2">OEE global</div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">
+      <ngx-charts-bar-vertical
+        [results]="barChartNgx"
+        [scheme]="'vivid'"
+        [xAxis]="true"
+        [yAxis]="true"
+        [legend]="true"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxisLabel]="'Catégorie'"
+        [yAxisLabel]="'Valeur'"
+        [animations]="true">
+      </ngx-charts-bar-vertical>
+      <div class="text-xs text-gray-400 mt-2">Comparatif</div>
+    </div>
+  </div>
+</div>

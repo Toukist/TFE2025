@@ -1,0 +1,25 @@
+<div class="flex flex-col h-full max-h-[500px] w-full max-w-lg mx-auto border rounded shadow bg-white">
+  <div class="flex-1 overflow-y-auto p-4 space-y-2">
+    <div *ngFor="let msg of messages" class="px-3 py-2 rounded bg-gray-100 text-gray-800 w-fit max-w-full">
+      {{ msg }}
+    </div>
+  </div>
+  <form class="flex items-center gap-2 p-4 border-t" (ngSubmit)="send()">
+    <input
+      type="text"
+      [(ngModel)]="message"
+      name="message"
+      class="flex-1 border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+      placeholder="Tapez votre message..."
+      autocomplete="off"
+      required
+    />
+    <button
+      type="submit"
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+      [disabled]="!message.trim()"
+    >
+      Envoyer
+    </button>
+  </form>
+</div>

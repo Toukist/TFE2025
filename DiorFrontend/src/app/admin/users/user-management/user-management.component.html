@@ -1,0 +1,53 @@
+<div class="user-management">
+  <div class="user-list">
+    <button (click)="newUser()" (keyup.enter)="newUser()" tabindex="0">➕ Nouvel utilisateur</button>
+    <ul>
+      <li *ngFor="let user of users" (click)="selectUser(user)" (keyup.enter)="selectUser(user)" tabindex="0" [class.selected]="selectedUser?.id === user.id">
+        {{ user.firstName }} {{ user.lastName }} <span *ngIf="!user.isActive">(inactif)</span>
+        <button (click)="delete(user); $event.stopPropagation()" (keyup.enter)="delete(user); $event.stopPropagation()" tabindex="0">🗑️</button>
+      </li>
+    </ul>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="user-form">
+    <label for="firstName">Prénom :</label>
+    <input id="firstName" formControlName="firstName" placeholder="Prénom" required>
+    <label for="lastName">Nom :</label>
+    <input id="lastName" formControlName="lastName" placeholder="Nom" required>
+    <label for="email">Email :</label>
+    <input id="email" formControlName="email" placeholder="Email" required>
+    <label for="password" *ngIf="!selectedUser">Mot de passe :</label>
+    <input id="password" formControlName="password" placeholder="Mot de passe" type="password" *ngIf="!selectedUser">
+    <label for="phoneNumber">Téléphone :</label>
+    <input id="phoneNumber" formControlName="phoneNumber" placeholder="Téléphone">
+    <label for="badgePhysicalNumber">Badge :</label>
+    <input id="badgePhysicalNumber" formControlName="badgePhysicalNumber" placeholder="Badge">
+    <label for="isActive">
+      <input id="isActive" type="checkbox" formControlName="isActive"> Actif
+    </label>
+
+    <label for="roles">Rôles :</label>
+    <select id="roles" formControlName="roles" multiple>
+      <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+    </select>
+
+    <label for="accessIds">Accès :</label>
+    <select id="accessIds" formControlName="accessIds" multiple>
+      <option *ngFor="let access of accesses" [value]="access.id">{{ access.badgePhysicalNumber }}</option>
+    </select>
+
+    <label for="accessCompetencyIds">Compétences d'accès :</label>
+    <select id="accessCompetencyIds" formControlName="accessCompetencyIds" multiple>
+      <option *ngFor="let comp of competencies" [value]="comp.id">{{ comp.name }}</option>
+    </select>
+
+    <div *ngIf="privileges.length">
+      <h4>Privilèges liés aux rôles sélectionnés :</h4>
+      <ul>
+        <li *ngFor="let priv of privileges">{{ priv.name }} - {{ priv.description }}</li>
+      </ul>
+    </div>
+
+    <button type="submit" [disabled]="form.invalid">💾 Sauvegarder</button>
+  </form>
+</div>

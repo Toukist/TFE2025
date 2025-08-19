@@ -1,0 +1,74 @@
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow">
+  <h2 class="text-2xl font-bold mb-4">Liste des rôles</h2>
+  <div *ngIf="error" class="bg-red-50 text-red-700 border border-red-200 rounded p-2 mb-4">{{ error }}</div>
+  <table class="min-w-full bg-white border border-gray-200 rounded-lg mb-6">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="px-4 py-2">ID</th>
+        <th class="px-4 py-2">Nom</th>
+        <th class="px-4 py-2">Description</th>
+        <th class="px-4 py-2">Statut</th>
+        <th class="px-4 py-2">Dernière modif par</th>
+        <th class="px-4 py-2">Dernière modif le</th>
+        <th class="px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let role of roleList" class="border-b last:border-b-0">
+        <td class="px-4 py-2">{{ role.id }}</td>
+        <td class="px-4 py-2">{{ role.name }}</td>
+        <td class="px-4 py-2">{{ role.description }}</td>
+        <td class="px-4 py-2">{{ role.isActive ? 'Supprimé' : 'Actif' }}</td>
+        <td class="px-4 py-2">{{ role.lastEditBy }}</td>
+        <td class="px-4 py-2">{{ role.lastEditAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td class="px-4 py-2 flex gap-2">
+          <button class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200 transition" (click)="selectRole(role)">Modifier</button>
+          <button class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition" (click)="deleteRole(role.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 class="text-lg font-semibold mb-2">Ajouter un rôle</h3>
+  <form (ngSubmit)="addRole()" #addForm="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mb-4">
+    <div>
+      <label for="roleName" class="block text-sm font-medium mb-1">Nom <span class="text-red-500">*</span></label>
+      <input type="text" id="roleName" [(ngModel)]="newRole.name" name="name" required class="border border-gray-300 rounded px-3 py-2 w-full">
+    </div>
+    <div>
+      <label for="roleDescription" class="block text-sm font-medium mb-1">Description</label>
+      <textarea id="roleDescription" [(ngModel)]="newRole.description" name="description" class="border border-gray-300 rounded px-3 py-2 w-full"></textarea>
+    </div>
+    <div class="col-span-2 flex items-center gap-2">
+      <label class="flex items-center gap-2 text-sm">
+        <input type="checkbox" [(ngModel)]="newRole.isActive" name="isDeleted" class="form-checkbox"> Supprimé
+      </label>
+      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Ajouter</button>
+    </div>
+  </form>
+  <div *ngIf="selectedRole" class="mb-8">
+    <h3 class="text-lg font-semibold mb-2">Modifier un rôle</h3>
+    <form (ngSubmit)="updateRole()" #editForm="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mb-4">
+      <div>
+        <label for="editRoleId" class="block text-sm font-medium mb-1">ID</label>
+        <input type="number" id="editRoleId" [(ngModel)]="selectedRole.id" name="editId" disabled class="border border-gray-300 rounded px-3 py-2 w-full">
+      </div>
+      <div>
+        <label for="editRoleName" class="block text-sm font-medium mb-1">Nom <span class="text-red-500">*</span></label>
+        <input type="text" id="editRoleName" [(ngModel)]="selectedRole.name" name="editName" required class="border border-gray-300 rounded px-3 py-2 w-full">
+      </div>
+      <div class="col-span-2">
+        <label for="editRoleDescription" class="block text-sm font-medium mb-1">Description</label>
+        <textarea id="editRoleDescription" [(ngModel)]="selectedRole.description" name="editDescription" class="border border-gray-300 rounded px-3 py-2 w-full"></textarea>
+      </div>
+      <div class="col-span-2 flex items-center gap-2">
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" [(ngModel)]="selectedRole.isActive" name="editIsDeleted" class="form-checkbox"> Supprimé
+        </label>
+      </div>
+      <div class="col-span-2 flex gap-2">
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Enregistrer</button>
+        <button type="button" (click)="cancelEdit()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>

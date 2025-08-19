@@ -1,0 +1,119 @@
+{
+  // For more information, visit: https://go.microsoft.com/fwlink/?LinkId=733558
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "npm: start",
+      "type": "npm",
+      "script": "start",
+      "group": "build",
+      "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "Initial chunk files.*"
+          },
+          "endsPattern": {
+            "regexp": ".*Local:.*https://localhost:4200.*"
+          }
+        }
+      }
+    },
+    {
+      "label": "npm: test",
+      "type": "npm",
+      "script": "test",
+      "group": "test",
+      "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": ".*%.*INFO.*"
+          },
+          "endsPattern": {
+            "regexp": ".*Executed.*"
+          }
+        }
+      }
+    },
+    {
+      "label": "npm: build",
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false      },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "npm: dev",
+      "type": "npm",
+      "script": "dev",
+      "group": "build",
+      "isBackground": true,
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "Initial chunk files.*"
+          },
+          "endsPattern": {
+            "regexp": ".*Local:.*https://localhost:4200.*"
+          }
+        }
+      }
+    },
+    {
+      "label": "npm: lint",
+      "type": "npm",
+      "script": "lint",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": ["$eslint-stylish"]
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+.user-access-competency-list {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  
+  h2 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #eaeaea;
+    padding-bottom: 0.5rem;
+  }
+  
+  h3 {
+    color: #444;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .error-message {
+    background-color: #fff5f5;
+    color: #c53030;
+    border-left: 4px solid #c53030;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0 4px 4px 0;
+  }
+  
+  .loading-indicator {
+    color: #3182ce;
+    text-align: center;
+    margin: 1rem 0;
+    font-style: italic;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    
+    th {
+      background-color: #f8f9fa;
+      color: #333;
+      text-align: left;
+      padding: 0.75rem;
+      font-weight: 600;
+      border-bottom: 2px solid #dee2e6;
+    }
+    
+    td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: middle;
+      
+      &.center {
+        text-align: center;
+      }
+      
+      &.no-data {
+        text-align: center;
+        padding: 2rem;
+        color: #718096;
+        font-style: italic;
+      }
+    }
+    
+    tr:hover {
+      background-color: #f7fafc;
+    }
+    
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-start;
+    }
+  }
+  
+  button {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease;
+    font-weight: 500;
+    
+    &.edit-btn {
+      background-color: #3182ce;
+      color: white;
+      
+      &:hover {
+        background-color: #2c5282;
+      }
+    }
+    
+    &.delete-btn {
+      background-color: #e53e3e;
+      color: white;
+      
+      &:hover {
+        background-color: #c53030;
+      }
+    }
+    
+    &.submit-btn {
+      background-color: #38a169;
+      color: white;
+      
+      &:hover:not(:disabled) {
+        background-color: #2f855a;
+      }
+      
+      &:disabled {
+        background-color: #9ae6b4;
+        cursor: not-allowed;
+      }
+    }
+    
+    &.cancel-btn {
+      background-color: #718096;
+      color: white;
+      
+      &:hover {
+        background-color: #4a5568;
+      }
+    }
+  }
+  
+  .form-section {
+    background-color: #f8fafc;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    border: 1px solid #e2e8f0;
+    
+    &.edit-section {
+      border-left: 4px solid #3182ce;
+    }
+  }
+  
+  .association-form {
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      
+      @media (max-width: 768px) {
+        flex-direction: column;
+      }
+    }
+    
+    .form-group {
+      flex: 1;
+      
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #4a5568;
+      }
+      
+      select, input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #cbd5e0;
+        border-radius: 4px;
+        font-size: 1rem;
+        
+        &:focus {
+          outline: none;
+          border-color: #63b3ed;
+          box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+        }
+      }
+      
+      select {
+        background-color: white;
+      }
+    }
+    
+    .form-actions {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1rem;
+    }
+  }
+}

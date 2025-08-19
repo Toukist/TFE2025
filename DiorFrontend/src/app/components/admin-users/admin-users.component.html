@@ -1,0 +1,120 @@
+<div class="admin-users-container">
+  <div class="header">
+    <h2>Gestion des utilisateurs</h2>
+    <div class="flex items-center gap-3">
+      <mat-form-field appearance="outline" style="width:260px" *ngIf="!showForm">
+        <mat-label>Filtrer</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Nom, email, équipe..." />
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="onCreate()" *ngIf="!showForm">Ajouter</button>
+      <button mat-stroked-button color="primary" (click)="onCancel()" *ngIf="showForm">Retour liste</button>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+  <div *ngIf="loading" class="loading">Chargement...</div>
+
+  <div *ngIf="!loading && !showForm" class="users-table mat-elevation-z2">
+    <table mat-table [dataSource]="dataSource" matSort matSortDisableClear>
+
+      <!-- Prénom -->
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Prénom</th>
+        <td mat-cell *matCellDef="let u">{{ u.firstName }}</td>
+      </ng-container>
+
+      <!-- Nom -->
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nom</th>
+        <td mat-cell *matCellDef="let u">{{ u.lastName }}</td>
+      </ng-container>
+
+      <!-- Identifiant -->
+      <ng-container matColumnDef="userName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Identifiant</th>
+        <td mat-cell *matCellDef="let u">{{ u.userName }}</td>
+      </ng-container>
+
+      <!-- Email -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+        <td mat-cell *matCellDef="let u">{{ u.email }}</td>
+      </ng-container>
+
+      <!-- Téléphone -->
+      <ng-container matColumnDef="phone">
+        <th mat-header-cell *matHeaderCellDef>Téléphone</th>
+        <td mat-cell *matCellDef="let u">{{ u.phone || '—' }}</td>
+      </ng-container>
+
+      <!-- Équipe -->
+      <ng-container matColumnDef="team">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Équipe</th>
+        <td mat-cell *matCellDef="let u">{{ u.teamName || '—' }}</td>
+      </ng-container>
+
+      <!-- Actif -->
+      <ng-container matColumnDef="active">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Statut</th>
+        <td mat-cell *matCellDef="let u">
+          <span [class.status-active]="u.isActive" [class.status-inactive]="!u.isActive">
+            {{ u.isActive ? 'Actif' : 'Inactif' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Roles -->
+      <ng-container matColumnDef="roles">
+        <th mat-header-cell *matHeaderCellDef>Rôles</th>
+        <td mat-cell *matCellDef="let u">
+          <mat-chip-set *ngIf="u.roles?.length; else noRole" aria-label="Rôles utilisateur">
+            <mat-chip *ngFor="let r of u.roles" color="primary" selected>{{ r }}</mat-chip>
+          </mat-chip-set>
+          <ng-template #noRole><span class="text-gray-400">—</span></ng-template>
+        </td>
+      </ng-container>
+
+      <!-- Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let u" class="flex gap-2">
+          <button mat-icon-button color="primary" (click)="onEdit(u)" aria-label="Editer">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="onDelete(u)" aria-label="Supprimer">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5,10,25,50]" showFirstLastButtons></mat-paginator>
+  </div>
+
+  <div *ngIf="showForm" class="user-form">
+    <h3>{{ editingUser ? 'Modifier utilisateur' : 'Nouvel utilisateur' }}</h3>
+    <form (ngSubmit)="onSubmit()" class="form-grid">
+      <div class="form-row">
+        <mat-form-field appearance="outline"><mat-label>Prénom</mat-label><input matInput [(ngModel)]="formData.firstName" name="firstName" required /></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Nom</mat-label><input matInput [(ngModel)]="formData.lastName" name="lastName" required /></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Identifiant</mat-label><input matInput [(ngModel)]="formData.userName" name="userName" required /></mat-form-field>
+      </div>
+      <div class="form-row">
+        <mat-form-field class="w-full" appearance="outline"><mat-label>Email</mat-label><input matInput [(ngModel)]="formData.email" name="email" type="email" required /></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Téléphone</mat-label><input matInput [(ngModel)]="formData.phone" name="phone" /></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Équipe</mat-label><input matInput [(ngModel)]="formData.teamId" name="teamId" type="number" /></mat-form-field>
+      </div>
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="w-full"><mat-label>Rôles (séparés par virgule)</mat-label><input matInput [(ngModel)]="rolesInput" name="rolesInput" (blur)="updateRolesFromInput()" /></mat-form-field>
+        <mat-form-field appearance="outline" *ngIf="!editingUser"><mat-label>Mot de passe</mat-label><input matInput [(ngModel)]="formData.password" name="password" type="password" /></mat-form-field>
+        <mat-form-field appearance="outline"><mat-label>Statut</mat-label><mat-select [(ngModel)]="formData.isActive" name="isActive"><mat-option [value]="true">Actif</mat-option><mat-option [value]="false">Inactif</mat-option></mat-select></mat-form-field>
+      </div>
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit">{{ editingUser ? 'Mettre à jour' : 'Créer' }}</button>
+        <button mat-button type="button" (click)="onCancel()">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>

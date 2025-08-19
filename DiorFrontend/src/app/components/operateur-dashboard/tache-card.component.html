@@ -1,0 +1,37 @@
+<mat-card class="tache-card" [ngClass]="task.priorite?.toLowerCase()">
+  <div class="card-header flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="font-semibold">{{ task.titre }}</span>
+      <mat-chip [color]="chipColor(task.priorite)" selected>{{ task.priorite }}</mat-chip>
+    </div>
+    <span *ngIf="task.echeance" class="text-xs text-gray-500">⏰ {{ task.echeance }}</span>
+  </div>
+  <div class="card-body mt-2">
+    <div class="text-sm text-gray-700 mb-1">{{ task.description }}</div>
+    <div class="text-xs text-gray-500" *ngIf="task.equipement">
+      <mat-icon inline fontSize="small">precision_manufacturing</mat-icon> {{ task.equipement }}
+    </div>
+    <div class="text-xs text-gray-500" *ngIf="task.assignePar">
+      <mat-icon inline fontSize="small">person</mat-icon> Assignée par {{ task.assignePar }}
+    </div>
+  </div>
+  <div class="card-footer flex items-center justify-between mt-2">
+    <div class="flex gap-2">
+      <button mat-icon-button color="primary" matTooltip="Démarrer" *ngIf="task.statut === 'A faire'">
+        <mat-icon>play_arrow</mat-icon>
+      </button>
+      <button mat-icon-button color="accent" matTooltip="Pause" *ngIf="task.statut === 'En cours'">
+        <mat-icon>pause</mat-icon>
+      </button>
+      <button mat-icon-button color="success" matTooltip="Terminer" *ngIf="task.statut !== 'Terminé'">
+        <mat-icon>check_circle</mat-icon>
+      </button>
+      <button mat-icon-button matTooltip="Commenter">
+        <mat-icon>chat_bubble</mat-icon>
+      </button>
+    </div>
+    <button mat-icon-button matTooltip="Joindre une photo">
+      <mat-icon>photo_camera</mat-icon>
+    </button>
+  </div>
+</mat-card>

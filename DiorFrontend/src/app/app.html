@@ -1,0 +1,31 @@
+<!-- Dior - Application avec navigation -->
+
+<style>
+  :host {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    --dior-black: #1a1a1a;
+    --dior-gold: #e5c06d;
+    --dior-white: #faf8f3;
+    --dior-grey: #e0dcd6;
+    --menu-hover: #f6f1e8;
+    background: linear-gradient(120deg, #faf8f3 70%, #f6f1e8 100%);
+    min-height: 100vh;
+    display: block;
+  }
+
+  .main-content {
+    padding-top: 1rem;
+  }
+
+  .main-content.no-navbar {
+    padding-top: 0;
+  }
+</style>
+
+<!-- Afficher la navbar seulement si on n'est pas sur une route admin 
+<app-navbar *ngIf="showNavbar"></app-navbar>
+
+<div class="main-content" [class.no-navbar]="!showNavbar">
+  <router-outlet></router-outlet>
+</div>
+-->

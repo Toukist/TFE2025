@@ -1,0 +1,114 @@
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow">
+  <h2 class="text-2xl font-bold mb-4">Liste des privilèges</h2>
+  <div *ngIf="error" class="bg-red-50 text-red-700 border border-red-200 rounded p-2 mb-4">{{ error }}</div>
+  <table class="min-w-full bg-white border border-gray-200 rounded-lg mb-6">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="px-4 py-2">ID</th>
+        <th class="px-4 py-2">Nom</th>
+        <th class="px-4 py-2">Description</th>
+        <th class="px-4 py-2">Lecture</th>
+        <th class="px-4 py-2">Ajout</th>
+        <th class="px-4 py-2">Modification</th>
+        <th class="px-4 py-2">Suppression</th>
+        <th class="px-4 py-2">Status</th>
+        <th class="px-4 py-2">Exécution</th>
+        <th class="px-4 py-2">Dernière modif par</th>
+        <th class="px-4 py-2">Dernière modif le</th>
+        <th class="px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let privilege of privilegeList" class="border-b last:border-b-0">
+        <td class="px-4 py-2">{{ privilege.id }}</td>
+        <td class="px-4 py-2">{{ privilege.name }}</td>
+        <td class="px-4 py-2">{{ privilege.description }}</td>
+        <td class="px-4 py-2">{{ privilege.isConfigurableRead ? 'Oui' : 'Non' }}</td>
+        <td class="px-4 py-2">{{ privilege.isConfigurableAdd ? 'Oui' : 'Non' }}</td>
+        <td class="px-4 py-2">{{ privilege.isConfigurableModify ? 'Oui' : 'Non' }}</td>
+        <td class="px-4 py-2">{{ privilege.isConfigurableDelete ? 'Oui' : 'Non' }}</td>
+        <td class="px-4 py-2">{{ privilege.isConfigurableStatus ? 'Oui' : 'Non' }}</td>
+        <td class="px-4 py-2">{{ privilege.isConfigurableExecution ? 'Oui' : 'Non' }}</td>
+        <td class="px-4 py-2">{{ privilege.lastEditBy }}</td>
+        <td class="px-4 py-2">{{ privilege.lastEditAt | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td class="px-4 py-2 flex gap-2">
+          <button class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200 transition" (click)="selectPrivilege(privilege)">Modifier</button>
+          <button class="px-2 py-1 text-xs bg-red-100 text-red-700 rounded hover:bg-red-200 transition" (click)="deletePrivilege(privilege.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 class="text-lg font-semibold mb-2">Ajouter un privilège</h3>
+  <form (ngSubmit)="addPrivilege()" #addForm="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mb-4">
+    <div>
+      <label for="privilegeName" class="block text-sm font-medium mb-1">Nom <span class="text-red-500">*</span></label>
+      <input type="text" id="privilegeName" [(ngModel)]="newPrivilege.name" name="name" required class="border border-gray-300 rounded px-3 py-2 w-full">
+    </div>
+    <div>
+      <label for="privilegeDescription" class="block text-sm font-medium mb-1">Description</label>
+      <input type="text" id="privilegeDescription" [(ngModel)]="newPrivilege.description" name="description" class="border border-gray-300 rounded px-3 py-2 w-full">
+    </div>
+    <div class="col-span-2 flex flex-wrap gap-4 items-center">
+      <label class="flex items-center gap-2 text-sm">
+        <input type="checkbox" [(ngModel)]="newPrivilege.isConfigurableRead" name="isConfigurableRead" class="form-checkbox"> Lecture
+      </label>
+      <label class="flex items-center gap-2 text-sm">
+        <input type="checkbox" [(ngModel)]="newPrivilege.isConfigurableAdd" name="isConfigurableAdd" class="form-checkbox"> Ajout
+      </label>
+      <label class="flex items-center gap-2 text-sm">
+        <input type="checkbox" [(ngModel)]="newPrivilege.isConfigurableModify" name="isConfigurableModify" class="form-checkbox"> Modification
+      </label>
+      <label class="flex items-center gap-2 text-sm">
+        <input type="checkbox" [(ngModel)]="newPrivilege.isConfigurableDelete" name="isConfigurableDelete" class="form-checkbox"> Suppression
+      </label>
+      <label class="flex items-center gap-2 text-sm">
+        <input type="checkbox" [(ngModel)]="newPrivilege.isConfigurableStatus" name="isConfigurableStatus" class="form-checkbox"> Status
+      </label>
+      <label class="flex items-center gap-2 text-sm">
+        <input type="checkbox" [(ngModel)]="newPrivilege.isConfigurableExecution" name="isConfigurableExecution" class="form-checkbox"> Exécution
+      </label>
+      <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Ajouter</button>
+    </div>
+  </form>
+  <div *ngIf="selectedPrivilege" class="mb-8">
+    <h3 class="text-lg font-semibold mb-2">Modifier un privilège</h3>
+    <form (ngSubmit)="updatePrivilege()" #editForm="ngForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end mb-4">
+      <div>
+        <label for="editPrivilegeId" class="block text-sm font-medium mb-1">ID</label>
+        <input type="text" id="editPrivilegeId" [(ngModel)]="selectedPrivilege.id" name="editId" disabled class="border border-gray-300 rounded px-3 py-2 w-full">
+      </div>
+      <div>
+        <label for="editPrivilegeName" class="block text-sm font-medium mb-1">Nom <span class="text-red-500">*</span></label>
+        <input type="text" id="editPrivilegeName" [(ngModel)]="selectedPrivilege.name" name="editName" required class="border border-gray-300 rounded px-3 py-2 w-full">
+      </div>
+      <div class="col-span-2">
+        <label for="editPrivilegeDescription" class="block text-sm font-medium mb-1">Description</label>
+        <input type="text" id="editPrivilegeDescription" [(ngModel)]="selectedPrivilege.description" name="editDescription" class="border border-gray-300 rounded px-3 py-2 w-full">
+      </div>
+      <div class="col-span-2 flex flex-wrap gap-4 items-center">
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" [(ngModel)]="selectedPrivilege.isConfigurableRead" name="editIsConfigurableRead" class="form-checkbox"> Lecture
+        </label>
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" [(ngModel)]="selectedPrivilege.isConfigurableAdd" name="editIsConfigurableAdd" class="form-checkbox"> Ajout
+        </label>
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" [(ngModel)]="selectedPrivilege.isConfigurableModify" name="editIsConfigurableModify" class="form-checkbox"> Modification
+        </label>
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" [(ngModel)]="selectedPrivilege.isConfigurableDelete" name="editIsConfigurableDelete" class="form-checkbox"> Suppression
+        </label>
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" [(ngModel)]="selectedPrivilege.isConfigurableStatus" name="editIsConfigurableStatus" class="form-checkbox"> Status
+        </label>
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" [(ngModel)]="selectedPrivilege.isConfigurableExecution" name="editIsConfigurableExecution" class="form-checkbox"> Exécution
+        </label>
+      </div>
+      <div class="col-span-2 flex gap-2">
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Enregistrer</button>
+        <button type="button" (click)="cancelEdit()" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>

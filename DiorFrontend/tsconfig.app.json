@@ -1,0 +1,29 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": [],
+    "baseUrl": "./src",
+    "paths": {
+      "@app/*": ["app/*"],
+      "@admin/*": ["app/admin/*"],
+      "@users/*": ["app/users/*"],
+      "@shared/*": ["app/shared/*"],
+      "@components/*": ["app/shared/components/*"],
+      "@models/*": ["app/models/*"],
+      "@services/*": ["app/services/*"],
+      "@pipes/*": ["app/pipes/*"],
+      "@directives/*": ["app/directives/*"],
+      "@validators/*": ["app/validators/*"],
+      "@guards/*": ["app/guards/*"],
+      "@interceptors/*": ["app/interceptors/*"],
+      "@environments/*": ["environments/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts"
+  ]
+}

@@ -1,0 +1,542 @@
+// Variables de couleurs
+$primary-color: #2c3e50;
+$secondary-color: #34495e;
+$accent-color: #3498db;
+$success-color: #27ae60;
+$error-color: #e74c3c;
+$warning-color: #f39c12;
+$light-gray: #ecf0f1;
+$medium-gray: #bdc3c7;
+$dark-gray: #7f8c8d;
+$white: #ffffff;
+
+// Variables de layout
+$border-radius: 8px;
+$box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+$transition: all 0.3s ease;
+
+.user-access-management {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  // En-tête principal
+  .header {
+    background: linear-gradient(135deg, $primary-color, $secondary-color);
+    color: $white;
+    padding: 30px;
+    border-radius: $border-radius;
+    margin-bottom: 30px;
+    box-shadow: $box-shadow;
+
+    .title {
+      margin: 0 0 10px 0;
+      font-size: 32px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .icon-users::before {
+        content: '👥';
+        font-size: 28px;
+      }
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 16px;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+  }
+
+  // Alert global
+  .alert {
+    padding: 15px 20px;
+    border-radius: $border-radius;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+
+    &.alert-error {
+      background-color: #fadbd8;
+      color: #721c24;
+      border-left: 4px solid $error-color;
+
+      .icon-error::before {
+        content: '⚠️';
+      }
+    }
+  }
+
+  // Section de sélection d'utilisateur
+  .user-selection-section {
+    background: $white;
+    padding: 25px;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    border: 1px solid #e9ecef;
+    margin-bottom: 30px;
+
+    .section-title {
+      margin: 0 0 20px 0;
+      font-size: 22px;
+      font-weight: 600;
+      color: $primary-color;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .icon-search::before {
+        content: '🔍';
+        font-size: 20px;
+      }
+    }
+
+    // Loader
+    .loading-container {
+      text-align: center;
+      padding: 40px 20px;
+      color: $dark-gray;
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid $light-gray;
+        border-top: 3px solid $accent-color;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+      }
+    }
+
+    // Interface de sélection
+    .selection-interface {
+      display: grid;
+      gap: 25px;
+
+      // Barre de recherche
+      .search-section {
+        .search-input-container {
+          position: relative;
+          max-width: 400px;
+
+          .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: $medium-gray;
+            pointer-events: none;
+
+            &::before {
+              content: '🔍';
+              font-size: 16px;
+            }
+          }
+
+          .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 45px;
+            border: 2px solid #e9ecef;
+            border-radius: $border-radius;
+            font-size: 14px;
+            transition: $transition;
+
+            &:focus {
+              outline: none;
+              border-color: $accent-color;
+              box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            }
+          }
+
+          .clear-search-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: $medium-gray;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: $transition;
+
+            &:hover {
+              background-color: #f8f9fa;
+              color: $dark-gray;
+            }
+          }
+        }
+      }
+
+      // Sélection directe
+      .direct-select-section {
+        .form-label {
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 500;
+          color: $secondary-color;
+          font-size: 14px;
+        }
+
+        .select-container {
+          position: relative;
+          max-width: 400px;
+
+          .form-select {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: $border-radius;
+            font-size: 14px;
+            background-color: $white;
+            transition: $transition;
+            cursor: pointer;
+            appearance: none;
+
+            &:focus {
+              outline: none;
+              border-color: $accent-color;
+              box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            }
+          }
+
+          .select-arrow {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: $medium-gray;
+
+            &::before {
+              content: '▼';
+              font-size: 12px;
+            }
+          }
+        }
+      }
+
+      // Liste des utilisateurs
+      .users-list {
+        .list-title {
+          font-size: 16px;
+          font-weight: 600;
+          color: $secondary-color;
+          margin: 0 0 15px 0;
+        }
+
+        .users-grid {
+          display: grid;
+          gap: 12px;
+          max-height: 300px;
+          overflow-y: auto;
+          padding: 5px;
+
+          .user-card {
+            background: $white;
+            border: 2px solid #e9ecef;
+            border-radius: $border-radius;
+            padding: 15px;
+            cursor: pointer;
+            transition: $transition;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            &:hover {
+              border-color: $accent-color;
+              transform: translateY(-1px);
+              box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+            }
+
+            .user-info {
+              flex: 1;
+
+              .user-name {
+                margin: 0 0 5px 0;
+                font-size: 16px;
+                font-weight: 600;
+                color: $primary-color;
+              }
+
+              .user-username {
+                margin: 0 0 8px 0;
+                font-size: 14px;
+                color: $dark-gray;
+                font-style: italic;
+              }
+
+              .user-status {
+                font-size: 12px;
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-weight: 500;
+                background-color: #f8f9fa;
+                color: $dark-gray;
+
+                &.active {
+                  background-color: rgba(39, 174, 96, 0.1);
+                  color: $success-color;
+                }
+              }
+            }
+
+            .select-btn {
+              color: $accent-color;
+              font-size: 18px;
+
+              .icon-arrow::before {
+                content: '→';
+              }
+            }
+          }
+        }
+      }
+
+      // Aucun résultat
+      .no-results {
+        text-align: center;
+        padding: 30px 20px;
+        color: $dark-gray;
+
+        .icon-no-results::before {
+          content: '😕';
+          font-size: 32px;
+          display: block;
+          margin-bottom: 10px;
+        }
+
+        p {
+          margin: 0;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  // Section de gestion des compétences
+  .competency-management-section {
+    .selected-user-header {
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      padding: 25px;
+      border-radius: $border-radius;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border: 1px solid #e9ecef;
+
+      .user-details {
+        flex: 1;
+
+        .section-title {
+          margin: 0 0 15px 0;
+          font-size: 22px;
+          font-weight: 600;
+          color: $primary-color;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+
+          .icon-key::before {
+            content: '🔑';
+            font-size: 20px;
+          }
+        }
+
+        .selected-user-info {
+          .selected-user-name {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: $secondary-color;
+          }
+
+          .selected-user-meta {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 14px;
+
+            .username {
+              color: $dark-gray;
+              font-style: italic;
+            }
+
+            .status {
+              padding: 4px 10px;
+              border-radius: 12px;
+              font-weight: 500;
+              font-size: 12px;
+              background-color: #f8f9fa;
+              color: $dark-gray;
+
+              &.active {
+                background-color: rgba(39, 174, 96, 0.1);
+                color: $success-color;
+              }
+            }
+          }
+        }
+      }
+
+      .clear-selection-btn {
+        background-color: $white;
+        border: 2px solid $medium-gray;
+        color: $secondary-color;
+        padding: 10px 16px;
+        border-radius: $border-radius;
+        cursor: pointer;
+        transition: $transition;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        &:hover {
+          border-color: $accent-color;
+          color: $accent-color;
+          transform: translateY(-1px);
+        }
+
+        .icon-close::before {
+          content: '↩️';
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  // Message si aucune sélection
+  .no-selection {
+    text-align: center;
+    padding: 60px 20px;
+    background: $white;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    border: 1px solid #e9ecef;
+    color: $dark-gray;
+
+    .icon-user-select::before {
+      content: '👤';
+      font-size: 48px;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      margin: 0 0 10px 0;
+      color: $secondary-color;
+      font-size: 20px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 16px;
+    }
+  }
+}
+
+// Animations
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Responsive design
+@media (max-width: 1024px) {
+  .user-access-management {
+    padding: 15px;
+
+    .competency-management-section {
+      .selected-user-header {
+        flex-direction: column;
+        gap: 20px;
+        align-items: stretch;
+
+        .clear-selection-btn {
+          align-self: flex-end;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .user-access-management {
+    padding: 10px;
+
+    .header {
+      padding: 20px;
+
+      .title {
+        font-size: 24px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+    }
+
+    .user-selection-section,
+    .competency-management-section .selected-user-header {
+      padding: 20px;
+    }
+
+    .selection-interface {
+      .search-section .search-input-container,
+      .direct-select-section .select-container {
+        max-width: 100%;
+      }
+
+      .users-grid .user-card {
+        padding: 12px;
+
+        .user-info .user-name {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .user-access-management {
+    .header {
+      padding: 15px;
+
+      .title {
+        font-size: 20px;
+      }
+    }
+
+    .user-selection-section,
+    .competency-management-section .selected-user-header {
+      padding: 15px;
+    }
+
+    .users-grid .user-card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+
+      .select-btn {
+        align-self: flex-end;
+      }
+    }
+  }
+}

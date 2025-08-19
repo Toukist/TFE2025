@@ -1,0 +1,91 @@
+<div class="login-container">
+  <div class="login-card">    <div class="login-header">
+      <h1>🔑 Connexion</h1>
+      <p>Système de gestion DiorSystem</p>
+    </div>
+
+    <div class="login-toggle">
+      <button 
+        type="button"
+        [class.active]="loginType === 'credentials'"
+        (click)="setLoginType('credentials')"
+        class="toggle-btn">
+        Identifiants
+      </button>
+      <button 
+        type="button"
+        [class.active]="loginType === 'badge'"
+        (click)="setLoginType('badge')"
+        class="toggle-btn">
+        Badge
+      </button>
+    </div><form [formGroup]="loginType === 'credentials' ? loginForm : badgeForm" (ngSubmit)="onSubmit()" class="login-form">
+      <!-- Connexion par identifiants -->
+      <div *ngIf="loginType === 'credentials'" class="form-section">
+        <div class="form-group">
+          <label for="username">Nom d'utilisateur</label>
+          <input 
+            type="text" 
+            id="username"
+            formControlName="username"
+            placeholder="Entrez votre nom d'utilisateur"
+            [class.error]="username?.touched && username?.invalid"
+            autocomplete="username">
+          <div *ngIf="username?.touched && username?.invalid" class="field-error">
+            {{ getFieldError('username', loginForm) }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <div class="password-input-container">
+            <input 
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              formControlName="password"
+              placeholder="Entrez votre mot de passe"
+              [class.error]="password?.touched && password?.invalid"
+              autocomplete="current-password">
+            <button 
+              type="button" 
+              class="toggle-password"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+              {{ showPassword ? '🙈' : '👁️' }}
+            </button>
+          </div>
+          <div *ngIf="password?.touched && password?.invalid" class="field-error">
+            {{ getFieldError('password', loginForm) }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Connexion par badge -->
+      <div *ngIf="loginType === 'badge'" class="form-section">
+        <div class="form-group">
+          <label for="badge">Numéro de badge</label>
+          <input 
+            type="text" 
+            id="badge"
+            formControlName="badgeNumber"
+            placeholder="Entrez votre numéro de badge"
+            [class.error]="badgeNumber?.touched && badgeNumber?.invalid"
+            autocomplete="off">
+          <div *ngIf="badgeNumber?.touched && badgeNumber?.invalid" class="field-error">
+            {{ getFieldError('badgeNumber', badgeForm) }}
+          </div>
+        </div>
+      </div>      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="submit"          class="login-button" 
+          [disabled]="(isLoading$ | async) || (loginType === 'credentials' ? loginForm.invalid : badgeForm.invalid)">
+          <span *ngIf="(isLoading$ | async) === false">Se connecter</span>
+          <span *ngIf="isLoading$ | async">🔄 Connexion...</span>        </button>
+      </div>
+    </form>
+  </div>
+</div>

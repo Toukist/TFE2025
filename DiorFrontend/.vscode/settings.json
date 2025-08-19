@@ -1,0 +1,37 @@
+{
+  // Configuration spécifique pour ce projet Angular
+  "debug.toolBarLocation": "docked",
+  "debug.inlineValues": "on",
+  "debug.showBreakpointsInOverviewRuler": true,
+  
+  // Terminal intégré
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.cwd": "${workspaceFolder}",
+  
+  // Angular Language Service
+  "angular.experimental-ivy": true,
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  
+  // Configuration par défaut pour le débogage (F5)
+  "launch": {
+    "configurations": [],
+    "compounds": []
+  },
+  
+  // Fichiers à exclure de la recherche
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.angular": true
+  },
+  
+  // Auto-save pour éviter les problèmes de synchronisation
+  "files.autoSave": "onFocusChange",
+  
+  // Configuration ESLint
+  "eslint.workingDirectories": ["${workspaceFolder}"],
+  "eslint.validate": ["typescript", "html"],
+  
+  // Angular Schematics
+  "angular.enableTraceLogging": false
+}

@@ -1,0 +1,58 @@
+<div class="access-competency-list">
+  <h2>Zones/Salles accessibles</h2>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of itemList">
+        <td>{{ item.id }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.isActive ? 'Actif' : 'Inactif' }}</td>
+        <td>
+          <button (click)="selectItem(item)">Modifier</button>
+          <button (click)="deleteItem(item.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>Ajouter une zone/salle</h3>
+  <form (ngSubmit)="addItem()" #addForm="ngForm">
+    <div class="form-group">
+      <label for="name">Nom:</label>
+      <input type="text" id="name" [(ngModel)]="newItem.name" name="name" required>
+    </div>
+    <div class="form-group checkbox-group">
+      <label for="isActive">
+        <input type="checkbox" id="isActive" [(ngModel)]="newItem.isActive" name="isActive" required> Actif
+      </label>
+    </div>
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <div *ngIf="selectedItem">
+    <h3>Modifier une zone/salle</h3>    <form (ngSubmit)="updateItem()" #editForm="ngForm">
+      <div class="form-group">
+        <label for="editId">ID:</label>
+        <input type="number" id="editId" [(ngModel)]="selectedItem.id" name="editId" disabled>
+      </div>
+      <div class="form-group">
+        <label for="editName">Nom:</label>
+        <input type="text" id="editName" [(ngModel)]="selectedItem.name" name="editName" required>
+      </div>
+      <div class="form-group checkbox-group">
+        <label for="editIsActive">
+          <input type="checkbox" id="editIsActive" [(ngModel)]="selectedItem.isActive" name="editIsActive" required> Actif
+        </label>
+      </div>
+      <button type="submit">Enregistrer</button>
+      <button type="button" (click)="cancelEdit()">Annuler</button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<div class="choix-role-container" *ngIf="currentUser$ | async as currentUser">
+  <div class="header-container">
+    <h1 class="main-title">Sélectionnez Votre Rôle</h1>
+    <p class="welcome-message" *ngIf="currentUser">
+      Bonjour <strong>{{ currentUser.firstName }} {{ currentUser.lastName }}</strong>,
+      <span *ngIf="(userRoles$ | async) as userRoles">vous avez accès à <strong *ngIf="userRoles">{{ (userRoles?.length || 0) }}</strong> rôle{{ (userRoles?.length || 0) > 1 ? 's' : '' }}.</span>
+    </p>
+    <p class="instructions">
+      Veuillez choisir le rôle avec lequel vous souhaitez accéder à l'application.
+      Chaque rôle vous donnera accès à des fonctionnalités spécifiques.
+    </p>
+  </div>
+
+  <div *ngIf="isLoading$ | async" class="loading-indicator">
+    <p>Chargement des rôles...</p>
+    <div class="spinner"></div>
+  </div>
+
+  <ng-container *ngIf="(userRoles$ | async) as userRoles">
+    <div class="roles-grid" *ngIf="userRoles && userRoles.length > 0 && (isLoading$ | async) === false">
+      <div class="role-card"
+           *ngFor="let role of userRoles; let i = index"
+           tabindex="0"
+           [class.loading]="(isLoading$ | async) === true"
+           [attr.aria-label]="'Sélectionner le rôle ' + role.name"
+           (click)="selectRoleAndNavigate(role.name)"
+           (keydown.enter)="selectRoleAndNavigate(role.name)"
+           (keydown.space)="selectRoleAndNavigate(role.name)">        <div class="role-icon">{{ getRoleIcon(role.name) }}</div>
+        <h3 class="role-name">{{ role.name }}</h3>
+        <p class="role-description">{{ getRoleDescription(role.name) }}</p>
+        <button class="select-button" [disabled]="isLoading$ | async">
+            <span *ngIf="(isLoading$ | async) === false">Accéder en tant que {{ role.name }}</span>
+            <span *ngIf="isLoading$ | async">🔄 Chargement...</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="no-roles" *ngIf="userRoles && userRoles.length === 0 && (isLoading$ | async) === false">
+      <p>😕</p>
+      <p>Aucun rôle ne vous est actuellement attribué ou vos rôles ne sont pas encore chargés.</p>
+      <p>Si vous pensez qu'il s'agit d'une erreur, veuillez contacter l'administrateur.</p>
+    </div>
+
+    <div class="loading-state" *ngIf="(isLoading$ | async) && (!userRoles || userRoles.length === 0)">
+      <p>🔄 Vérification de vos accès en cours...</p>
+      <p>Merci de patienter.</p>
+    </div>
+  </ng-container>
+  <div class="footer-actions">
+    <button (click)="logout()" class="logout-button" [disabled]="isLoading$ | async">
+      <span *ngIf="(isLoading$ | async) === false">Déconnexion</span>
+      <span *ngIf="isLoading$ | async">🔄 Déconnexion...</span>
+    </button>
+  </div>
+</div>

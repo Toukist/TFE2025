@@ -1,0 +1,88 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+.logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(140deg, #e5c06d, #e0dcd6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 16px 2px #e5c06d55;
+}
+.logo-text {
+  font-size: 2.8rem;
+  font-family: 'Cinzel', serif;
+  font-weight: 900;
+  color: #1a1a1a;
+  letter-spacing: 3px;
+  text-shadow: 0 3px 6px #fff7;
+}
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 1.8rem;
+  padding: 1.3rem 0 1.9rem 0;
+  background: #e0dcd6;
+  border-radius: 30px;
+  margin-bottom: 2.2rem;
+  box-shadow: 0 1px 8px 1px #e5c06d25;
+  font-size: 1.07rem;
+}
+nav a {
+  text-decoration: none;
+  color: #1a1a1a;
+  font-weight: 600;
+  transition: color 0.2s, background 0.2s;
+  padding: 0.6rem 1.2rem;
+  border-radius: 18px;
+}
+nav a:hover, nav a.active {
+  background: #f6f1e8;
+  color: #e5c06d;
+}
+.welcome {
+  text-align: center;
+  margin: 2.5rem auto 2.2rem auto;
+  max-width: 520px;
+  color: #2a2a2a;
+}
+.welcome h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 2.8rem;
+  color: #1a1a1a;
+  font-weight: 700;
+  margin-bottom: 0.7rem;
+  letter-spacing: 2px;
+}
+.welcome p {
+  font-size: 1.15rem;
+  color: #6b5b38;
+  margin-bottom: 0.6rem;
+}
+.quick-links {
+  margin-top: 2.7rem;
+  text-align: center;
+}
+.quick-links a {
+  display: inline-block;
+  margin: 0 1.2rem;
+  color: #e5c06d;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color .2s;
+}
+.quick-links a:hover {
+  color: #1a1a1a;
+  text-decoration: underline;
+}
+@media (max-width: 700px) {
+  .header { flex-direction: column; gap:0.3rem; }
+  nav { flex-direction: column; gap: 1rem; border-radius: 14px;}
+}

@@ -1,0 +1,15 @@
+.tache-card {
+  margin-bottom: 12px;
+  border-left: 4px solid transparent;
+  &.urgente { border-color: #e53935; }
+  &.haute { border-color: #fb8c00; }
+  &.moyenne { border-color: #1976d2; }
+  &.faible { border-color: #43a047; }
+  .mat-chip {
+    font-weight: bold;
+    font-size: 0.85em;
+    margin-left: 4px;
+  }
+  .card-header { margin-bottom: 4px; }
+  .card-footer { margin-top: 8px; }
+}

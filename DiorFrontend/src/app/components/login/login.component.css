@@ -1,0 +1,235 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Arial', sans-serif;
+}
+
+.login-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-header h1 {
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.login-header p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.login-toggle {
+  display: flex;
+  margin-bottom: 2rem;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.login-toggle button {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  background: #f8f9fa;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-toggle button.active {
+  background: #667eea;
+  color: white;
+}
+
+.login-toggle button:hover:not(.active) {
+  background: #e9ecef;
+}
+
+.form-section {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+/* Styles pour la validation des formulaires */
+.form-group input.error {
+  border-color: #e53e3e;
+  box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.2);
+}
+
+.field-error {
+  color: #e53e3e;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Conteneur pour l'input mot de passe avec bouton */
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-container input {
+  padding-right: 3rem;
+  flex: 1;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 1.2rem;
+  color: #666;
+  transition: color 0.3s ease;
+  z-index: 1;
+  user-select: none;
+}
+
+.toggle-password:hover {
+  color: #333;
+}
+
+.toggle-password:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* État de validation réussie */
+.form-group input:valid:not(:placeholder-shown) {
+  border-color: #38a169;
+  box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.2);
+}
+
+/* Amélioration de l'accessibilité */
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+/* Animation pour les erreurs */
+.field-error {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Bouton désactivé avec meilleur feedback visuel */
+.login-button:disabled {
+  background: #a0aec0;
+  color: #718096;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.login-button {
+  width: 100%;
+  padding: 0.75rem;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background: #5a67d8;
+}
+
+.login-button:active {
+  transform: translateY(1px);
+}
+
+.login-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.login-button:disabled:hover {
+  background: #ccc;
+  transform: none;
+}
+
+/* Animation pour le spinner de chargement */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.login-button span:first-child {
+  display: inline-block;
+}
+
+/* Responsive design amélioré */
+@media (max-width: 480px) {
+  .login-card {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .toggle-password {
+    right: 0.5rem;
+    font-size: 1rem;
+  }
+}

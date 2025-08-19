@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>Dior.Database</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{a76d0570-6fcd-42d6-9e30-8353566e80a2}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql160DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>Dior.Database</RootNamespace>
+    <AssemblyName>Dior.Database</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="dbo" />
+    <Folder Include="dbo\Stored Procedures" />
+    <Folder Include="dbo\Stored Procedures\User" />
+    <Folder Include="dbo\Tables" />
+    <Folder Include="dbo\Stored Procedures\AccessCompetency" />
+    <Folder Include="dbo\Stored Procedures\Privilege" />
+    <Folder Include="dbo\Stored Procedures\RoleDefinition" />
+    <Folder Include="dbo\Stored Procedures\RoleDefinition_Privilege" />
+    <Folder Include="dbo\Stored Procedures\User_Role" />
+    <Folder Include="dbo\Stored Procedures\UserAccessCompetency" />
+    <Folder Include="dbo\User Defined Types\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="dbo\User Defined Types\UserType.sql" />
+    <Build Include="dbo\User Defined Types\UT_BigIntTable.sql" />
+    <Build Include="dbo\Tables\USER_ACCESS_COMPETENCY.sql" />
+    <Build Include="dbo\Tables\USER_ACCESS.sql" />
+    <Build Include="dbo\Tables\ROLE_DEFINITION_PRIVILEGE.sql" />
+    <Build Include="dbo\Tables\ROLE_DEFINITION.sql" />
+    <Build Include="dbo\Tables\ACCESS_COMPETENCY.sql" />
+    <Build Include="dbo\Tables\ACCESS.sql" />
+    <Build Include="dbo\Tables\User_Role.sql" />
+    <Build Include="dbo\Tables\User.sql" />
+    <Build Include="dbo\Tables\Privilege.sql" />
+    <Build Include="dbo\Tables\Team.sql" />
+    <Build Include="dbo\Tables\Task.sql" />
+    <Build Include="dbo\Tables\Projet.sql" />
+    <Build Include="dbo\Tables\NOTIFICATIONS.sql" />
+    <Build Include="dbo\Tables\Contract.sql" />
+    <Build Include="dbo\Tables\AUDIT_LOGS.sql" />
+    <Build Include="dbo\Stored Procedures\SP_UserAccessCompetency_GetList.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateUserRole.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateUserAccess.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateUser.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateRoleDefinitionPrivilege.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateRoleDefinition.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdatePrivilege.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateAccessCompetency.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateAccess.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetUsersWithRoles.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetUserRoleList.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetUserRoleById.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetUserList.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetUserFullInfo.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetUserById.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetUserAccessList.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetUserAccessCompetencyList.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetUserAccessById.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetRoleDefinitionPrivilegeList.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetRoleDefinitionPrivilegeById.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetRoleDefinitionList.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetRoleDefinitionById.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetPrivilegeList.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetPrivilegeById.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetAuditLogById.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetAccessList.sql" />
+    <Build Include="dbo\Stored Procedures\SP_GetAccessCompetencyList.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetAccessCompetencyById.sql" />
+    <Build Include="dbo\Stored Procedures\SP_GetAccessCompetency.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetAccessById.sql" />
+    <Build Include="dbo\Stored Procedures\sp_EnableAccessById.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DisableBadge.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DisableAccessById.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteUserRole.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteUserAccess.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteUser.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteRoleDefinitionPrivilege.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteRoleDefinition.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeletePrivilege.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteAuditLog.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteAccessCompetency.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteAccess.sql" />
+    <Build Include="dbo\Stored Procedures\SP_Contract_GetByUserId.sql" />
+    <Build Include="dbo\Stored Procedures\sp_AddUserRole.sql" />
+    <Build Include="dbo\Stored Procedures\sp_AddUserAccess.sql" />
+    <Build Include="dbo\Stored Procedures\sp_AddRoleDefinitionPrivilege.sql" />
+    <Build Include="dbo\Stored Procedures\sp_AddRoleDefinition.sql" />
+    <Build Include="dbo\Stored Procedures\sp_AddPrivilege.sql" />
+    <Build Include="dbo\Stored Procedures\sp_AddAuditLog.sql" />
+    <Build Include="dbo\Stored Procedures\sp_AddAccessCompetency.sql" />
+    <Build Include="dbo\Stored Procedures\sp_AddAccess.sql" />
+    <Build Include="dbo\Stored Procedures\GetAccessCompetencyList.sql" />
+    <Build Include="dbo\Tables\PASSWORD_HISTORY.sql" />
+    <Build Include="dbo\Stored Procedures\sp_AddUser.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Dior.Database.refactorlog" />
+  </ItemGroup>
+</Project>

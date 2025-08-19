@@ -1,0 +1,21 @@
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2 class="text-white font-bold text-xl">🏛️ Dior Admin</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <ul>
+        <li><a routerLink="/admin/users" routerLinkActive="active" class="nav-link">👥 Utilisateurs</a></li>
+        <li><a routerLink="/admin/audit-log"  routerLinkActive="active" class="nav-link">📋 Journal d'audit</a></li>
+        <li><a routerLink="/admin/dashboard/roles" routerLinkActive="active" class="nav-link">🔐 Rôles</a></li>
+        <li><a routerLink="/admin/dashboard/settings" routerLinkActive="active" class="nav-link">⚙️ Paramètres</a></li>
+        <li><a routerLink="/admin/dashboard/agenda" routerLinkActive="active" class="nav-link">📅 Agenda</a></li>
+        <li><a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link">🏠 Dashboard</a></li>
+      </ul>
+    </nav>
+  </aside>
+  <main class="main-content">
+    <!-- Zone de contenu optimisée sans navbar supérieure -->
+    <router-outlet></router-outlet>
+  </main>
+</div>

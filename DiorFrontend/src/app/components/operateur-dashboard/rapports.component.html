@@ -1,0 +1,103 @@
+<div class="flex flex-col md:flex-row gap-6">
+  <!-- Sidebar -->
+  <aside class="w-full md:w-64 bg-gray-100 rounded-lg p-4 mb-4 md:mb-0">
+    <nav class="space-y-4">
+      <div>
+        <div class="flex items-center gap-2 text-blue-600 font-semibold mb-2"><span>📊</span> Rapports Production</div>
+        <ul class="space-y-1">
+          <li><button class="w-full text-left px-2 py-1 rounded hover:bg-blue-50" (click)="selectReport('Synthèse quotidienne')">Synthèse quotidienne</button></li>
+          <li><button class="w-full text-left px-2 py-1 rounded hover:bg-blue-50" (click)="selectReport('Performance hebdomadaire')">Performance hebdomadaire</button></li>
+          <li><button class="w-full text-left px-2 py-1 rounded hover:bg-blue-50" (click)="selectReport('Analyse mensuelle')">Analyse mensuelle</button></li>
+        </ul>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 text-green-600 font-semibold mb-2"><span>🛠️</span> Rapports Maintenance</div>
+        <ul class="space-y-1">
+          <li><button class="w-full text-left px-2 py-1 rounded hover:bg-green-50" (click)="selectReport('Coûts par équipement')">Coûts par équipement</button></li>
+          <li><button class="w-full text-left px-2 py-1 rounded hover:bg-green-50" (click)="selectReport('Planning vs réalisé')">Planning vs réalisé</button></li>
+          <li><button class="w-full text-left px-2 py-1 rounded hover:bg-green-50" (click)="selectReport('Pannes récurrentes')">Pannes récurrentes</button></li>
+        </ul>
+      </div>
+      <div>
+        <div class="flex items-center gap-2 text-purple-600 font-semibold mb-2"><span>📈</span> Tableaux de bord</div>
+        <ul class="space-y-1">
+          <li><button class="w-full text-left px-2 py-1 rounded hover:bg-purple-50" (click)="selectReport('Vue d\'ensemble')">Vue d'ensemble</button></li>
+        </ul>
+      </div>
+    </nav>
+  </aside>
+  <!-- Main content -->
+  <main class="flex-1">
+    <div class="flex flex-wrap gap-4 mb-6">
+      <div>
+        <label class="block text-xs font-medium mb-1">Période</label>
+        <input type="date" class="border border-gray-300 rounded px-2 py-1" [(ngModel)]="filters.startDate">
+        <span class="mx-1">→</span>
+        <input type="date" class="border border-gray-300 rounded px-2 py-1" [(ngModel)]="filters.endDate">
+      </div>
+      <div>
+        <label class="block text-xs font-medium mb-1">Équipement</label>
+        <select class="border border-gray-300 rounded px-2 py-1" [(ngModel)]="filters.equipment">
+          <option value="">Tous</option>
+          <option *ngFor="let eq of equipmentList" [value]="eq">{{ eq }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-medium mb-1">Équipe</label>
+        <select class="border border-gray-300 rounded px-2 py-1" [(ngModel)]="filters.team">
+          <option value="">Toutes</option>
+          <option *ngFor="let team of teams" [value]="team">{{ team }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-medium mb-1">Type de rapport</label>
+        <select class="border border-gray-300 rounded px-2 py-1" [(ngModel)]="filters.type">
+          <option value="">Tous</option>
+          <option *ngFor="let type of reportTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+      <div class="flex gap-2 items-end">
+        <button class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition" (click)="generateReport()">Générer PDF</button>
+        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition" (click)="exportExcel()">Export Excel</button>
+        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition" (click)="scheduleSend()">Programmer envoi</button>
+      </div>
+    </div>
+    <div class="bg-white rounded-lg shadow p-6">
+      <h3 class="text-lg font-semibold mb-4">{{ selectedReport }}</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <ngx-charts-bar-vertical
+          *ngIf="selectedReport === 'Synthèse quotidienne'"
+          [results]="productionChartNgx"
+          [scheme]="'vivid'"
+          [xAxis]="true"
+          [yAxis]="true"
+          [legend]="true"
+          [showXAxisLabel]="true"
+          [showYAxisLabel]="true"
+          [xAxisLabel]="'Jour'"
+          [yAxisLabel]="'Production'"
+          [animations]="true">
+        </ngx-charts-bar-vertical>
+        <ngx-charts-pie-chart
+          *ngIf="selectedReport === 'Pannes récurrentes'"
+          [results]="failuresChartNgx"
+          [legend]="true"
+          [labels]="true"
+          [doughnut]="false"
+          [animations]="true">
+        </ngx-charts-pie-chart>
+        <ngx-charts-pie-chart
+          *ngIf="selectedReport === 'Vue d'ensemble'"
+          [results]="oeeChartNgx"
+          [legend]="true"
+          [labels]="true"
+          [doughnut]="true"
+          [animations]="true">
+        </ngx-charts-pie-chart>
+      </div>
+      <div *ngIf="generating" class="mt-4">
+        <span class="block text-blue-600 font-semibold">Génération en cours...</span>
+      </div>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,6 @@
+﻿CREATE PROCEDURE sp_GetAccessCompetencyById
+    @id INT
+AS
+BEGIN
+    SELECT * FROM ACCESS_COMPETENCY WHERE id = @id
+END

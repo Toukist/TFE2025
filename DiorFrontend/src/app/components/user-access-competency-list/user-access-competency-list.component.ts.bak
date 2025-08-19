@@ -1,0 +1,189 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { UserAccessCompetencyService } from '../../services/admin-routes/user-access-competency.service';
+import { UserAccessCompetency, UserAccessCompetencyDto } from '../../models/user-access-competency.model';
+import { UserAccessService } from '../../services/admin-routes/user-access.service';
+import { AccessCompetencyService } from '../../services/admin-routes/access-competency.service';
+import { UserAccess } from '../../models/user-access.model';
+import { AccessCompetencyDto } from '../../models/access-competency.model';
+
+/**
+ * Composant pour gérer les associations entre badges utilisateur et compétences d'accès
+ */
+@Component({
+  selector: 'app-user-access-competency-list',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './user-access-competency-list.component.html',
+  styleUrls: ['./user-access-competency-list.component.scss']
+})
+export class UserAccessCompetencyListComponent {
+  itemList: UserAccessCompetencyDto[] = [];
+  userAccessList: UserAccess[] = [];
+  accessCompetencyList: AccessCompetencyDto[] = [];
+  selectedItem: UserAccessCompetencyDto | null = null;
+  newItem: Partial<UserAccessCompetencyDto> = {};
+  error: string | null = null;
+  loading = false;
+
+  constructor(
+    private service: UserAccessCompetencyService,
+    private userAccessService: UserAccessService,
+    private accessCompetencyService: AccessCompetencyService
+  ) {
+    this.loadItems();
+    this.loadUserAccess();
+    this.loadAccessCompetencies();
+  }
+
+  /**
+   * Charge la liste des associations UserAccessCompetency
+   */  loadItems() {
+    this.loading = true;
+    this.service.getAll().subscribe({
+      next: (data: UserAccessCompetencyDto[]) => { 
+        this.itemList = data; 
+        this.error = null; 
+        this.loading = false;
+      },
+      error: () => { 
+        this.error = 'Erreur lors du chargement.'; 
+        this.loading = false;
+      }
+    });
+  }
+
+  /**
+   * Charge la liste des UserAccess (badges utilisateur)
+   */
+  loadUserAccess() {
+    this.userAccessService.getAll().subscribe({
+      next: (data: UserAccess[]) => { 
+        this.userAccessList = data; 
+      },
+      error: () => { 
+        this.error = 'Erreur lors du chargement des accès utilisateur.'; 
+      }
+    });
+  }
+
+  /**
+   * Charge la liste des AccessCompetency (compétences d'accès/zones)
+   */
+  loadAccessCompetencies() {
+    this.accessCompetencyService.getAll().subscribe({
+      next: (data: AccessCompetencyDto[]) => { 
+        this.accessCompetencyList = data; 
+      },
+      error: () => { 
+        this.error = 'Erreur lors du chargement des compétences.'; 
+      }
+    });
+  }
+  /**
+   * Sélectionne un item pour modification
+   */
+  selectItem(item: UserAccessCompetencyDto) {
+    this.selectedItem = { ...item };
+    this.error = null;
+  }
+
+  /**
+   * Ajoute une nouvelle association
+   */  addItem() {
+    if (!this.newItem.userId || !this.newItem.accessCompetencyId) {
+      this.error = 'Les champs utilisateur et Compétence d\'accès sont obligatoires.';
+      return;
+    }    // Création de l'objet avec le bon format
+    const itemToCreate: UserAccessCompetencyDto = {
+      id: 0,
+      userId: this.newItem.userId!,
+      accessCompetencyId: this.newItem.accessCompetencyId!,
+      createdAt: new Date(),
+      createdBy: 'WebAdmin'
+    };
+
+    this.loading = true;
+    this.service.create(itemToCreate).subscribe({
+      next: () => { 
+        this.loadItems(); 
+        this.newItem = {}; 
+        this.error = null;
+      },
+      error: (err: any) => { 
+        console.error('Erreur lors de l\'ajout d\'une association:', err);
+        this.error = 'Erreur lors de l\'ajout.';
+        this.loading = false; 
+      }
+    });
+  }
+
+  /**
+   * Met à jour une association existante
+   */  updateItem() {
+    if (!this.selectedItem) return;
+
+    // Mise à jour des informations d'édition
+    this.selectedItem.lastEditAt = new Date();
+    this.selectedItem.lastEditBy = 'WebAdmin'; // À remplacer par l'utilisateur connecté
+
+    this.loading = true;
+    this.service.update(this.selectedItem.id, this.selectedItem).subscribe({
+      next: () => { 
+        this.loadItems(); 
+        this.selectedItem = null; 
+        this.error = null;
+      },
+      error: (err: any) => { 
+        console.error('Erreur lors de la modification d\'une association:', err);
+        this.error = 'Erreur lors de la modification.';
+        this.loading = false; 
+      }
+    });
+  }
+
+  /**
+   * Supprime une association
+   */
+  deleteItem(id: number) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette association ?')) return;
+
+    this.loading = true;
+    this.service.delete(id).subscribe({
+      next: () => { 
+        this.loadItems(); 
+        this.error = null;
+      },
+      error: (err: any) => { 
+        console.error('Erreur lors de la suppression d\'une association:', err);
+        this.error = 'Erreur lors de la suppression.';
+        this.loading = false; 
+      }
+    });
+  }
+
+  /**
+   * Annule l'édition en cours
+   */
+  cancelEdit() {
+    this.selectedItem = null;
+    this.error = null;
+  }
+
+  /**
+   * Renvoie le nom d'un badge utilisateur pour l'affichage
+   */
+  getUserAccessIdentifier(userAccessId: number): string {
+    const userAccess = this.userAccessList.find(ua => ua.id === userAccessId);
+    return userAccess ? `ID:${userAccess.id} (User:${userAccess.userId})` : `ID:${userAccessId}`;
+  }
+
+  /**
+   * Renvoie le nom d'une compétence d'accès pour l'affichage
+   */
+  getAccessCompetencyName(accessCompetencyId: number): string {
+    const accessCompetency = this.accessCompetencyList.find(ac => ac.id === accessCompetencyId);
+    return accessCompetency ? accessCompetency.name : `ID:${accessCompetencyId}`;
+  }
+}
