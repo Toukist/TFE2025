@@ -182,7 +182,7 @@ namespace Dior.Service.Host.Controllers
         {
             using var conn = new SqlConnection(_connectionString);
             conn.Open();
-            using var cmd = new SqlCommand(@"SELECT u.ID, u.Username, u.LastName, u.FirstName, u.IsActive, u.Email, u.Phone, u.passwordHash FROM [USER] u INNER JOIN [USER_ACCESS] ua ON u.ID = ua.UserId INNER JOIN [ACCESS] a ON ua.AccessId = a.ID WHERE a.BadgePhysicalNumber = @badge", conn);
+            using var cmd = new SqlCommand(@"SELECT u.ID, u.Username, u.LastName, u.FirstName, u.IsActive, u.Email, u.Phone, u.passwordHash FROM [User] u INNER JOIN [UserAccess] ua ON u.ID = ua.UserId INNER JOIN [Access] a ON ua.AccessId = a.ID WHERE a.BadgePhysicalNumber = @badge", conn);
             cmd.Parameters.AddWithValue("@badge", badgePhysicalNumber);
             using var reader = cmd.ExecuteReader();
             return reader.Read() ? MapUser(reader) : null;
@@ -193,7 +193,7 @@ namespace Dior.Service.Host.Controllers
         {
             using var conn = new SqlConnection(_connectionString);
             conn.Open();
-            using var cmd = new SqlCommand("SELECT * FROM [USER] WHERE Username = @username", conn);
+            using var cmd = new SqlCommand("SELECT * FROM [User] WHERE Username = @username", conn);
             cmd.Parameters.AddWithValue("@username", username);
             using var reader = cmd.ExecuteReader();
             if (reader.Read())

@@ -23,7 +23,7 @@ namespace Dior.Service
             var roles = new List<RoleDefinitionDto>();
             using var conn = new SqlConnection(_connectionString);
             conn.Open();
-            using var cmd = new SqlCommand(@"SELECT rd.Id, rd.Name FROM USER_ROLE ur INNER JOIN ROLE_DEFINITION rd ON ur.RoleDefinitionId = rd.Id WHERE ur.UserId = @userId", conn);
+            using var cmd = new SqlCommand(@"SELECT rd.Id, rd.Name FROM UserRole ur INNER JOIN RoleDefinition rd ON ur.RoleDefinitionId = rd.Id WHERE ur.UserId = @userId", conn);
             cmd.Parameters.AddWithValue("@userId", userId);
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
