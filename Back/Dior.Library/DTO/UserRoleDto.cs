@@ -3,8 +3,8 @@
     public class UserRoleDto
     {
         public int Id { get; set; }
-        public int RoleDefinitionID { get; set; }
-        public int UserID { get; set; }
+        public int RoleDefinitionId { get; set; }
+        public int UserId { get; set; }
         public string? LastEditBy { get; set; }
         public DateTime? LastEditAt { get; set; }
         public string Name { get; set; } = string.Empty;
