@@ -13,3 +13,12 @@ dist/
 # OS / IDE
 .DS_Store
 Thumbs.db
+# SQL Server artefacts (local only)
+*.dbmdl
+*.jfm
+*.mdf
+*.ldf
+*.ndf
+*.bak
+*.dacpac
+*.bacpac
