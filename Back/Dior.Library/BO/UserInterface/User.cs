@@ -3,7 +3,7 @@ namespace Dior.Library.BO.UserInterface
     public class User
     {
         public int Id { get; set; } // Un seul identifiant
-        public string Name { get; set; }
+        public string UserName { get; set; }
         public Boolean IsActive { get; set; }
         public String LastName { get; set; }
         public String FirstName { get; set; }

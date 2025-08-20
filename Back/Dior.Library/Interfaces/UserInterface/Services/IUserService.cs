@@ -1,4 +1,5 @@
 ﻿using DiorUser = Dior.Library.BO.UserInterface.User;
+using Dior.Library.Entities;
 
 namespace Dior.Library.Interfaces.UserInterface.Services
 {

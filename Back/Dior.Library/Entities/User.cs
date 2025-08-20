@@ -14,15 +14,15 @@ namespace Dior.Library.Entities
         }
 
         [Key]
-        public long Id { get; set; } // ✅ CORRIGÉ : Le type est maintenant 'long'
+        public long Id { get; set; } // ✅ Type 'long'
 
         [Required]
         [MaxLength(100)]
-        public string Username { get; set; } // ✅ CORRIGÉ : 'UserName' est devenu 'Username' pour correspondre au DbContext
+        public string Username { get; set; } // ✅ 'UserName' est devenu 'Username' pour être cohérent
 
         [Required]
         [MaxLength(255)]
-        public string PasswordHash { get; set; }
+        public string PasswordHash { get; set; } // ✅ PascalCase
 
         [Required]
         [MaxLength(100)]
@@ -33,7 +33,7 @@ namespace Dior.Library.Entities
         public string FirstName { get; set; }
 
         [Required]
-        public bool IsActive { get; set; } // ✅ CORRIGÉ : 'IsAdmin' a été supprimé
+        public bool IsActive { get; set; } // 
 
         [Required]
         public DateTime CreatedAt { get; set; }
@@ -56,12 +56,11 @@ namespace Dior.Library.Entities
         public int? TeamId { get; set; }
         public virtual Team Team { get; set; }
 
-        // --- Collections de navigation ---
         public virtual ICollection<UserRole> UserRoles { get; set; }
         public virtual ICollection<UserAccessCompetency> UserAccessCompetencies { get; set; }
         public virtual ICollection<UserAccess> UserAccesses { get; set; }
         public virtual ICollection<AuditLog> AuditLogs { get; set; }
 
-        // ❌ La propriété 'Name' a été supprimée car elle était en double avec 'Username'
+        // ❌ La propriété 'Name' a été supprimée
     }
 }

@@ -1,3 +1,5 @@
+using Dior.Library.Entities;
+
 namespace Dior.Library.Interfaces.UserInterface.Services
 {
     public interface IUserAccessService
