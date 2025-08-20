@@ -4,10 +4,10 @@ namespace Dior.Library.Service.DAO
 {
     public interface IDA_AccessCompetency
     {
+        AccessCompetency Get(int id);
+        List<AccessCompetency> GetList();
         long Add(AccessCompetency accessCompetency, string editBy);
         void Set(AccessCompetency accessCompetency, string editBy);
-        void Del(long id);
-        AccessCompetency Get(long id);
-        List<AccessCompetency> GetList();
+        void Del(int id);
     }
 }

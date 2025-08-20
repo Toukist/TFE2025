@@ -1,13 +1,11 @@
-﻿using Dior.Library.BO.UserInterface;
+﻿using Dior.Library.Entities;
 
-namespace Dior.Library.Interfaces.UserInterface.Services
-{
-    public interface IUserRoleService
-    {
-        List<UserRole> GetList();
-        UserRole Get(long id);
-        long Add(UserRole role, string editBy);
-        void Set(UserRole role, string editBy);
+namespace Dior.Library.Interfaces.UserInterface.Services {
+    public interface IUserRoleService {
+        List<Dior.Library.Entities.UserRole> GetList();
+        Dior.Library.Entities.UserRole Get(long id);
+        long Add(Dior.Library.Entities.UserRole entity, string editBy);
+        void Set(Dior.Library.Entities.UserRole entity, string editBy);
         void Del(long id);
     }
 }

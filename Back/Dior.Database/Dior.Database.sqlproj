@@ -59,7 +59,6 @@
     <Folder Include="dbo" />
     <Folder Include="dbo\Stored Procedures" />
     <Folder Include="dbo\Stored Procedures\User" />
-    <Folder Include="dbo\Tables" />
     <Folder Include="dbo\Stored Procedures\AccessCompetency" />
     <Folder Include="dbo\Stored Procedures\Privilege" />
     <Folder Include="dbo\Stored Procedures\RoleDefinition" />
@@ -71,18 +70,6 @@
   <ItemGroup>
     <Build Include="dbo\User Defined Types\UserType.sql" />
     <Build Include="dbo\User Defined Types\UT_BigIntTable.sql" />
-    <Build Include="dbo\Tables\ROLE_DEFINITION.sql" />
-    <Build Include="dbo\Tables\ACCESS_COMPETENCY.sql" />
-    <Build Include="dbo\Tables\ACCESS.sql" />
-    <Build Include="dbo\Tables\User_Role.sql" />
-    <Build Include="dbo\Tables\User.sql" />
-    <Build Include="dbo\Tables\Privilege.sql" />
-    <Build Include="dbo\Tables\Team.sql" />
-    <Build Include="dbo\Tables\Task.sql" />
-    <Build Include="dbo\Tables\Projet.sql" />
-    <Build Include="dbo\Tables\NOTIFICATIONS.sql" />
-    <Build Include="dbo\Tables\Contract.sql" />
-    <Build Include="dbo\Tables\AUDIT_LOGS.sql" />
     <Build Include="dbo\Stored Procedures\SP_UserAccessCompetency_GetList.sql" />
     <Build Include="dbo\Stored Procedures\sp_UpdateUserRole.sql" />
     <Build Include="dbo\Stored Procedures\sp_UpdateUserAccess.sql" />
@@ -135,13 +122,7 @@
     <Build Include="dbo\Stored Procedures\sp_AddAccessCompetency.sql" />
     <Build Include="dbo\Stored Procedures\sp_AddAccess.sql" />
     <Build Include="dbo\Stored Procedures\GetAccessCompetencyList.sql" />
-    <Build Include="dbo\Tables\PASSWORD_HISTORY.sql" />
     <Build Include="dbo\Stored Procedures\sp_AddUser.sql" />
-    <Build Include="dbo\Tables\UserAccessCompetency.sql" />
-    <Build Include="dbo\Tables\UserAccess.sql" />
-    <Build Include="dbo\Tables\RoleDefinitionPrivilege.sql" />
-    <Build Include="dbo\Tables\Payslips.sql" />
-    <Build Include="dbo\Tables\Messages.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Dior.Database.refactorlog" />

@@ -16,7 +16,7 @@ namespace Dior.Library.Entities
         }
 
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Required]
         [MaxLength(100)]
@@ -31,16 +31,24 @@ namespace Dior.Library.Entities
         public string LastName { get; set; } = string.Empty;
 
         [MaxLength(255)]
+        [EmailAddress]
         public string? Email { get; set; }
 
         [MaxLength(50)]
+        [Phone]
         public string? Phone { get; set; }
 
         [MaxLength(255)]
         public string? PasswordHash { get; set; }
 
-        public bool IsAdmin { get; set; }
+        // Soft delete flag (true = active, false = logically deleted)
         public bool IsActive { get; set; }
+
+        // Soft delete metadata
+        public DateTime? DeletedAt { get; set; }
+
+        [MaxLength(100)]
+        public string? DeletedBy { get; set; }
 
         public int? TeamId { get; set; }
 
@@ -54,8 +62,13 @@ namespace Dior.Library.Entities
         [MaxLength(100)]
         public string? LastEditBy { get; set; }
 
-        // Pour compatibilité avec le code existant
-        public string Name => Username;
+        // Security stamp for token/session invalidation
+        [MaxLength(100)]
+        public string SecurityStamp { get; set; } = Guid.NewGuid().ToString();
+
+        // Computed convenience property (not mapped to DB)
+        [NotMapped]
+        public string FullName => $"{FirstName} {LastName}";
 
         // Navigation properties
         public virtual Team? Team { get; set; }

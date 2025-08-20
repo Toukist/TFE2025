@@ -1,13 +1,13 @@
-using Dior.Library.BO.UserInterface;
+using Dior.Library.Entities;
 
 namespace Dior.Library.Interfaces.UserInterface.Services
 {
     public interface IRoleDefinitionPrivilegeService
     {
-        List<RoleDefinitionPrivilege> GetList();
-        RoleDefinitionPrivilege Get(int id);
-        int Add(RoleDefinitionPrivilege item, string editBy);
-        void Set(RoleDefinitionPrivilege item, string editBy);
+        List<Dior.Library.Entities.RoleDefinitionPrivilege> GetList();
+        Dior.Library.Entities.RoleDefinitionPrivilege Get(int id);
+        long Add(Dior.Library.Entities.RoleDefinitionPrivilege entity, string editBy);
+        void Set(Dior.Library.Entities.RoleDefinitionPrivilege entity, string editBy);
         void Del(int id);
     }
 }

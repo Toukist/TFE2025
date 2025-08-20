@@ -1,5 +1,6 @@
 ﻿using Dior.Library.Interfaces.UserInterface.Services;
 using Dior.Library.Service.DAO;
+using Dior.Library.Entities;
 
 namespace Dior.Service.Services.UserInterfaces
 {
@@ -14,24 +15,22 @@ namespace Dior.Service.Services.UserInterfaces
 
         public List<UserRole> GetList()
         {
-            // Convert types if needed
             return _DA_UserRole.GetList();
         }
 
         public UserRole Get(long id)
         {
-            // Implement method to get user role by id
             return _DA_UserRole.Get(id);
         }
 
-        public long Add(UserRole userRole, string editBy)
+        public long Add(UserRole entity, string editBy)
         {
-            return _DA_UserRole.Add(userRole, editBy);
+            return _DA_UserRole.Add(entity, editBy);
         }
 
-        public void Set(UserRole userRole, string editBy)
+        public void Set(UserRole entity, string editBy)
         {
-            _DA_UserRole.Set(userRole, editBy);
+            _DA_UserRole.Set(entity, editBy);
         }
 
         public void Del(long id)

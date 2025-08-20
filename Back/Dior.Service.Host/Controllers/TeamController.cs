@@ -66,15 +66,14 @@ namespace Dior.Service.Host.Controllers
             // Convert User entities to UserDto for the API response
             var userDtos = users.Select(u => new UserDto
             {
-                Id = (int)u.Id,
-                Username = u.Username,
+                Id = u.Id,
+                UserName = u.Username,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 Email = u.Email,
                 Phone = u.Phone,
                 TeamId = u.TeamId,
                 IsActive = u.IsActive,
-                IsAdmin = u.IsAdmin,
                 CreatedAt = u.CreatedAt,
                 CreatedBy = u.CreatedBy,
                 LastEditAt = u.LastEditAt,

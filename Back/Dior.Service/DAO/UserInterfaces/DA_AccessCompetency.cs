@@ -1,3 +1,4 @@
+using Dior.Library.BO.UserInterface;
 using Dior.Library.Service.DAO;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -56,7 +57,7 @@ namespace Dior.Service.DAO.UserInterfaces
             cmd.ExecuteNonQuery();
         }
 
-        public AccessCompetency Get(long id)
+        public AccessCompetency Get(int id)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("dbo.SP_AccessCompetency_Get", conn)
@@ -116,7 +117,7 @@ namespace Dior.Service.DAO.UserInterfaces
             return list;
         }
 
-        public void Del(long id)
+        public void Del(int id)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("dbo.SP_AccessCompetency_Del", conn)

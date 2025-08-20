@@ -6,6 +6,8 @@ namespace Dior.Service.Services
 {
     public class DiorDbContext : DbContext, IDiorContext
     {
+        public DiorDbContext() { }
+        
         public DiorDbContext(DbContextOptions<DiorDbContext> options) : base(options) { }
 
         // DbSets pour les entités principales (conformes à IDiorContext)
@@ -23,7 +25,14 @@ namespace Dior.Service.Services
         public DbSet<RoleDefinitionPrivilege> RoleDefinitionPrivileges { get; set; }
         public DbSet<UserAccessCompetency> UserAccessCompetencies { get; set; }
         public DbSet<UserAccess> UserAccesses { get; set; }
-        public object Accesses { get; internal set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseInMemoryDatabase("TempDb");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,35 +50,9 @@ namespace Dior.Service.Services
                     .HasDatabaseName("IX_User_Email");
                 
                 // Index unique sur UserName
-                entity.HasIndex(e => e.UserName)
+                entity.HasIndex(e => e.Username)
                     .IsUnique()
                     .HasDatabaseName("IX_User_UserName");
-
-                // Relations
-                entity.HasOne(e => e.Team)
-                    .WithMany()
-                    .HasForeignKey(e => e.TeamId)
-                    .IsRequired(false);
-
-                entity.HasMany(e => e.UserRoles)
-                    .WithOne(ur => ur.User)
-                    .HasForeignKey(ur => ur.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasMany(e => e.UserAccesses)
-                    .WithOne(ua => ua.User)
-                    .HasForeignKey(ua => ua.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasMany(e => e.UserAccessCompetencies)
-                    .WithOne(uac => uac.User)
-                    .HasForeignKey(uac => uac.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasMany(e => e.AuditLogs)
-                    .WithOne(al => al.User)
-                    .HasForeignKey(al => al.UserId)
-                    .IsRequired(false);
             });
 
             // Configuration Access
@@ -77,17 +60,6 @@ namespace Dior.Service.Services
             {
                 entity.ToTable("ACCESS");
                 entity.HasKey(e => e.Id);
-                
-                // Index unique sur BadgePhysicalNumber
-                entity.HasIndex(e => e.BadgePhysicalNumber)
-                    .IsUnique()
-                    .HasDatabaseName("IX_Access_BadgePhysicalNumber")
-                    .HasFilter("[BadgePhysicalNumber] IS NOT NULL");
-
-                entity.HasMany(e => e.UserAccesses)
-                    .WithOne(ua => ua.Access)
-                    .HasForeignKey(ua => ua.AccessId)
-                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Configuration RoleDefinition
@@ -95,16 +67,6 @@ namespace Dior.Service.Services
             {
                 entity.ToTable("ROLE_DEFINITION");
                 entity.HasKey(e => e.Id);
-
-                entity.HasMany(e => e.UserRoles)
-                    .WithOne(ur => ur.RoleDefinition)
-                    .HasForeignKey(ur => ur.RoleDefinitionId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasMany(e => e.RoleDefinitionPrivileges)
-                    .WithOne(rdp => rdp.RoleDefinition)
-                    .HasForeignKey(rdp => rdp.RoleDefinitionId)
-                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Configuration Privilege
@@ -112,11 +74,6 @@ namespace Dior.Service.Services
             {
                 entity.ToTable("PRIVILEGE");
                 entity.HasKey(e => e.Id);
-
-                entity.HasMany(e => e.RoleDefinitionPrivileges)
-                    .WithOne(rdp => rdp.Privilege)
-                    .HasForeignKey(rdp => rdp.PrivilegeId)
-                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Configuration AccessCompetency
@@ -124,11 +81,6 @@ namespace Dior.Service.Services
             {
                 entity.ToTable("ACCESS_COMPETENCY");
                 entity.HasKey(e => e.Id);
-
-                entity.HasMany(e => e.UserAccessCompetencies)
-                    .WithOne(uac => uac.AccessCompetency)
-                    .HasForeignKey(uac => uac.AccessCompetencyId)
-                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Configuration Team
@@ -143,11 +95,6 @@ namespace Dior.Service.Services
             {
                 entity.ToTable("NOTIFICATION");
                 entity.HasKey(e => e.Id);
-
-                entity.HasOne<User>()
-                    .WithMany()
-                    .HasForeignKey(e => e.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Configuration AuditLog
@@ -177,7 +124,7 @@ namespace Dior.Service.Services
             modelBuilder.Entity<UserAccessCompetency>(entity =>
             {
                 entity.ToTable("USER_ACCESS_COMPETENCY");
-                entity.HasKey(e => new { e.UserId, e.AccessCompetencyId });
+                entity.HasKey(e => e.Id);
             });
 
             // UserAccess - table de liaison User <-> Access
@@ -185,11 +132,6 @@ namespace Dior.Service.Services
             {
                 entity.ToTable("USER_ACCESS");
                 entity.HasKey(e => e.Id);
-                
-                // Index pour éviter les doublons User/Access
-                entity.HasIndex(e => new { e.UserId, e.AccessId })
-                    .IsUnique()
-                    .HasDatabaseName("IX_UserAccess_User_Access");
             });
         }
     }

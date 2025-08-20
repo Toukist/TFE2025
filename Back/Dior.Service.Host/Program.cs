@@ -46,13 +46,9 @@ Console.WriteLine($"Issuer: {jwtOptions.Issuer}");
 Console.WriteLine($"Audience: {jwtOptions.Audience}");
 Console.WriteLine($"Expiration: {jwtOptions.ExpirationMinutes} minutes");
 
-// Ajouter DbContext
-var connectionString = builder.Configuration.GetConnectionString("Dior_DB") 
-    ?? builder.Configuration.GetConnectionString("DIOR_DB")
-    ?? "Server=.;Database=Dior.Database;Trusted_Connection=true;TrustServerCertificate=true;";
-
+// Ajouter DbContext with InMemory database for development
 builder.Services.AddDbContext<DiorDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseInMemoryDatabase("DiorDevelopmentDb"));
 
 // CORS pour Angular
 builder.Services.AddCors(options =>

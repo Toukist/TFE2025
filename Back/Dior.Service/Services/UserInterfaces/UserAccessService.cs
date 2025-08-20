@@ -1,4 +1,6 @@
 using Dior.Library.Interfaces.UserInterface.Services;
+using Dior.Library.Entities;
+using Dior.Service.Services;
 
 namespace Dior.Service.Services.UserInterfaces
 {
@@ -50,7 +52,9 @@ namespace Dior.Service.Services.UserInterfaces
 
         public int? GetActiveAccessIdByUserId(int userId)
         {
-            throw new NotImplementedException();
+            var userAccess = _context.UserAccesses
+                .FirstOrDefault(ua => ua.UserId == userId);
+            return userAccess?.AccessId;
         }
     }
 }

@@ -1,4 +1,5 @@
 using Dior.Library.Service.DAO;
+using Dior.Library.BO.UserInterface;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
@@ -47,6 +48,7 @@ namespace Dior.Service.DAO.UserInterfaces
                 CommandType = CommandType.StoredProcedure
             };
 
+            cmd.Parameters.AddWithValue("@PR_ID", userRole.Id);
             cmd.Parameters.AddWithValue("@PR_RoleDefinitionID", userRole.RoleDefinitionId);
             cmd.Parameters.AddWithValue("@PR_UserID", userRole.UserId);
             cmd.Parameters.AddWithValue("@PR_EditBy", editBy ?? (object)DBNull.Value);
@@ -75,11 +77,8 @@ namespace Dior.Service.DAO.UserInterfaces
                     Id = reader.GetInt32(reader.GetOrdinal("ID")),
                     RoleDefinitionId = reader.GetInt32(reader.GetOrdinal("RoleDefinitionID")),
                     UserId = reader.GetInt32(reader.GetOrdinal("UserID")),
-                    ExpiresAt = reader.IsDBNull(reader.GetOrdinal("ExpiresAt")) ? null : reader.GetDateTime(reader.GetOrdinal("ExpiresAt")),
-                    CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-                    CreatedBy = reader.GetString(reader.GetOrdinal("CreatedBy")),
-                    LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? null : reader.GetDateTime(reader.GetOrdinal("LastEditAt")),
-                    LastEditBy = reader.IsDBNull(reader.GetOrdinal("LastEditBy")) ? null : reader.GetString(reader.GetOrdinal("LastEditBy"))
+                    LastEditBy = reader.IsDBNull(reader.GetOrdinal("LastEditBy")) ? null : reader.GetString(reader.GetOrdinal("LastEditBy")),
+                    LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? DateTime.Now : reader.GetDateTime(reader.GetOrdinal("LastEditAt"))
                 };
                 list.Add(userRole);
             }
@@ -103,7 +102,30 @@ namespace Dior.Service.DAO.UserInterfaces
 
         public UserRole Get(long id)
         {
-            throw new NotImplementedException();
+            using var conn = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SP_User_Role_Get", conn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            cmd.Parameters.AddWithValue("@PR_ID", id);
+
+            conn.Open();
+            using var reader = cmd.ExecuteReader();
+
+            if (reader.Read())
+            {
+                return new UserRole
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("ID")),
+                    RoleDefinitionId = reader.GetInt32(reader.GetOrdinal("RoleDefinitionID")),
+                    UserId = reader.GetInt32(reader.GetOrdinal("UserID")),
+                    LastEditBy = reader.IsDBNull(reader.GetOrdinal("LastEditBy")) ? null : reader.GetString(reader.GetOrdinal("LastEditBy")),
+                    LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? DateTime.Now : reader.GetDateTime(reader.GetOrdinal("LastEditAt"))
+                };
+            }
+
+            return null;
         }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using Dior.Library.BO.UserInterface;
 
 namespace Dior.Service.DAO.UserInterfaces
 {

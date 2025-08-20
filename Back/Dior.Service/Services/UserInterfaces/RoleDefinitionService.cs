@@ -1,5 +1,6 @@
 ﻿using Dior.Library.Interfaces.UserInterface.Services;
 using Dior.Library.Service.DAO;
+using Dior.Library.Entities;
 
 namespace Dior.Service.Services.UserInterfaces
 {
@@ -14,24 +15,24 @@ namespace Dior.Service.Services.UserInterfaces
             _daRoleDefinition = daRoleDefinition;
         }
 
-        public RoleDefinition Get(long id)
-        {
-            return DaRoleDefinition.Get((int)id);
-        }
-
         public List<RoleDefinition> GetList()
         {
             return DaRoleDefinition.GetList();
         }
 
-        public long Add(RoleDefinition roleDefinition, string editBy)
+        public RoleDefinition Get(long id)
         {
-            return DaRoleDefinition.Add(roleDefinition, editBy);
+            return DaRoleDefinition.Get((int)id);
         }
 
-        public void Set(RoleDefinition roleDefinition, string editBy)
+        public long Add(RoleDefinition entity, string editBy)
         {
-            DaRoleDefinition.Set(roleDefinition, editBy);
+            return DaRoleDefinition.Add(entity, editBy);
+        }
+
+        public void Set(RoleDefinition entity, string editBy)
+        {
+            DaRoleDefinition.Set(entity, editBy);
         }
 
         public void Del(long id)

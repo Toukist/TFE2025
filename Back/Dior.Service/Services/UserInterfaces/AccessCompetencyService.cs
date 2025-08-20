@@ -1,5 +1,6 @@
 ﻿using Dior.Library.Interfaces.UserInterface.Services;
 using Dior.Library.Service.DAO;
+using Dior.Library.BO.UserInterface;
 
 namespace Dior.Service.Services.UserInterfaces
 {

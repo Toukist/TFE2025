@@ -1,4 +1,5 @@
-﻿using Dior.Library.Service.DAO;
+﻿using Dior.Library.BO.UserInterface;
+using Dior.Library.Service.DAO;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
@@ -59,7 +60,7 @@ namespace Dior.Service.DAO.UserInterfaces
             cmd.ExecuteNonQuery();
         }
 
-        public Privilege Get(long id)
+        public Privilege Get(int id)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Privilege_Get", conn)
@@ -119,7 +120,7 @@ namespace Dior.Service.DAO.UserInterfaces
             return list;
         }
 
-        public void Del(long id)
+        public void Del(int id)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Privilege_Del", conn)

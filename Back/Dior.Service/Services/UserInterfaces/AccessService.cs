@@ -4,6 +4,7 @@ using Dior.Library.Service.DAO;
 using Dior.Service.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Dior.Library.Entities;
 
 namespace Dior.Service.Services.UserInterfaces
 {

@@ -227,7 +227,7 @@ namespace Dior.Service.DAO.UserInterfaces
                     return new UserDto
                     {
                         Id = any.Id,
-                        Username = any.UserName,
+                        UserName = any.UserName,
                         LastName = any.LastName,
                         FirstName = any.FirstName,
                         IsActive = any.IsActive,
@@ -267,7 +267,7 @@ namespace Dior.Service.DAO.UserInterfaces
                 using var conn = new SqlConnection(_connectionString);
                 using var cmd = new SqlCommand(@"
                     SELECT u.Id, u.Username, u.FirstName, u.LastName, u.Email, u.Phone,
-                           u.IsActive, u.IsAdmin, u.TeamId, u.CreatedAt, u.CreatedBy, 
+                           u.IsActive, u.TeamId, u.CreatedAt, u.CreatedBy, 
                            u.LastEditAt, u.LastEditBy, t.Name as TeamName
                     FROM [USER] u
                     LEFT JOIN Team t ON u.TeamId = t.Id", conn)
@@ -286,7 +286,6 @@ namespace Dior.Service.DAO.UserInterfaces
                         FirstName = reader["FirstName"]?.ToString() ?? "",
                         LastName = reader["LastName"]?.ToString() ?? "",
                         IsActive = reader.IsDBNull(reader.GetOrdinal("IsActive")) ? false : reader.GetBoolean(reader.GetOrdinal("IsActive")),
-                        IsAdmin = reader.IsDBNull(reader.GetOrdinal("IsAdmin")) ? false : reader.GetBoolean(reader.GetOrdinal("IsAdmin")),
                         Email = reader["Email"]?.ToString(),
                         Phone = reader["Phone"]?.ToString(),
                         TeamId = reader.IsDBNull(reader.GetOrdinal("TeamId")) ? null : (int?)reader.GetInt32(reader.GetOrdinal("TeamId")),
@@ -303,6 +302,12 @@ namespace Dior.Service.DAO.UserInterfaces
                 Console.WriteLine($"Erreur dans GetAllUsersWithTeam: {ex.Message}");
             }
             return users;
+        }
+
+        // Method to get List<User> for compatibility (fallback implementation)
+        public List<User> GetList(string? filter)
+        {
+            return GetAllUsersWithTeam();
         }
     }
 }

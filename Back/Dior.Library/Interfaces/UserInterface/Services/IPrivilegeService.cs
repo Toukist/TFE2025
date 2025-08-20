@@ -1,4 +1,4 @@
-﻿using Dior.Library.BO.UserInterface;
+﻿using Dior.Library.Entities;
 
 namespace Dior.Library.Interfaces.UserInterface.Services
 {

@@ -1,5 +1,7 @@
 ﻿using Dior.Library.Interfaces.UserInterface.Services;
 using Dior.Library.Service.DAO;
+using Dior.Library.Entities;
+
 namespace Dior.Service.Services.UserInterfaces
 {
     public class PrivilegeService : IPrivilegeService
@@ -13,7 +15,7 @@ namespace Dior.Service.Services.UserInterfaces
 
         public Privilege Get(long id)
         {
-            return _daPrivilege.Get(id);
+            return _daPrivilege.Get((int)id);
         }
 
         public List<Privilege> GetList()
@@ -33,7 +35,7 @@ namespace Dior.Service.Services.UserInterfaces
 
         public void Del(long id)
         {
-            _daPrivilege.Del(id);
+            _daPrivilege.Del((int)id);
         }
     }
 }
