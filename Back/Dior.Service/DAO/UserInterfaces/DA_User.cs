@@ -1,6 +1,7 @@
 ﻿using Dior.Library.DTO;
 using Dior.Library.Service.DAO;
 using Dior.Service.Services;
+using Dior.Library.Entities;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
@@ -19,94 +20,32 @@ namespace Dior.Service.DAO.UserInterfaces
             _context = context;
         }
 
-        // =====================================================================================
-        // ADO.NET (SP)
-        // =====================================================================================
-
-        public int Add(User user, string editBy)
+        // Implémentation de la nouvelle interface IDA_User
+        public User GetUserByUsername(string username)
         {
             try
             {
                 using var conn = new SqlConnection(_connectionString);
-                using var cmd = new SqlCommand("sp_AddUser", conn)
+                using var cmd = new SqlCommand("sp_GetUserByUsername", conn)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
-                // TODO: Ajoute tes paramètres ici (Username, FirstName, LastName, Email, Phone, TeamId, IsActive, editBy,...)
-                // cmd.Parameters.AddWithValue("@Username", user.Name); // legacy: Name = Username
-                // ...
-                conn.Open();
-                var result = cmd.ExecuteScalar();
-                return result != null ? Convert.ToInt32(result) : -1;
-            }
-            catch
-            {
-                return -1;
-            }
-        }
-
-        public void Set(User user, string editBy)
-        {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("sp_SetUser", conn)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
-            // TODO: Ajoute tes paramètres ici
-            conn.Open();
-            cmd.ExecuteNonQuery();
-        }
-
-        public List<User> GetList(List<int> userIds) // garde la signature (int) pour compat, même si Id est bigint en DB
-        {
-            var users = new List<User>();
-            try
-            {
-                using var conn = new SqlConnection(_connectionString);
-                using var cmd = new SqlCommand("sp_GetUsers", conn)
-                {
-                    CommandType = CommandType.StoredProcedure
-                };
-                // TODO: Si sp_GetUsers accepte une liste d'IDs, ajoute le param ici.
-
+                cmd.Parameters.AddWithValue("@Username", username);
                 conn.Open();
                 using var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                if (reader.Read())
                 {
-                    // FIX: Id en bigint -> GetInt64
-                    var id = reader.IsDBNull(reader.GetOrdinal("Id")) ? 0L : reader.GetInt64(reader.GetOrdinal("Id"));
-
-                    // legacy: le BO "User" expose souvent "Name" pour le login → y stocke "Username"
-                    var username = reader["Username"]?.ToString() ?? string.Empty;
-
-                    var user = new User
-                    {
-                        // Si ton BO est en long -> Id = id; sinon cas limite : (int)id
-                        Id = (int)id, // ⚠️ garde int si ton BO est encore en int; sinon passe en long
-                        Name = username, // FIX: Name = Username (legacy)
-                        LastName = reader["LastName"]?.ToString() ?? "",
-                        FirstName = reader["FirstName"]?.ToString() ?? "",
-                        IsActive = !reader.IsDBNull(reader.GetOrdinal("IsActive")) && reader.GetBoolean(reader.GetOrdinal("IsActive")),
-                        LastEditBy = reader["LastEditBy"]?.ToString() ?? "",
-                        LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? null : reader.GetDateTime(reader.GetOrdinal("LastEditAt")),
-                        Email = reader["Email"]?.ToString() ?? "",
-                        Phone = reader["Phone"]?.ToString() ?? "",
-                        // FIX: TeamId nullable
-                        TeamId = reader.IsDBNull(reader.GetOrdinal("TeamId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("TeamId"))
-                    };
-                    users.Add(user);
+                    return MapUser(reader);
                 }
             }
             catch
             {
                 // log si besoin
             }
-            return users;
+            return null;
         }
 
-        public List<User> GetList() => GetList(null);
-
-        public User Get(int id)
+        public User GetUserById(long id)
         {
             try
             {
@@ -120,22 +59,7 @@ namespace Dior.Service.DAO.UserInterfaces
                 using var reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
-                    var dbId = reader.IsDBNull(reader.GetOrdinal("Id")) ? 0L : reader.GetInt64(reader.GetOrdinal("Id"));
-                    var username = reader["Username"]?.ToString() ?? string.Empty;
-
-                    return new User
-                    {
-                        Id = (int)dbId, // ⚠️ garde int si ton BO est encore en int
-                        Name = username, // FIX: Name = Username (legacy)
-                        LastName = reader["LastName"]?.ToString() ?? "",
-                        FirstName = reader["FirstName"]?.ToString() ?? "",
-                        IsActive = !reader.IsDBNull(reader.GetOrdinal("IsActive")) && reader.GetBoolean(reader.GetOrdinal("IsActive")),
-                        LastEditBy = reader["LastEditBy"]?.ToString() ?? "",
-                        LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? null : reader.GetDateTime(reader.GetOrdinal("LastEditAt")),
-                        Email = reader["Email"]?.ToString() ?? "",
-                        Phone = reader["Phone"]?.ToString() ?? "",
-                        TeamId = reader.IsDBNull(reader.GetOrdinal("TeamId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("TeamId"))
-                    };
+                    return MapUser(reader);
                 }
             }
             catch
@@ -145,19 +69,128 @@ namespace Dior.Service.DAO.UserInterfaces
             return null;
         }
 
-        public void Del(int id)
+        public IEnumerable<User> GetAllUsers()
         {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("sp_DelUser", conn)
+            var users = new List<User>();
+            try
             {
-                CommandType = CommandType.StoredProcedure
-            };
-            cmd.Parameters.AddWithValue("@Id", id);
-            conn.Open();
-            cmd.ExecuteNonQuery();
+                using var conn = new SqlConnection(_connectionString);
+                using var cmd = new SqlCommand("sp_GetAllUsers", conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                conn.Open();
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    users.Add(MapUser(reader));
+                }
+            }
+            catch
+            {
+                // log si besoin
+            }
+            return users;
         }
 
-        // Remplacement de "_context.Accesses" par "_context.Access" dans la requête LINQ de GetAllWithTeam
+        public void CreateUser(User user)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                using var cmd = new SqlCommand("sp_AddUser", conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                cmd.Parameters.AddWithValue("@Username", user.Username);
+                cmd.Parameters.AddWithValue("@PasswordHash", user.PasswordHash);
+                cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
+                cmd.Parameters.AddWithValue("@LastName", user.LastName);
+                cmd.Parameters.AddWithValue("@Email", user.Email ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Phone", user.Phone ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@TeamId", user.TeamId ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@IsActive", user.IsActive);
+                cmd.Parameters.AddWithValue("@CreatedBy", user.CreatedBy);
+                
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+            catch
+            {
+                // log si besoin
+            }
+        }
+
+        public void UpdateUser(User user)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                using var cmd = new SqlCommand("sp_UpdateUser", conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                cmd.Parameters.AddWithValue("@Id", user.Id);
+                cmd.Parameters.AddWithValue("@Username", user.Username);
+                cmd.Parameters.AddWithValue("@FirstName", user.FirstName);
+                cmd.Parameters.AddWithValue("@LastName", user.LastName);
+                cmd.Parameters.AddWithValue("@Email", user.Email ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@Phone", user.Phone ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@TeamId", user.TeamId ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@IsActive", user.IsActive);
+                cmd.Parameters.AddWithValue("@LastEditBy", user.LastEditBy);
+                
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+            catch
+            {
+                // log si besoin
+            }
+        }
+
+        public void DeleteUser(long id)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                using var cmd = new SqlCommand("sp_DeleteUser", conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                cmd.Parameters.AddWithValue("@Id", id);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+            catch
+            {
+                // log si besoin
+            }
+        }
+
+        // Méthode helper pour mapper un SqlDataReader vers User
+        private User MapUser(SqlDataReader reader)
+        {
+            return new User
+            {
+                Id = reader.GetInt64(reader.GetOrdinal("Id")),
+                Username = reader["Username"]?.ToString() ?? string.Empty,
+                PasswordHash = reader["PasswordHash"]?.ToString() ?? string.Empty,
+                FirstName = reader["FirstName"]?.ToString() ?? string.Empty,
+                LastName = reader["LastName"]?.ToString() ?? string.Empty,
+                Email = reader["Email"]?.ToString(),
+                Phone = reader["Phone"]?.ToString(),
+                TeamId = reader.IsDBNull(reader.GetOrdinal("TeamId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("TeamId")),
+                IsActive = !reader.IsDBNull(reader.GetOrdinal("IsActive")) && reader.GetBoolean(reader.GetOrdinal("IsActive")),
+                CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                CreatedBy = reader["CreatedBy"]?.ToString() ?? string.Empty,
+                LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? (DateTime?)null : reader.GetDateTime(reader.GetOrdinal("LastEditAt")),
+                LastEditBy = reader["LastEditBy"]?.ToString()
+            };
+        }
+
+        // Méthodes legacy pour compatibilité - peuvent être supprimées plus tard
         public List<UserDto> GetAllWithTeam()
         {
             // FIX: ajout badge + roles (si dispo dans le modèle EF)
@@ -168,12 +201,12 @@ namespace Dior.Service.DAO.UserInterfaces
                     // Badge via UserAccess/Access si disponible
                 join ua in _context.UserAccesses on u.Id equals ua.UserId into uaJoin
                 from ua in uaJoin.DefaultIfEmpty()
-                join a in _context.Access on ua.AccessId equals a.Id into aJoin // <-- FIX ici
+                join a in _context.Access on ua.AccessId equals a.Id into aJoin
                 from a in aJoin.DefaultIfEmpty()
                 select new
                 {
                     u.Id,
-                    UserName = u.Name, // legacy propriété EF, correspond à Username
+                    UserName = u.Username,
                     u.LastName,
                     u.FirstName,
                     u.IsActive,
@@ -194,7 +227,7 @@ namespace Dior.Service.DAO.UserInterfaces
                     return new UserDto
                     {
                         Id = any.Id,
-                        UserName = any.UserName,
+                        Username = any.UserName,
                         LastName = any.LastName,
                         FirstName = any.FirstName,
                         IsActive = any.IsActive,
@@ -202,41 +235,10 @@ namespace Dior.Service.DAO.UserInterfaces
                         Phone = any.Phone,
                         TeamId = any.TeamId,
                         TeamName = any.TeamName ?? string.Empty,
-                        // FIX: string? côté DTO
                         BadgePhysicalNumber = ParseBadgeNumber(g.Select(x => x.Badge).FirstOrDefault())
                     };
                 })
                 .ToList();
-
-            // FIX: ajouter les rôles (liste de RoleDefinitionDto) si nécessaire
-            var roleMap =
-                (from ur in _context.UserRoles
-                 join rd in _context.RoleDefinitions on ur.RoleDefinitionId equals rd.Id
-                 select new { ur.UserId, Role = rd })
-                .AsEnumerable()
-                .GroupBy(x => x.UserId)
-                .ToDictionary(
-                    g => g.Key,
-                    g => g.Select(x => new RoleDefinitionDto
-                    {
-                        Id = x.Role.Id,
-                        Name = x.Role.Name,
-                        Description = x.Role.Description,
-                        ParentRoleId = x.Role.ParentRoleId,
-                        IsActive = x.Role.IsActive,
-                        CreatedBy = x.Role.CreatedBy,
-                        LastEditBy = x.Role.LastEditBy
-                    }).ToList()
-                );
-
-            foreach (var u in list)
-            {
-                if (roleMap.TryGetValue((int)u.Id, out var roleDtos))
-                {
-                    // Convertir RoleDefinitionDto en List<string> pour compatibilité
-                    u.Roles = roleDtos.Select(r => r.Name).ToList();
-                }
-            }
 
             return list;
         }
@@ -247,60 +249,6 @@ namespace Dior.Service.DAO.UserInterfaces
                     join rd in _context.RoleDefinitions on ur.RoleDefinitionId equals rd.Id
                     where ur.UserId == userId
                     select rd.Name).ToList();
-        }
-
-        // Front Angular : users + roles (noms), badge, team
-        public List<UserFullDto> GetUsersWithRoles()
-        {
-            var users = new Dictionary<long, UserFullDto>();
-
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("sp_GetUsersWithRoles", conn)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
-
-            conn.Open();
-            using var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
-            {
-                // FIX: Id bigint
-                var userId = reader.GetInt64(reader.GetOrdinal("UserId"));
-
-                if (!users.TryGetValue(userId, out var user))
-                {
-                    user = new UserFullDto
-                    {
-                        Id = userId,
-                        FirstName = reader["FirstName"]?.ToString() ?? string.Empty,
-                        LastName = reader["LastName"]?.ToString() ?? string.Empty,
-                        Email = reader["Email"]?.ToString() ?? string.Empty,
-                        Phone = reader["Phone"]?.ToString(),
-                        // FIX: badge int? (cohérent avec le DTO)
-                        BadgePhysicalNumber = reader.IsDBNull(reader.GetOrdinal("BadgePhysicalNumber"))
-                            ? null
-                            : Convert.ToInt32(reader["BadgePhysicalNumber"]),
-                        TeamName = reader["TeamName"]?.ToString(),
-                        TeamId = reader["TeamId"] == DBNull.Value ? (int?)null : Convert.ToInt32(reader["TeamId"]),
-                        Roles = new List<string>() // Corrigé: List<string>
-                    };
-                    users.Add(userId, user);
-                }
-
-                if (!reader.IsDBNull(reader.GetOrdinal("Roles")))
-                {
-                    var rolesCsv = reader.GetString(reader.GetOrdinal("Roles"));
-                    var roles = rolesCsv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                    foreach (var role in roles)
-                    {
-                        if (!string.IsNullOrWhiteSpace(role) && user.Roles != null && !user.Roles.Contains(role))
-                            user.Roles.Add(role); // Corrigé: Add string directement
-                    }
-                }
-            }
-
-            return users.Values.ToList();
         }
 
         // Méthode helper pour convertir le badge string en int?

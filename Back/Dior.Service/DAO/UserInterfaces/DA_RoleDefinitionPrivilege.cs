@@ -1,4 +1,5 @@
-﻿using Dior.Library.Service.DAO;
+using Dior.Library.Service.DAO;
+using Dior.Library.BO.UserInterface;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
@@ -54,67 +55,6 @@ namespace Dior.Service.DAO.UserInterfaces
 
             conn.Open();
             cmd.ExecuteNonQuery();
-        }
-
-        public void Del(long roleDefinitionId, long privilegeId)
-        {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SP_RoleDefinition_Privilege_DelByIds", conn)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
-
-            cmd.Parameters.AddWithValue("@PR_RoleDefinitionID", roleDefinitionId);
-            cmd.Parameters.AddWithValue("@PR_PrivilegeID", privilegeId);
-
-            conn.Open();
-            cmd.ExecuteNonQuery();
-        }
-
-        public List<RoleDefinitionPrivilege> GetByRoleDefinitionId(long roleDefinitionId)
-        {
-            var list = new List<RoleDefinitionPrivilege>();
-
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SP_RoleDefinition_Privilege_GetByRoleDefinitionId", conn)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
-
-            cmd.Parameters.AddWithValue("@PR_RoleDefinitionID", roleDefinitionId);
-
-            conn.Open();
-            using var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
-            {
-                list.Add(MapFromReader(reader));
-            }
-
-            return list;
-        }
-
-        public List<RoleDefinitionPrivilege> GetByPrivilegeId(long privilegeId)
-        {
-            var list = new List<RoleDefinitionPrivilege>();
-
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SP_RoleDefinition_Privilege_GetByPrivilegeId", conn)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
-
-            cmd.Parameters.AddWithValue("@PR_PrivilegeID", privilegeId);
-
-            conn.Open();
-            using var reader = cmd.ExecuteReader();
-
-            while (reader.Read())
-            {
-                list.Add(MapFromReader(reader));
-            }
-
-            return list;
         }
 
         public void Del(long id)

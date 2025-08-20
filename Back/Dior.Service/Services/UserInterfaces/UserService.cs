@@ -1,6 +1,7 @@
 ﻿using Dior.Library.Interfaces.UserInterface.Services;
 using Dior.Library.Service.DAO;
-using DiorUser = Dior.Library.BO.UserInterface.User;
+using Dior.Library.Entities;
+using Dior.Library.DTO;
 
 namespace Dior.Service.Services.UserInterfaces
 {
@@ -13,75 +14,55 @@ namespace Dior.Service.Services.UserInterfaces
             _DA_User = daUser;
         }
 
-        public List<DiorUser> GetList(List<int> userIDs = null)
+        public User Authenticate(string username, string password)
         {
-            var users = _DA_User.GetList(userIDs);
-            return users != null ? users.ConvertAll(user => new DiorUser
+            // Implémentation basique - à améliorer avec hash password
+            var user = _DA_User.GetUserByUsername(username);
+            if (user != null && user.IsActive)
             {
-                Id = user.Id,
-                Name = user.Name,
-                // Map other properties as needed
-            }) : new List<DiorUser>();
+                // TODO: Vérifier le hash du mot de passe
+                return user;
+            }
+            return null;
         }
 
-        public void Set(DiorUser user, string editBy)
+        public List<RoleDefinitionDto> GetUserRoles(long userId)
         {
-            _DA_User.Set(new User
-            {
-                Id = user.Id,
-                Name = user.Name,
-                // Map other properties as needed
-            }, editBy);
+            // TODO: Implémenter la récupération des rôles via DAO
+            return new List<RoleDefinitionDto>();
         }
 
-        public int Add(DiorUser user, string editBy)
+        public List<PrivilegeDto> GetUserPrivileges(long userId)
         {
-            return _DA_User.Add(new User
-            {
-                Id = user.Id,
-                Name = user.Name,
-                // Map other properties as needed
-            }, editBy);
+            // TODO: Implémenter la récupération des privilèges via DAO
+            return new List<PrivilegeDto>();
         }
 
-        public void Del(int id)
+        public User GetUserById(long userId)
         {
-            _DA_User.Del(id);
+            return _DA_User.GetUserById(userId);
         }
 
-        public DiorUser Get(int userId)
+        public IEnumerable<User> GetAllUsers()
         {
-            throw new NotImplementedException();
+            return _DA_User.GetAllUsers();
         }
 
-        public object Add(User user, string editBy)
+        public void CreateUser(User user, string password)
         {
-            throw new NotImplementedException();
+            // TODO: Hash the password
+            user.PasswordHash = password; // Remplacer par BCrypt
+            _DA_User.CreateUser(user);
         }
 
-        public void Set(User user, string editBy)
+        public void UpdateUser(User user)
         {
-            throw new NotImplementedException();
+            _DA_User.UpdateUser(user);
         }
 
-        public List<DiorUser> GetList(List<long> userIDs = null)
+        public void DeleteUser(long userId)
         {
-            throw new NotImplementedException();
-        }
-
-        long IUserService.Add(DiorUser user, string editBy)
-        {
-            return Add(user, editBy);
-        }
-
-        public void Del(long id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DiorUser Get(long userId)
-        {
-            throw new NotImplementedException();
+            _DA_User.DeleteUser(userId);
         }
     }
 }
