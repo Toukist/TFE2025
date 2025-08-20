@@ -61,9 +61,27 @@ namespace Dior.Service.Host.Controllers
 
             // Récupérer les utilisateurs de cette équipe
             var users = await Task.Run(() => 
-                _userDao.GetAllWithTeam().Where(u => u.TeamId == id).ToList());
+                _userDao.GetAllUsersWithTeam().Where(u => u.TeamId == id).ToList());
             
-            return Ok(users);
+            // Convert User entities to UserDto for the API response
+            var userDtos = users.Select(u => new UserDto
+            {
+                Id = (int)u.Id,
+                Username = u.Username,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                Phone = u.Phone,
+                TeamId = u.TeamId,
+                IsActive = u.IsActive,
+                IsAdmin = u.IsAdmin,
+                CreatedAt = u.CreatedAt,
+                CreatedBy = u.CreatedBy,
+                LastEditAt = u.LastEditAt,
+                LastEditBy = u.LastEditBy
+            }).ToList();
+            
+            return Ok(userDtos);
         }
 
         /// <summary>
@@ -127,7 +145,7 @@ namespace Dior.Service.Host.Controllers
 
             // Vérifier s'il y a des utilisateurs dans cette équipe
             var teamMembers = await Task.Run(() => 
-                _userDao.GetAllWithTeam().Where(u => u.TeamId == id).ToList());
+                _userDao.GetAllUsersWithTeam().Where(u => u.TeamId == id).ToList());
 
             if (teamMembers.Any())
             {

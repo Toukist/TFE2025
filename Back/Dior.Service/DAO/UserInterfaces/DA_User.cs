@@ -257,5 +257,52 @@ namespace Dior.Service.DAO.UserInterfaces
             if (string.IsNullOrWhiteSpace(badge)) return null;
             return int.TryParse(badge, out int result) ? result : null;
         }
+
+        // NEW: Method that returns List<User> entities (for TeamController compatibility)
+        public List<User> GetAllUsersWithTeam()
+        {
+            var users = new List<User>();
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                using var cmd = new SqlCommand(@"
+                    SELECT u.Id, u.Username, u.FirstName, u.LastName, u.Email, u.Phone,
+                           u.IsActive, u.IsAdmin, u.TeamId, u.CreatedAt, u.CreatedBy, 
+                           u.LastEditAt, u.LastEditBy, t.Name as TeamName
+                    FROM [USER] u
+                    LEFT JOIN Team t ON u.TeamId = t.Id", conn)
+                {
+                    CommandType = CommandType.Text
+                };
+                
+                conn.Open();
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var user = new User
+                    {
+                        Id = reader.IsDBNull(reader.GetOrdinal("Id")) ? 0 : reader.GetInt64(reader.GetOrdinal("Id")),
+                        Username = reader["Username"]?.ToString() ?? "",
+                        FirstName = reader["FirstName"]?.ToString() ?? "",
+                        LastName = reader["LastName"]?.ToString() ?? "",
+                        IsActive = reader.IsDBNull(reader.GetOrdinal("IsActive")) ? false : reader.GetBoolean(reader.GetOrdinal("IsActive")),
+                        IsAdmin = reader.IsDBNull(reader.GetOrdinal("IsAdmin")) ? false : reader.GetBoolean(reader.GetOrdinal("IsAdmin")),
+                        Email = reader["Email"]?.ToString(),
+                        Phone = reader["Phone"]?.ToString(),
+                        TeamId = reader.IsDBNull(reader.GetOrdinal("TeamId")) ? null : (int?)reader.GetInt32(reader.GetOrdinal("TeamId")),
+                        CreatedAt = reader.IsDBNull(reader.GetOrdinal("CreatedAt")) ? DateTime.Now : reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                        CreatedBy = reader["CreatedBy"]?.ToString() ?? "",
+                        LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? null : reader.GetDateTime(reader.GetOrdinal("LastEditAt")),
+                        LastEditBy = reader["LastEditBy"]?.ToString()
+                    };
+                    users.Add(user);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur dans GetAllUsersWithTeam: {ex.Message}");
+            }
+            return users;
+        }
     }
 }

@@ -3,15 +3,6 @@ using Dior.Library.DAO;
 
 namespace Dior.Service.Services
 {
-    public interface ITeamService
-    {
-        List<Team> GetAll();
-        Team? GetById(int id);
-        void Create(Team team);
-        void Update(Team team);
-        void Delete(int id);
-    }
-
     public class TeamService : ITeamService
     {
         private readonly ITeamDao _dao;
