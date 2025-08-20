@@ -1,10 +1,9 @@
-﻿
-namespace Dior.Library.DTO
+﻿namespace Dior.Library.DTO
 {
     public class UserAccessDto
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
+        public long UserId { get; set; } // ✅ Changé de int à long
         public int AccessId { get; set; }
         public DateTime CreatedAt { get; set; }
         public string CreatedBy { get; set; }

@@ -1,5 +1,6 @@
 // Dior.Library\Service\DAO\IDA_Access.cs
 using Dior.Library.DTO;
+using Dior.Library.Entities;
 
 namespace Dior.Library.Service.DAO
 {

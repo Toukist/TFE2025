@@ -1,7 +1,7 @@
 ﻿public class UserAccessCompetencyDto
 {
     public int Id { get; set; }
-    public int UserId { get; set; }
+    public long UserId { get; set; } // ✅ Changé de int à long
     public int AccessCompetencyId { get; set; }
 
     public string Name { get; set; }           // ajouté

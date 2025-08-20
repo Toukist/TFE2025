@@ -1,3 +1,5 @@
+using Dior.Library.BO.UserInterface;
+
 namespace Dior.Library.Service.DAO
 {
     public interface IDA_UserRole

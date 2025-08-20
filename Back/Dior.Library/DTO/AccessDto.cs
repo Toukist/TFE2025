@@ -1,4 +1,5 @@
 ﻿
+using Dior.Library.Entities;
 
 namespace Dior.Library.DTO
 {

@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public int RoleDefinitionId { get; set; }
-        public int UserId { get; set; }
+        public long UserId { get; set; } // ✅ Changé de int à long
         public string? LastEditBy { get; set; }
         public DateTime? LastEditAt { get; set; }
         public string Name { get; set; } = string.Empty;

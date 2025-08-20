@@ -1,4 +1,4 @@
-﻿namespace Dior.Library.DTO
+namespace Dior.Library.DTO
 {
     public class RoleDefinitionPrivilegeDto
     {

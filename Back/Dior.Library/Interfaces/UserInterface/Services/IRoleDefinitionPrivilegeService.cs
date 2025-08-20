@@ -1,3 +1,5 @@
+using Dior.Library.BO.UserInterface;
+
 namespace Dior.Library.Interfaces.UserInterface.Services
 {
     public interface IRoleDefinitionPrivilegeService

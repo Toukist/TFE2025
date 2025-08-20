@@ -10,7 +10,7 @@ namespace Dior.Library.Entities
         public int Id { get; set; }
 
         [Required]
-        public int UserId { get; set; }
+        public long UserId { get; set; } // ? Changé de int à long
         [ForeignKey(nameof(UserId))]
         public User User { get; set; }
 

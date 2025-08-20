@@ -5,11 +5,11 @@ using System.Data;
 
 [ApiController]
 [Route("api/[controller]")]
-public class RoleDefinition_PrivilegeController : ControllerBase
+public class RoleDefinitionPrivilegeController : ControllerBase
 {
     private readonly string _connectionString;
 
-    public RoleDefinition_PrivilegeController(IConfiguration configuration)
+    public RoleDefinitionPrivilegeController(IConfiguration configuration)
     {
         _connectionString = configuration.GetConnectionString("Dior_DB");
     }
