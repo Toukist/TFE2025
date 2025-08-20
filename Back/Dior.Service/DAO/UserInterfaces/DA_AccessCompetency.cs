@@ -130,6 +130,16 @@ namespace Dior.Service.DAO.UserInterfaces
             conn.Open();
             cmd.ExecuteNonQuery();
         }
+
+        public void Del(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public AccessCompetency Get(long id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

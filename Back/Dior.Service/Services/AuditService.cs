@@ -23,17 +23,19 @@ namespace Dior.Service.Services
 
         public async Task WriteAsync(int userId, string action, string entity, int entityId, object? before, object? after, CancellationToken ct = default)
         {
-            var details = new { Before = before, After = after };
-            var detailsJson = JsonSerializer.Serialize(details, _jsonOpts);
+            var oldValuesJson = before != null ? JsonSerializer.Serialize(before, _jsonOpts) : null;
+            var newValuesJson = after != null ? JsonSerializer.Serialize(after, _jsonOpts) : null;
 
             var auditLog = new AuditLog
             {
                 UserId = userId,
-                Action = action,
+                Operation = action,
                 TableName = entity,
                 RecordId = entityId,
-                Details = detailsJson,
-                Timestamp = DateTime.UtcNow
+                OldValues = oldValuesJson,
+                NewValues = newValuesJson,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = userId.ToString()
             };
 
             _context.AuditLogs.Add(auditLog);

@@ -233,7 +233,6 @@ namespace Dior.Service.DAO.UserInterfaces
                         IsActive = any.IsActive,
                         Email = any.Email,
                         Phone = any.Phone,
-                        TeamId = any.TeamId,
                         TeamName = any.TeamName ?? string.Empty,
                         BadgePhysicalNumber = ParseBadgeNumber(g.Select(x => x.Badge).FirstOrDefault())
                     };

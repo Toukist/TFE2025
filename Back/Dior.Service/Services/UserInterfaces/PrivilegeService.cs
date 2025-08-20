@@ -15,12 +15,16 @@ namespace Dior.Service.Services.UserInterfaces
 
         public Privilege Get(long id)
         {
-            return _daPrivilege.Get((int)id);
+            // Correction : Mapper explicitement l'objet BO vers Entities
+            var boPrivilege = _daPrivilege.Get((int)id);
+            return MapToEntityPrivilege(boPrivilege);
         }
 
         public List<Privilege> GetList()
         {
-            return _daPrivilege.GetList();
+            // Correction : Mapper explicitement la liste d'objets BO vers Entities
+            var boList = _daPrivilege.GetList();
+            return boList.Select(MapToEntityPrivilege).ToList();
         }
 
         public long Add(Privilege privilege, string editBy)
@@ -36,6 +40,18 @@ namespace Dior.Service.Services.UserInterfaces
         public void Del(long id)
         {
             _daPrivilege.Del((int)id);
+        }
+
+        // Méthode de mapping explicite
+        private Privilege MapToEntityPrivilege(Dior.Library.BO.UserInterface.Privilege boPrivilege)
+        {
+            if (boPrivilege == null) return null;
+            return new Privilege
+            {
+                Id = boPrivilege.Id,
+                Name = boPrivilege.Name,
+                // Ajoutez ici les autres propriétés nécessaires
+            };
         }
     }
 }

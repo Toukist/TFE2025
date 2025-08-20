@@ -21,7 +21,7 @@ namespace Dior.Library.Entities
         [Required]
         [MaxLength(100)]
         public string Username { get; set; } = string.Empty;
-
+        public string UserName { get; set; }
         [Required]
         [MaxLength(100)]
         public string FirstName { get; set; } = string.Empty;

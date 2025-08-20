@@ -66,12 +66,6 @@ public class PrivilegeController : ControllerBase
                         Id = reader.GetInt64(reader.GetOrdinal("id")),
                         Name = reader.GetString(reader.GetOrdinal("name")),
                         Description = reader.IsDBNull(reader.GetOrdinal("description")) ? null : reader.GetString(reader.GetOrdinal("description")),
-                        IsConfigurableRead = reader.GetBoolean(reader.GetOrdinal("isConfigurableRead")),
-                        IsConfigurableDelete = reader.GetBoolean(reader.GetOrdinal("isConfigurableDelete")),
-                        IsConfigurableAdd = reader.GetBoolean(reader.GetOrdinal("isConfigurableAdd")),
-                        IsConfigurableModify = reader.GetBoolean(reader.GetOrdinal("isConfigurableModify")),
-                        IsConfigurableStatus = reader.GetBoolean(reader.GetOrdinal("isConfigurableStatus")),
-                        IsConfigurableExecution = reader.GetBoolean(reader.GetOrdinal("isConfigurableExecution")),
                         LastEditBy = reader.GetString(reader.GetOrdinal("lastEditBy")),
                         LastEditAt = reader.GetDateTime(reader.GetOrdinal("lastEditAt"))
                     };
@@ -93,12 +87,6 @@ public class PrivilegeController : ControllerBase
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Name", dto.Name ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@Description", dto.Description ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@IsConfigurableRead", dto.IsConfigurableRead);
-            cmd.Parameters.AddWithValue("@IsConfigurableDelete", dto.IsConfigurableDelete);
-            cmd.Parameters.AddWithValue("@IsConfigurableAdd", dto.IsConfigurableAdd);
-            cmd.Parameters.AddWithValue("@IsConfigurableModify", dto.IsConfigurableModify);
-            cmd.Parameters.AddWithValue("@IsConfigurableStatus", dto.IsConfigurableStatus);
-            cmd.Parameters.AddWithValue("@IsConfigurableExecution", dto.IsConfigurableExecution);
             cmd.Parameters.AddWithValue("@LastEditBy", dto.LastEditBy ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@LastEditAt", DateTime.Now);
 
@@ -120,12 +108,6 @@ public class PrivilegeController : ControllerBase
             cmd.Parameters.AddWithValue("@Id", id);
             cmd.Parameters.AddWithValue("@Name", dto.Name ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@Description", dto.Description ?? (object)DBNull.Value);
-            cmd.Parameters.AddWithValue("@IsConfigurableRead", dto.IsConfigurableRead);
-            cmd.Parameters.AddWithValue("@IsConfigurableDelete", dto.IsConfigurableDelete);
-            cmd.Parameters.AddWithValue("@IsConfigurableAdd", dto.IsConfigurableAdd);
-            cmd.Parameters.AddWithValue("@IsConfigurableModify", dto.IsConfigurableModify);
-            cmd.Parameters.AddWithValue("@IsConfigurableStatus", dto.IsConfigurableStatus);
-            cmd.Parameters.AddWithValue("@IsConfigurableExecution", dto.IsConfigurableExecution);
             cmd.Parameters.AddWithValue("@LastEditBy", dto.LastEditBy ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@LastEditAt", DateTime.Now);
 

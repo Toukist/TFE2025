@@ -1,6 +1,6 @@
 using Dior.Library.Interfaces.UserInterface.Services;
 using Dior.Library.Service.DAO;
-using Dior.Library.Entities;
+using Dior.Library.BO.UserInterface;
 
 namespace Dior.Service.Services.UserInterfaces
 {
@@ -36,6 +36,26 @@ namespace Dior.Service.Services.UserInterfaces
         public void Del(int id)
         {
             _dao.Del(id);
+        }
+
+        List<Library.Entities.RoleDefinitionPrivilege> IRoleDefinitionPrivilegeService.GetList()
+        {
+            throw new NotImplementedException();
+        }
+
+        Library.Entities.RoleDefinitionPrivilege IRoleDefinitionPrivilegeService.Get(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public long Add(Library.Entities.RoleDefinitionPrivilege entity, string editBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Set(Library.Entities.RoleDefinitionPrivilege entity, string editBy)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -9,5 +9,7 @@ namespace Dior.Library.Service.DAO
         long Add(Privilege privilege, string editBy);
         void Set(Privilege privilege, string editBy);
         void Del(int id);
+        long Add(Entities.Privilege privilege, string editBy);
+        void Set(Entities.Privilege privilege, string editBy);
     }
 }

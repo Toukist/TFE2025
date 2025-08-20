@@ -7,13 +7,11 @@ namespace Dior.Library.DTO
     {
         public long Id { get; set; }
         public bool IsActive { get; set; }
-        public bool IsAdmin { get; set; }
         public string UserName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string FirstName { get; set; } = string.Empty;
         public string? Email { get; set; }
         public string? Phone { get; set; }
-        public int? TeamId { get; set; }
         public string? TeamName { get; set; }
         public int? BadgePhysicalNumber { get; set; }
         public DateTime CreatedAt { get; set; }

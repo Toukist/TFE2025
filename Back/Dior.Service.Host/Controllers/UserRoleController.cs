@@ -30,8 +30,8 @@ public class UserRoleController : ControllerBase
                     list.Add(new UserRoleDto
                     {
                         Id = (int)reader.GetInt64(reader.GetOrdinal("ID")),
-                        RoleDefinitionId = (int)reader.GetInt64(reader.GetOrdinal("RoleDefinitionID")),
-                        UserId = (int)reader.GetInt64(reader.GetOrdinal("UserID")),
+                        RoleDefinition = (int)reader.GetInt64(reader.GetOrdinal("RoleDefinitionID")),
+                        User = (int)reader.GetInt64(reader.GetOrdinal("UserID")),
                         LastEditBy = reader.GetString(reader.GetOrdinal("LastEditBy")),
                         LastEditAt = reader.GetDateTime(reader.GetOrdinal("LastEditAt"))
                     });
@@ -58,8 +58,8 @@ public class UserRoleController : ControllerBase
                     result = new UserRoleDto
                     {
                         Id = (int)reader.GetInt64(reader.GetOrdinal("ID")),
-                        RoleDefinitionId = (int)reader.GetInt64(reader.GetOrdinal("RoleDefinitionID")),
-                        UserId = (int)reader.GetInt64(reader.GetOrdinal("UserID")),
+                        RoleDefinition = (int)reader.GetInt64(reader.GetOrdinal("RoleDefinitionID")),
+                        User = (int)reader.GetInt64(reader.GetOrdinal("UserID")),
                         LastEditBy = reader.GetString(reader.GetOrdinal("LastEditBy")),
                         LastEditAt = reader.GetDateTime(reader.GetOrdinal("LastEditAt"))
                     };
@@ -79,8 +79,8 @@ public class UserRoleController : ControllerBase
         using (var cmd = new SqlCommand("sp_AddUserRole", conn))
         {
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@RoleDefinitionID", dto.RoleDefinitionId);
-            cmd.Parameters.AddWithValue("@UserID", dto.UserId);
+            cmd.Parameters.AddWithValue("@RoleDefinitionID", dto.RoleDefinition);
+            cmd.Parameters.AddWithValue("@UserID", dto.User);
             cmd.Parameters.AddWithValue("@LastEditBy", dto.LastEditBy ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@LastEditAt", DateTime.Now);
 
@@ -100,8 +100,8 @@ public class UserRoleController : ControllerBase
         {
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Id", id);
-            cmd.Parameters.AddWithValue("@RoleDefinitionID", dto.RoleDefinitionId);
-            cmd.Parameters.AddWithValue("@UserID", dto.UserId);
+            cmd.Parameters.AddWithValue("@RoleDefinitionID", dto.RoleDefinition);
+            cmd.Parameters.AddWithValue("@UserID", dto.User);
             cmd.Parameters.AddWithValue("@LastEditBy", dto.LastEditBy ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@LastEditAt", DateTime.Now);
 

@@ -9,5 +9,7 @@ namespace Dior.Library.Service.DAO
         long Add(AccessCompetency accessCompetency, string editBy);
         void Set(AccessCompetency accessCompetency, string editBy);
         void Del(int id);
+        void Del(long id);
+        AccessCompetency Get(long id);
     }
 }

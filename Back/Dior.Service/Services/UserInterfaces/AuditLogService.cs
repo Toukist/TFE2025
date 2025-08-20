@@ -1,8 +1,6 @@
 using Dior.Library.Interfaces.UserInterface.Services;
 using Microsoft.EntityFrameworkCore;
-
-// Aliases pour éviter les conflits de noms
-using BOAuditLog = Dior.Library.BO.UserInterface.AuditLog;
+using Dior.Library.BO.UserInterface;
 using EntityAuditLog = Dior.Library.Entities.AuditLog;
 
 namespace Dior.Service.Services.UserInterfaces
@@ -16,53 +14,54 @@ namespace Dior.Service.Services.UserInterfaces
             _context = context;
         }
 
-        // ------------------ MÉTHODES SYNCHRONES (BOAuditLog) ------------------
+        // ------------------ MÉTHODES SYNCHRONES (AuditLog BO) ------------------
 
-        public List<BOAuditLog> GetList()
+        public List<AuditLog> GetList()
         {
             var entityAuditLogs = _context.AuditLogs
-                .OrderByDescending(al => al.Timestamp)
+                .OrderByDescending(al => al.CreatedAt)
                 .ToList();
 
-            return entityAuditLogs.Select(al => new BOAuditLog
+            return entityAuditLogs.Select(al => new AuditLog
             {
                 Id = al.Id,
-                UserId = al.UserId,
-                Action = al.Action,
+                UserId = al.UserId ?? 0,
+                Action = al.Operation,
                 TableName = al.TableName,
-                RecordId = al.RecordId,
-                Details = al.Details,
-                Timestamp = al.Timestamp
+                RecordId = al.RecordId ?? 0,
+                Details = CombineDetails(al.OldValues, al.NewValues),
+                Timestamp = al.CreatedAt
             }).ToList();
         }
 
-        public BOAuditLog Get(long id)
+        public AuditLog Get(long id)
         {
             var entityAuditLog = _context.AuditLogs.Find((int)id);
             if (entityAuditLog == null) return null;
 
-            return new BOAuditLog
+            return new AuditLog
             {
                 Id = entityAuditLog.Id,
-                UserId = entityAuditLog.UserId,
-                Action = entityAuditLog.Action,
+                UserId = entityAuditLog.UserId ?? 0,
+                Action = entityAuditLog.Operation,
                 TableName = entityAuditLog.TableName,
-                RecordId = entityAuditLog.RecordId,
-                Details = entityAuditLog.Details,
-                Timestamp = entityAuditLog.Timestamp
+                RecordId = entityAuditLog.RecordId ?? 0,
+                Details = CombineDetails(entityAuditLog.OldValues, entityAuditLog.NewValues),
+                Timestamp = entityAuditLog.CreatedAt
             };
         }
 
-        public long Add(BOAuditLog log, string editBy)
+        public long Add(AuditLog log, string editBy)
         {
             var entityAuditLog = new EntityAuditLog
             {
                 UserId = (int)log.UserId,
-                Action = log.Action,
+                Operation = log.Action,
                 TableName = log.TableName,
                 RecordId = (int)log.RecordId,
-                Details = log.Details,
-                Timestamp = DateTime.Now
+                NewValues = log.Details,
+                CreatedAt = DateTime.Now,
+                CreatedBy = editBy
             };
 
             _context.AuditLogs.Add(entityAuditLog);
@@ -71,16 +70,16 @@ namespace Dior.Service.Services.UserInterfaces
             return entityAuditLog.Id;
         }
 
-        public void Set(BOAuditLog log, string editBy)
+        public void Set(AuditLog log, string editBy)
         {
             var entityAuditLog = _context.AuditLogs.Find((int)log.Id);
             if (entityAuditLog != null)
             {
                 entityAuditLog.UserId = (int)log.UserId;
-                entityAuditLog.Action = log.Action;
+                entityAuditLog.Operation = log.Action;
                 entityAuditLog.TableName = log.TableName;
                 entityAuditLog.RecordId = (int)log.RecordId;
-                entityAuditLog.Details = log.Details;
+                entityAuditLog.NewValues = log.Details;
                 _context.SaveChanges();
             }
         }
@@ -95,11 +94,11 @@ namespace Dior.Service.Services.UserInterfaces
             }
         }
 
-        // Remplacer les méthodes asynchrones pour qu'elles correspondent à la signature de l'interface
+        // Méthodes asynchrones pour les entités
         public async Task<List<EntityAuditLog>> GetAllAsync()
         {
             return await _context.AuditLogs
-                .OrderByDescending(a => a.Timestamp)
+                .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
         }
 
@@ -117,13 +116,19 @@ namespace Dior.Service.Services.UserInterfaces
                 query = query.Where(a => a.UserId == userId.Value);
 
             if (!string.IsNullOrWhiteSpace(action))
-                query = query.Where(a => a.Action.Contains(action));
+                query = query.Where(a => a.Operation.Contains(action));
 
             return await query
-                .OrderByDescending(a => a.Timestamp)
+                .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
         }
 
-
+        private string CombineDetails(string? oldValues, string? newValues)
+        {
+            if (!string.IsNullOrEmpty(oldValues) && !string.IsNullOrEmpty(newValues))
+                return $"Old: {oldValues}, New: {newValues}";
+            
+            return newValues ?? oldValues ?? string.Empty;
+        }
     }
 }

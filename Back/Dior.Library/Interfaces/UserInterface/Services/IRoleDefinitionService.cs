@@ -1,13 +1,13 @@
-﻿using Dior.Library.Entities;
+﻿using Dior.Library.BO.UserInterface;
 
 namespace Dior.Library.Interfaces.UserInterface.Services
 {
     public interface IRoleDefinitionService
     {
-        List<Dior.Library.Entities.RoleDefinition> GetList();
-        Dior.Library.Entities.RoleDefinition Get(long id);
-        long Add(Dior.Library.Entities.RoleDefinition entity, string editBy);
-        void Set(Dior.Library.Entities.RoleDefinition entity, string editBy);
+        List<RoleDefinition> GetList();
+        RoleDefinition Get(long id);
+        long Add(RoleDefinition entity, string editBy);
+        void Set(RoleDefinition entity, string editBy);
         void Del(long id);
     }
 }

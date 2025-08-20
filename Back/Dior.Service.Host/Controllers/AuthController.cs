@@ -110,7 +110,7 @@ namespace Dior.Service.Host.Controllers
 
             // Charger rôles via service et extraire les noms
             var roleDefinitions = _roleService.GetRolesByUserId(user.Id);
-            user.Roles = roleDefinitions?.Select(r => r.Name).ToList() ?? new List<string>();
+            user.Roles = roleDefinitions?.Select(r => r.Name).ToList() ?? [];
 
             var token = _jwtTokenService.GenerateToken(user);
             
@@ -211,13 +211,12 @@ namespace Dior.Service.Host.Controllers
             {
                 Id = Convert.ToInt64(reader["ID"]),
                 UserName = reader["Username"] as string,
-                Username = reader["Username"] as string, // Ajout pour compatibilité
                 LastName = reader["LastName"] as string,
                 FirstName = reader["FirstName"] as string,
                 IsActive = (bool)reader["IsActive"],
                 Email = reader["Email"] as string,
                 Phone = reader["Phone"] as string,
-                Roles = new List<string>() // Initialisé vide, sera rempli plus tard
+                Roles = new List<Dior.Library.DTO.RoleDefinitionDto>() // Initialisé vide, sera rempli plus tard
             };
         }
     }

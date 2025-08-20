@@ -133,5 +133,15 @@ namespace Dior.Service.DAO.UserInterfaces
             conn.Open();
             cmd.ExecuteNonQuery();
         }
+
+        public long Add(Library.Entities.Privilege privilege, string editBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Set(Library.Entities.Privilege privilege, string editBy)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

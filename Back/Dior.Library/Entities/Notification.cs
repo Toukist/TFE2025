@@ -12,6 +12,9 @@ namespace Dior.Library.Entities
 
         public int UserId { get; set; }
 
+        [MaxLength(50)]
+        public string Type { get; set; } = "INFO";
+
         [Required]
         [MaxLength(255)]
         public string Message { get; set; } = string.Empty;

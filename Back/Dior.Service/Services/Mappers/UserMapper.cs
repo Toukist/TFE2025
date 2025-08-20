@@ -16,7 +16,6 @@ namespace Dior.Service.Services.Mappers
                 Email = entity.Email,
                 Phone = entity.Phone,
                 IsActive = entity.IsActive,
-                TeamId = entity.TeamId,
                 TeamName = entity.Team?.Name
             };
         }
@@ -32,7 +31,6 @@ namespace Dior.Service.Services.Mappers
                 Phone = dto.Phone,
                 TeamId = dto.TeamId,
                 IsActive = true,
-                IsAdmin = false,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "System", // TODO: récupérer l'utilisateur courant
                 PasswordHash = string.Empty // TODO: hasher le mot de passe
