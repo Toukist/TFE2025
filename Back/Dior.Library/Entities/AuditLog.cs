@@ -1,32 +1,36 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Dior.Library.Entities
 {
-    [Table("AUDIT_LOGS")]
+    [Table("AUDIT_LOG")]
     public class AuditLog
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        public int UserId { get; set; }
-        [ForeignKey(nameof(UserId))]
-        public User User { get; set; }
+        [MaxLength(50)]
+        public string TableName { get; set; } = string.Empty;
 
         [Required]
-        [MaxLength(255)]
-        public string Action { get; set; }
+        [MaxLength(50)]
+        public string Operation { get; set; } = string.Empty;
 
-        [Required]
+        public int? RecordId { get; set; }
+
+        public string? OldValues { get; set; }
+        public string? NewValues { get; set; }
+
+        public int? UserId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
         [MaxLength(100)]
-        public string TableName { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
 
-        [Required]
-        public int RecordId { get; set; }
-
-        public string Details { get; set; }
-
-        [Required]
-        public DateTime Timestamp { get; set; }
+        // Navigation
+        public virtual User? User { get; set; }
     }
 }

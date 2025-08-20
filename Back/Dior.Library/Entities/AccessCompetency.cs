@@ -1,14 +1,16 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dior.Library.Entities
 {
+    [Table("ACCESS_COMPETENCY")]
     public class AccessCompetency
     {
         public AccessCompetency()
         {
-            Children = new List<AccessCompetency>();
-            UserAccessCompetencies = new List<UserAccessCompetency>();
+            UserAccessCompetencies = new HashSet<UserAccessCompetency>();
         }
 
         [Key]
@@ -16,29 +18,24 @@ namespace Dior.Library.Entities
 
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public int? ParentId { get; set; }
-        [ForeignKey(nameof(ParentId))]
-        public AccessCompetency Parent { get; set; } = null!;
-        public ICollection<AccessCompetency> Children { get; set; } = null!;
+        [MaxLength(255)]
+        public string? Description { get; set; }
 
-        [Required]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
-        [Required]
         public DateTime CreatedAt { get; set; }
 
-        [Required]
         [MaxLength(100)]
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
 
         public DateTime? LastEditAt { get; set; }
-        [MaxLength(100)]
-        public string LastEditBy { get; set; }
 
-        // Navigation
-        public ICollection<UserAccessCompetency> UserAccessCompetencies { get; set; } = null!;
-        //  public string Description { get; set; }
+        [MaxLength(100)]
+        public string? LastEditBy { get; set; }
+
+        // Navigation properties
+        public virtual ICollection<UserAccessCompetency> UserAccessCompetencies { get; set; }
     }
 }

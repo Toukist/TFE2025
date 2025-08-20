@@ -1,17 +1,19 @@
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Dior.Library.Entities
 {
-    [Index(nameof(Name), IsUnique = true)] // Moved Index attribute to the class level
+    [Table("ROLE_DEFINITION")]
+    [Index(nameof(Name), IsUnique = true)]
     public class RoleDefinition
     {
         public RoleDefinition()
         {
-            ChildRoles = new List<RoleDefinition>();
-            UserRoles = new List<UserRole>();
-            RoleDefinitionPrivileges = new List<RoleDefinitionPrivilege>();
+            UserRoles = new HashSet<UserRole>();
+            RoleDefinitionPrivileges = new HashSet<RoleDefinitionPrivilege>();
         }
 
         [Key]
@@ -19,33 +21,27 @@ namespace Dior.Library.Entities
 
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [MaxLength(255)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        // Self-referencing parent
         public int? ParentRoleId { get; set; }
-        [ForeignKey(nameof(ParentRoleId))]
-        public RoleDefinition ParentRole { get; set; } = null!;
-        public ICollection<RoleDefinition> ChildRoles { get; set; } = null!;
 
-        [Required]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
-        [Required]
         public DateTime CreatedAt { get; set; }
 
-        [Required]
         [MaxLength(100)]
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
 
         public DateTime? LastEditAt { get; set; }
-        [MaxLength(100)]
-        public string LastEditBy { get; set; }
 
-        // Navigation
-        public ICollection<UserRole> UserRoles { get; set; } = null!;
-        public ICollection<RoleDefinitionPrivilege> RoleDefinitionPrivileges { get; set; } = null!;
+        [MaxLength(100)]
+        public string? LastEditBy { get; set; }
+
+        // Navigation properties
+        public virtual ICollection<UserRole> UserRoles { get; set; }
+        public virtual ICollection<RoleDefinitionPrivilege> RoleDefinitionPrivileges { get; set; }
     }
 }

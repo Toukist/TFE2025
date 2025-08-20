@@ -1,31 +1,29 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dior.Library.Entities
 {
+    [Table("USER_ROLE")]
     public class UserRole
     {
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; } // BIGINT dans la base
+
+        public long RoleDefinitionId { get; set; } // BIGINT
+        public long UserId { get; set; } // BIGINT
 
         [Required]
-        public long UserId { get; set; } // ? Changé de int à long
-        [ForeignKey(nameof(UserId))]
-        public User User { get; set; }
+        [MaxLength(50)]
+        public string LastEditBy { get; set; } = string.Empty;
 
-        [Required]
-        public int RoleDefinitionId { get; set; }
-        [ForeignKey(nameof(RoleDefinitionId))]
-        public RoleDefinition RoleDefinition { get; set; }
+        public DateTime LastEditAt { get; set; }
 
-        public DateTime? ExpiresAt { get; set; }
-        [Required]
-        public DateTime CreatedAt { get; set; }
-        [Required]
-        [MaxLength(100)]
-        public string CreatedBy { get; set; }
-        public DateTime? LastEditAt { get; set; }
-        [MaxLength(100)]
-        public string LastEditBy { get; set; }
+        // Navigation properties (utiliser int pour les FK car User.Id est int)
+        [ForeignKey("UserId")]
+        public virtual User? User { get; set; }
+
+        [ForeignKey("RoleDefinitionId")]
+        public virtual RoleDefinition? RoleDefinition { get; set; }
     }
 }

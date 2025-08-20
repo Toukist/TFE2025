@@ -1,64 +1,66 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dior.Library.Entities
 {
-    public partial class User
+    [Table("USER")]
+    public class User
     {
         public User()
         {
             UserRoles = new HashSet<UserRole>();
             UserAccessCompetencies = new HashSet<UserAccessCompetency>();
             UserAccesses = new HashSet<UserAccess>();
-            AuditLogs = new HashSet<AuditLog>();
         }
 
         [Key]
-        public long Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(100)]
-        public string Username { get; set; }
+        public string Username { get; set; } = string.Empty;
 
         [Required]
+        [MaxLength(100)]
+        public string FirstName { get; set; } = string.Empty;
+
+        [Required]
+        [MaxLength(100)]
+        public string LastName { get; set; } = string.Empty;
+
         [MaxLength(255)]
-        public string PasswordHash { get; set; }
+        public string? Email { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        public string LastName { get; set; }
+        [MaxLength(50)]
+        public string? Phone { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        public string FirstName { get; set; }
+        [MaxLength(255)]
+        public string? PasswordHash { get; set; }
 
-        [Required]
+        public bool IsAdmin { get; set; }
         public bool IsActive { get; set; }
 
-        [Required]
+        public int? TeamId { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
-        [Required]
         [MaxLength(100)]
-        public string CreatedBy { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
 
         public DateTime? LastEditAt { get; set; }
 
         [MaxLength(100)]
-        public string LastEditBy { get; set; }
+        public string? LastEditBy { get; set; }
 
-        [MaxLength(255)]
-        public string Email { get; set; }
+        // Pour compatibilité avec le code existant
+        public string Name => Username;
 
-        [MaxLength(50)]
-        public string Phone { get; set; }
-
-        public int? TeamId { get; set; }
-        public virtual Team Team { get; set; }
-
+        // Navigation properties
+        public virtual Team? Team { get; set; }
         public virtual ICollection<UserRole> UserRoles { get; set; }
         public virtual ICollection<UserAccessCompetency> UserAccessCompetencies { get; set; }
         public virtual ICollection<UserAccess> UserAccesses { get; set; }
-        public virtual ICollection<AuditLog> AuditLogs { get; set; }
     }
 }

@@ -1,28 +1,47 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Dior.Library.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dior.Library.Entities
 {
+    [Table("ACCESS")]
     public class Access
     {
+        public Access()
+        {
+            UserAccesses = new HashSet<UserAccess>();
+        }
+
         [Key]
         public int Id { get; set; }
 
         [Required]
         [MaxLength(100)]
-        public string BadgePhysicalNumber { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        [Required]
-        public bool IsActive { get; set; }
+        [MaxLength(255)]
+        public string? Description { get; set; }
 
-        [Required]
+        [MaxLength(50)]
+        public string? BadgeNumber { get; set; }
+
+        [MaxLength(50)]
+        public string? BadgePhysicalNumber { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
         public DateTime CreatedAt { get; set; }
 
-        [Required]
         [MaxLength(100)]
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
 
-        // Navigation property referencing the assignments of this access badge to users
-        public ICollection<UserAccess> UserAccesses { get; set; }
+        public DateTime? LastEditAt { get; set; }
+
+        [MaxLength(100)]
+        public string? LastEditBy { get; set; }
+
+        // Navigation properties
+        public virtual ICollection<UserAccess> UserAccesses { get; set; }
     }
 }
