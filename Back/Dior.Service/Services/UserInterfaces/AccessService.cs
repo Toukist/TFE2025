@@ -1,6 +1,6 @@
 using Dior.Library.DTO;
 using Dior.Library.Interfaces.UserInterface.Services;
-using Dior.Library.Service.DAO;
+using Dior.Library.Interfaces.DAOs; // Nouvelle interface
 using Dior.Service.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,27 +16,38 @@ namespace Dior.Service.Services.UserInterfaces
 
         public AccessService(IDA_Access dA_Access, IConfiguration configuration, DiorDbContext context)
         {
-            this._daAccess = dA_Access;
-            this._connectionString = configuration.GetConnectionString("Dior_DB");
-            this._context = context;
+            _daAccess = dA_Access ?? throw new ArgumentNullException(nameof(dA_Access));
+            _connectionString = configuration?.GetConnectionString("Dior_DB") ?? throw new ArgumentNullException(nameof(configuration));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public List<AccessDto> GetList()
         {
-            return _daAccess.GetList();
+            var accesses = _daAccess.GetAllAccesses();
+            return accesses.Select(a => new AccessDto
+            {
+                Id = a.Id,
+                Name = a.Name ?? string.Empty,
+                Description = a.Description,
+                IsActive = a.IsActive
+            }).ToList();
         }
+        
         public long Add(Access item, string editBy) => throw new NotImplementedException();
         public void Set(Access item, string editBy) => throw new NotImplementedException();
         public void Del(long id) => throw new NotImplementedException();
 
         public async Task<bool> SetActiveAsync(int id, bool isActive, CancellationToken ct)
         {
-            var access = await _context.Access.FirstOrDefaultAsync(a => a.Id == id, ct);
+            var access = await _context.Access
+                .FirstOrDefaultAsync(a => a.Id == id, ct)
+                .ConfigureAwait(false);
+            
             if (access == null)
                 return false;
 
             access.IsActive = isActive;
-            await _context.SaveChangesAsync(ct);
+            await _context.SaveChangesAsync(ct).ConfigureAwait(false);
             return true;
         }
     }

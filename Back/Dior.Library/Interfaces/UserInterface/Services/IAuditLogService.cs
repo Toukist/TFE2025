@@ -4,7 +4,7 @@
     {
         // Méthodes synchrones (BO)
         List<BO.UserInterface.AuditLog> GetList();
-        BO.UserInterface.AuditLog Get(long id);
+        BO.UserInterface.AuditLog? Get(long id);
         long Add(BO.UserInterface.AuditLog log, string editBy);
         void Set(BO.UserInterface.AuditLog log, string editBy);
         void Del(long id);

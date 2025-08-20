@@ -1,9 +1,9 @@
-Ôªøusing Dior.Library.Interfaces.UserInterface.Services;
-using Dior.Library.Service.DAO;
+using Dior.Library.Interfaces.Services;
+using Dior.Library.Interfaces.DAOs;
 using Dior.Library.Entities;
 using Dior.Library.DTO;
 
-namespace Dior.Service.Services.UserInterfaces
+namespace Dior.Service.Services
 {
     public class UserService : IUserService
     {
@@ -11,16 +11,18 @@ namespace Dior.Service.Services.UserInterfaces
 
         public UserService(IDA_User daUser)
         {
-            _DA_User = daUser;
+            _DA_User = daUser ?? throw new ArgumentNullException(nameof(daUser));
         }
 
-        public User Authenticate(string username, string password)
+        public User? Authenticate(string username, string password)
         {
-            // Impl√©mentation basique - √† am√©liorer avec hash password
+            if (string.IsNullOrWhiteSpace(username)) return null;
+            if (string.IsNullOrWhiteSpace(password)) return null;
+
             var user = _DA_User.GetUserByUsername(username);
             if (user != null && user.IsActive)
             {
-                // TODO: V√©rifier le hash du mot de passe
+                // TODO: VÈrifier le hash du mot de passe
                 return user;
             }
             return null;
@@ -28,17 +30,17 @@ namespace Dior.Service.Services.UserInterfaces
 
         public List<RoleDefinitionDto> GetUserRoles(long userId)
         {
-            // TODO: Impl√©menter la r√©cup√©ration des r√¥les via DAO
+            // TODO: ImplÈmenter la rÈcupÈration des rÙles via DAO
             return new List<RoleDefinitionDto>();
         }
 
         public List<PrivilegeDto> GetUserPrivileges(long userId)
         {
-            // TODO: Impl√©menter la r√©cup√©ration des privil√®ges via DAO
+            // TODO: ImplÈmenter la rÈcupÈration des privilËges via DAO
             return new List<PrivilegeDto>();
         }
 
-        public User GetUserById(long userId)
+        public User? GetUserById(long userId)
         {
             return _DA_User.GetUserById(userId);
         }
@@ -50,13 +52,20 @@ namespace Dior.Service.Services.UserInterfaces
 
         public void CreateUser(User user, string password)
         {
+            if (user == null) throw new ArgumentNullException(nameof(user));
+            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Password cannot be null or empty", nameof(password));
+
             // TODO: Hash the password
             user.PasswordHash = password; // Remplacer par BCrypt
+            user.CreatedAt = DateTime.UtcNow;
             _DA_User.CreateUser(user);
         }
 
         public void UpdateUser(User user)
         {
+            if (user == null) throw new ArgumentNullException(nameof(user));
+
+            user.LastEditAt = DateTime.UtcNow;
             _DA_User.UpdateUser(user);
         }
 

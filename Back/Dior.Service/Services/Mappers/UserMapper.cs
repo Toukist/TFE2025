@@ -10,36 +10,42 @@ namespace Dior.Service.Services.Mappers
             return new UserDto
             {
                 Id = entity.Id,
-                UserName = entity.UserName,
+                Username = entity.Username, // Correction: utiliser Username
                 FirstName = entity.FirstName,
                 LastName = entity.LastName,
                 Email = entity.Email,
                 Phone = entity.Phone,
                 IsActive = entity.IsActive,
-                TeamName = entity.Team?.Name
+                TeamId = entity.TeamId,
+                CreatedAt = entity.CreatedAt,
+                CreatedBy = entity.CreatedBy,
+                LastEditAt = entity.LastEditAt,
+                LastEditBy = entity.LastEditBy
             };
         }
 
-        public static User ToEntity(UserCreateDto dto)
+        public static User ToEntity(UserDto dto)
         {
             return new User
             {
-                UserName = dto.UserName,
+                Id = dto.Id,
+                Username = dto.Username, // Correction: utiliser Username
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Email = dto.Email,
                 Phone = dto.Phone,
+                IsActive = dto.IsActive,
                 TeamId = dto.TeamId,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = "System", // TODO: récupérer l'utilisateur courant
-                PasswordHash = string.Empty // TODO: hasher le mot de passe
+                CreatedAt = dto.CreatedAt,
+                CreatedBy = dto.CreatedBy,
+                LastEditAt = dto.LastEditAt,
+                LastEditBy = dto.LastEditBy
             };
         }
 
-        public static void UpdateEntity(User entity, UserUpdateDto dto)
+        public static void UpdateEntity(User entity, UserDto dto)
         {
-            entity.UserName = dto.Username;
+            entity.Username = dto.Username; // Correction: utiliser Username
             entity.FirstName = dto.FirstName;
             entity.LastName = dto.LastName;
             entity.Email = dto.Email;
@@ -47,7 +53,7 @@ namespace Dior.Service.Services.Mappers
             entity.IsActive = dto.IsActive;
             entity.TeamId = dto.TeamId;
             entity.LastEditAt = DateTime.UtcNow;
-            entity.LastEditBy = "System"; // TODO: récupérer l'utilisateur courant
+            entity.LastEditBy = dto.LastEditBy;
         }
     }
 }

@@ -29,15 +29,9 @@ public class PrivilegeController : ControllerBase
                 {
                     list.Add(new PrivilegeDto
                     {
-                        Id = reader.GetInt64(reader.GetOrdinal("id")),
+                        Id = (int)reader.GetInt64(reader.GetOrdinal("id")),
                         Name = reader.GetString(reader.GetOrdinal("name")),
                         Description = reader.IsDBNull(reader.GetOrdinal("description")) ? null : reader.GetString(reader.GetOrdinal("description")),
-                        IsConfigurableRead = reader.GetBoolean(reader.GetOrdinal("isConfigurableRead")),
-                        IsConfigurableDelete = reader.GetBoolean(reader.GetOrdinal("isConfigurableDelete")),
-                        IsConfigurableAdd = reader.GetBoolean(reader.GetOrdinal("isConfigurableAdd")),
-                        IsConfigurableModify = reader.GetBoolean(reader.GetOrdinal("isConfigurableModify")),
-                        IsConfigurableStatus = reader.GetBoolean(reader.GetOrdinal("isConfigurableStatus")),
-                        IsConfigurableExecution = reader.GetBoolean(reader.GetOrdinal("isConfigurableExecution")),
                         LastEditBy = reader.GetString(reader.GetOrdinal("lastEditBy")),
                         LastEditAt = reader.GetDateTime(reader.GetOrdinal("lastEditAt"))
                     });
@@ -63,7 +57,7 @@ public class PrivilegeController : ControllerBase
                 {
                     result = new PrivilegeDto
                     {
-                        Id = reader.GetInt64(reader.GetOrdinal("id")),
+                        Id = (int)reader.GetInt64(reader.GetOrdinal("id")),
                         Name = reader.GetString(reader.GetOrdinal("name")),
                         Description = reader.IsDBNull(reader.GetOrdinal("description")) ? null : reader.GetString(reader.GetOrdinal("description")),
                         LastEditBy = reader.GetString(reader.GetOrdinal("lastEditBy")),

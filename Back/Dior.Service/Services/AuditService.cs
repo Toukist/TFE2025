@@ -29,7 +29,7 @@ namespace Dior.Service.Services
             var auditLog = new AuditLog
             {
                 UserId = userId,
-                Operation = action,
+                Action = action,
                 TableName = entity,
                 RecordId = entityId,
                 OldValues = oldValuesJson,

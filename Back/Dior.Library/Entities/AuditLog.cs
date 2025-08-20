@@ -16,15 +16,17 @@ namespace Dior.Library.Entities
 
         [Required]
         [MaxLength(50)]
-        public string Operation { get; set; } = string.Empty;
+        public string Action { get; set; } = string.Empty;
 
         public int? RecordId { get; set; }
 
+        public string? Details { get; set; }
         public string? OldValues { get; set; }
         public string? NewValues { get; set; }
 
-        public int? UserId { get; set; }
+        public long? UserId { get; set; }
 
+        public DateTime Timestamp { get; set; }
         public DateTime CreatedAt { get; set; }
 
         [MaxLength(100)]

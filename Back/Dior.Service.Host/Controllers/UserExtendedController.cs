@@ -1,6 +1,6 @@
 using Dior.Library.DTO;
+using Dior.Library.Interfaces.DAOs;
 using Dior.Service.Services;
-using Dior.Service.DAO.UserInterfaces; // Pour DA_User
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -13,9 +13,9 @@ namespace Dior.Service.Host.Controllers
     public class UserExtendedController : ControllerBase
     {
         private readonly ITeamService _teamService;
-        private readonly DA_User _userDao;
+        private readonly IDA_User _userDao;
 
-        public UserExtendedController(ITeamService teamService, DA_User userDao)
+        public UserExtendedController(ITeamService teamService, IDA_User userDao)
         {
             _teamService = teamService;
             _userDao = userDao;
@@ -40,7 +40,7 @@ namespace Dior.Service.Host.Controllers
             try
             {
                 // Récupérer l'utilisateur de base
-                var user = await Task.Run(() => _userDao.Get((int)id));
+                var user = await Task.Run(() => _userDao.GetUserById(id));
                 if (user == null)
                     return NotFound($"Utilisateur avec l'ID {id} non trouvé");
 
@@ -58,9 +58,6 @@ namespace Dior.Service.Host.Controllers
                     } : null;
                 }
 
-                // Récupérer les rôles de l'utilisateur
-                var roles = await Task.Run(() => _userDao.GetUserRoles(id));
-
                 // Construire le DTO complet
                 var userFull = new UserFullDto
                 {
@@ -72,12 +69,11 @@ namespace Dior.Service.Host.Controllers
                     IsActive = user.IsActive,
                     TeamId = user.TeamId ?? 0,
                     TeamName = team?.Name ?? string.Empty,
-                    Username = user.Name, // Legacy mapping
-                    UserName = user.Name, // Nouveau mapping
+                    Username = user.Username,
                     BadgePhysicalNumber = null, // TODO: récupérer depuis UserAccess si nécessaire
                     
                     // Informations étendues de base
-                    Roles = roles ?? new List<string>()
+                    Roles = new List<string>() // TODO: implémenter récupération des rôles
                 };
 
                 return Ok(userFull);
@@ -97,7 +93,7 @@ namespace Dior.Service.Host.Controllers
         {
             try
             {
-                var user = await Task.Run(() => _userDao.Get((int)id));
+                var user = await Task.Run(() => _userDao.GetUserById(id));
                 if (user == null)
                     return NotFound($"Utilisateur avec l'ID {id} non trouvé");
 

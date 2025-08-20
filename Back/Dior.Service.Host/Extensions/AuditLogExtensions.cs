@@ -1,5 +1,5 @@
-﻿using Dior.Library.Entities;
-using Dior.Service.Host.Models;
+﻿using Dior.Library.DTO;
+using Dior.Library.Entities;
 
 namespace Dior.Service.Host.Extensions
 {
@@ -10,11 +10,11 @@ namespace Dior.Service.Host.Extensions
             return new AuditLogDto
             {
                 Id = log.Id,
-                UserId = log.UserId ?? 0, // Correction CS0266 et CS8629 : utilise 0 si UserId est null
-                UserName = log.User?.Name,
+                UserId = log.UserId,
+                Username = log.User?.Username,
                 Action = log.Action,
                 TableName = log.TableName,
-                RecordId = log.RecordId ?? 0, // Correction similaire pour RecordId qui est aussi nullable
+                RecordId = log.RecordId,
                 Details = log.Details,
                 Timestamp = log.Timestamp
             };

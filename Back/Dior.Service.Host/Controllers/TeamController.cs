@@ -2,7 +2,7 @@
 // TeamController.cs
 // ----------------------------
 using Dior.Library.DTO;
-using Dior.Service.DAO.UserInterfaces;
+using Dior.Library.Interfaces.DAOs;
 using Dior.Service.Services; 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,9 +16,9 @@ namespace Dior.Service.Host.Controllers
     public class TeamController : ControllerBase
     {
         private readonly ITeamService _service;
-        private readonly DA_User _userDao;
+        private readonly IDA_User _userDao;
 
-        public TeamController(ITeamService service, DA_User userDao)
+        public TeamController(ITeamService service, IDA_User userDao)
         {
             _service = service;
             _userDao = userDao;
@@ -61,23 +61,20 @@ namespace Dior.Service.Host.Controllers
 
             // Récupérer les utilisateurs de cette équipe
             var users = await Task.Run(() => 
-                _userDao.GetAllUsersWithTeam().Where(u => u.TeamId == id).ToList());
+                _userDao.GetAllUsers().Where(u => u.TeamId == id).ToList());
             
             // Convert User entities to UserDto for the API response
             var userDtos = users.Select(u => new UserDto
             {
                 Id = u.Id,
-                UserName = u.Username,
+                Username = u.Username,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 Email = u.Email,
                 Phone = u.Phone,
-                TeamId = u.TeamId,
-                IsActive = u.IsActive,
-                CreatedAt = u.CreatedAt,
-                CreatedBy = u.CreatedBy,
-                LastEditAt = u.LastEditAt,
-                LastEditBy = u.LastEditBy
+                TeamId = u.TeamId ?? 0, // Conversion explicite pour éviter l'erreur nullable
+                IsActive = u.IsActive
+                // Enlever les propriétés qui ne sont pas dans UserDto ou mapper différemment
             }).ToList();
             
             return Ok(userDtos);
@@ -144,7 +141,7 @@ namespace Dior.Service.Host.Controllers
 
             // Vérifier s'il y a des utilisateurs dans cette équipe
             var teamMembers = await Task.Run(() => 
-                _userDao.GetAllUsersWithTeam().Where(u => u.TeamId == id).ToList());
+                _userDao.GetAllUsers().Where(u => u.TeamId == id).ToList());
 
             if (teamMembers.Any())
             {

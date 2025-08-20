@@ -16,6 +16,9 @@ using Dior.Library.Interfaces.UserInterface.Services; // Pour les interfaces ser
 using Dior.Service.Services.UserInterfaces; // Pour les implémentations services
 using Dior.Service.DAO.UserInterfaces; // Pour les DAO User Interfaces
 using Dior.Library.Service.DAO; // Pour INotificationDao etc.
+using Dior.Library.Interfaces.DAOs; // Pour les nouvelles interfaces DAO
+using Dior.Library.Interfaces.Services; // Pour les nouvelles interfaces Services
+using Dior.Service.DAOs; // Pour les nouvelles implémentations DAO
 
 var builder = WebApplication.CreateBuilder(args);
 Console.WriteLine("🔥 DÉMARRAGE DE L'APPLICATION DIOR ENTERPRISE 🔥");
@@ -180,18 +183,16 @@ builder.Services.AddScoped<IContractDao>(sp =>
 
 builder.Services.AddScoped<INotificationDao, NotificationDao>();
 
-// DAOs pour User Interfaces - need IConfiguration
-builder.Services.AddScoped<IDA_User>(sp =>
-    new DA_User(sp.GetRequiredService<IConfiguration>(), sp.GetRequiredService<DiorDbContext>()));
+// DAOs pour User Interfaces - use correct interfaces
+builder.Services.AddScoped<IDA_User, Dior.Service.DAOs.DA_User>();
+builder.Services.AddScoped<IDA_Access, Dior.Service.DAOs.DA_Access>();
+builder.Services.AddScoped<IDA_AuditLog, Dior.Service.DAOs.DA_AuditLog>();
 
 builder.Services.AddScoped<IDA_UserAccessCompetency>(sp =>
     new DA_UserAccessCompetency(sp.GetRequiredService<IConfiguration>()));
 
 builder.Services.AddScoped<IDA_AccessCompetency>(sp =>
     new DA_AccessCompetency(sp.GetRequiredService<IConfiguration>()));
-
-builder.Services.AddScoped<IDA_Access>(sp =>
-    new DA_Access(sp.GetRequiredService<IConfiguration>()));
 
 builder.Services.AddScoped<IDA_RoleDefinition>(sp =>
     new DA_RoleDefinition(sp.GetRequiredService<IConfiguration>()));
@@ -216,6 +217,9 @@ builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<TaskService>(); // Garder pour compatibilité existante
 builder.Services.AddScoped<ContractService>(); // Garder pour compatibilité existante
 
+// Register the correct UserService implementation
+builder.Services.AddScoped<Dior.Library.Interfaces.Services.IUserService, Dior.Service.Services.UserService>();
+
 // Services Interfaces Utilisateur
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IAccessCompetencyService, AccessCompetencyService>();
@@ -224,7 +228,6 @@ builder.Services.AddScoped<IRoleDefinitionService, RoleDefinitionService>();
 builder.Services.AddScoped<IPrivilegeService, PrivilegeService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<IRoleDefinitionPrivilegeService, RoleDefinitionPrivilegeService>();
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserAccessService, UserAccessService>();
 
 // Corrigé pour éviter l'ambiguïté

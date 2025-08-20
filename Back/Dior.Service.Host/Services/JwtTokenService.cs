@@ -38,16 +38,16 @@ namespace Dior.Service.Host.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Name, user.UserName ?? user.Username ?? string.Empty)
+                new Claim(ClaimTypes.Name, user.Username ?? string.Empty)
             };
 
-            // FIX: user.Roles est maintenant List<string>? et non List<RoleDto>
+            // FIX: user.Roles est maintenant List<RoleDefinitionDto>
             if (user.Roles != null)
             {
-                foreach (var roleName in user.Roles)
+                foreach (var role in user.Roles)
                 {
-                    if (!string.IsNullOrWhiteSpace(roleName))
-                        claims.Add(new Claim(ClaimTypes.Role, roleName));
+                    if (role != null && !string.IsNullOrWhiteSpace(role.Name))
+                        claims.Add(new Claim(ClaimTypes.Role, role.Name));
                 }
             }
 
