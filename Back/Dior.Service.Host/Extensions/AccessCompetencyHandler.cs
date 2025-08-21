@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using Dior.Library.Interfaces;
+using Dior.Library.Interfaces.UserInterface.Services;
 
 namespace Dior.Service.Host.Extensions
 {

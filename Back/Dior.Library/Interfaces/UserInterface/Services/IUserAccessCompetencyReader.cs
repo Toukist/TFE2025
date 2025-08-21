@@ -1,4 +1,4 @@
-namespace Dior.Library.Interfaces
+namespace Dior.Library.Interfaces.UserInterface.Services
 {
     public interface IUserAccessCompetencyReader
     {

@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using System.Text.Json;
 
-namespace Dior.Library.Interfaces
+namespace Dior.Library.Interfaces.UserInterface.Services
 {
     /// <summary>
     /// Service d'audit minimal pour tracer les mutations clés

@@ -1,77 +1,95 @@
-using Dior.Library.Interfaces.Services;
-using Dior.Library.Interfaces.DAOs;
-using Dior.Library.Entities;
+using AutoMapper;
+using BCrypt.Net;
+using Dior.Database.DTOs.User;
 using Dior.Library.DTOs;
+using Dior.Library.Entities;
+using Dior.Library.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
-namespace Dior.Service.Services
+namespace Dior.Service.Services;
+
+public class UserService : IUserService
 {
-    public class UserService : IUserService
+    private readonly DiorDbContext _context;
+    private readonly IMapper _mapper;
+
+    public UserService(DiorDbContext context, IMapper mapper)
     {
-        private readonly IDA_User _DA_User;
+        _context = context;
+        _mapper = mapper;
+    }
 
-        public UserService(IDA_User daUser)
-        {
-            _DA_User = daUser ?? throw new ArgumentNullException(nameof(daUser));
-        }
+    public async Task<IEnumerable<UserDto>> GetAllAsync()
+    {
+        var users = await _context.Users
+            .Include(u => u.Team)
+            .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.RoleDefinition)
+            .ToListAsync();
 
-        public User Authenticate(string username, string password)
-        {
-            if (string.IsNullOrWhiteSpace(username)) return null;
-            if (string.IsNullOrWhiteSpace(password)) return null;
+        return _mapper.Map<IEnumerable<UserDto>>(users);
+    }
 
-            var user = _DA_User.GetUserByUsername(username);
-            if (user != null && user.IsActive)
-            {
-                // TODO: Vérifier le hash du mot de passe
-                return user;
-            }
-            return null;
-        }
+    public async Task<UserDto?> GetByIdAsync(int id)
+    {
+        var user = await _context.Users
+            .Include(u => u.Team)
+            .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.RoleDefinition)
+            .FirstOrDefaultAsync(u => u.Id == id);
 
-        public List<RoleDefinitionDto> GetUserRoles(long userId)
-        {
-            // TODO: Implémenter la récupération des rôles via DAO
-            return new List<RoleDefinitionDto>();
-        }
+        return user == null ? null : _mapper.Map<UserDto>(user);
+    }
 
-        public List<PrivilegeDto> GetUserPrivileges(long userId)
-        {
-            // TODO: Implémenter la récupération des privilèges via DAO
-            return new List<PrivilegeDto>();
-        }
+    public async Task<UserDto?> GetByEmailAsync(string email)
+    {
+        var user = await _context.Users
+            .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.RoleDefinition)
+            .FirstOrDefaultAsync(u => u.Email == email);
 
-        public User GetUserById(long userId)
-        {
-            return _DA_User.GetUserById(userId);
-        }
+        return user == null ? null : _mapper.Map<UserDto>(user);
+    }
 
-        public IEnumerable<User> GetAllUsers()
-        {
-            return _DA_User.GetAllUsers();
-        }
+    public async Task<UserDto> CreateAsync(CreateUserDto createUserDto)
+    {
+        var user = _mapper.Map<User>(createUserDto);
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password);
+        user.CreatedAt = DateTime.UtcNow;
 
-        public void CreateUser(User user, string password)
-        {
-            if (user == null) throw new ArgumentNullException(nameof(user));
-            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Password cannot be null or empty", nameof(password));
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
 
-            // TODO: Hash the password
-            user.PasswordHash = password; // Remplacer par BCrypt
-            user.CreatedAt = DateTime.UtcNow;
-            _DA_User.CreateUser(user);
-        }
+        return _mapper.Map<UserDto>(user);
+    }
 
-        public void UpdateUser(User user)
-        {
-            if (user == null) throw new ArgumentNullException(nameof(user));
+    public async Task<bool> UpdateAsync(int id, UpdateUserDto updateUserDto)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user == null) return false;
 
-            user.LastEditAt = DateTime.UtcNow;
-            _DA_User.UpdateUser(user);
-        }
+        _mapper.Map(updateUserDto, user);
+        user.LastEditAt = DateTime.UtcNow;
 
-        public void DeleteUser(long userId)
-        {
-            _DA_User.DeleteUser(userId);
-        }
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user == null) return false;
+
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> AuthenticateAsync(string email, string password)
+    {
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Email == email && u.IsActive);
+
+        return user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
     }
 }

@@ -1,4 +1,4 @@
-using Dior.Library.Interfaces;
+using Dior.Library.Interfaces.UserInterface.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dior.Service.Services

@@ -1,9 +1,9 @@
-using Dior.Library.Interfaces;
 using Dior.Library.Entities;
 using Dior.Service.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text.Json;
+using Dior.Library.Interfaces.UserInterface.Services;
 
 namespace Dior.Service.Services
 {

@@ -1,17 +1,6 @@
-﻿using Dior.Library.DAO;
-using Dior.Library.Entities;
-using Dior.Library.Interfaces;
-using Dior.Library.Interfaces.DAOs;
-using Dior.Library.Interfaces.Services;
-using Dior.Library.Interfaces.UserInterface.Services;
-using Dior.Library.Service.DAO;
-using Dior.Service.DAO;
-using Dior.Service.DAO.UserInterfaces;
-using Dior.Service.DAOs;
-using Dior.Service.Host.Extensions;
-using Dior.Service.Host.Services; // Pour JwtTokenService et SwaggerAuthMiddleware
+﻿using Dior.Library.DTOs;
+using Dior.Service.Host.Services;
 using Dior.Service.Services;
-using Dior.Service.Services.UserInterfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -20,58 +9,19 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 1. Injection de Dépendances (Le cœur de la correction de l'erreur 500) ---
-
-// Enregistrement du DbContext
+// Configuration de la base de données
 builder.Services.AddDbContext<DiorDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DIOR_DB")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DIOR_DB"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure()
+    ));
 
-// Enregistrement de tous les DAOs (couche d'accès aux données)
-builder.Services.AddScoped<IDA_User, DA_User>();
-builder.Services.AddScoped<IDA_Access, DA_Access>();
-builder.Services.AddScoped<IDA_RoleDefinition, DA_RoleDefinition>();
-builder.Services.AddScoped<IDA_Privilege, DA_Privilege>();
-builder.Services.AddScoped<IDA_AccessCompetency, DA_AccessCompetency>();
-builder.Services.AddScoped<IDA_UserRole, DA_UserRole>();
-builder.Services.AddScoped<IDA_UserAccessCompetency, DA_UserAccessCompetency>();
-builder.Services.AddScoped<IDA_RoleDefinitionPrivilege, DA_RoleDefinitionPrivilege>();
-builder.Services.AddScoped<ITeamDao, DA_Team>();
-builder.Services.AddScoped<ITaskDao, TaskDao>();
-builder.Services.AddScoped<IContractDao, ContractDao>();
-builder.Services.AddScoped<INotificationDao, NotificationDao>();
-// Note : IDA_AuditLog n'a pas d'implémentation directe, il est géré par AuditService
+// Configuration JWT
+var jwtSecret = builder.Configuration["Jwt:Secret"]
+    ?? throw new InvalidOperationException("JWT Secret manquant dans la configuration");
 
-// Enregistrement de tous les Services (couche métier)
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IAccessService, AccessService>();
-builder.Services.AddScoped<IRoleDefinitionService, RoleDefinitionService>();
-builder.Services.AddScoped<IPrivilegeService, PrivilegeService>();
-builder.Services.AddScoped<IAccessCompetencyService, AccessCompetencyService>();
-builder.Services.AddScoped<IUserRoleService, UserRoleService>();
-builder.Services.AddScoped<IUserAccessService, UserAccessService>();
-builder.Services.AddScoped<IUserAccessCompetencyService, Dior.Service.Host.Services.UserAccessCompetencyService>();
-builder.Services.AddScoped<IRoleDefinitionPrivilegeService, RoleDefinitionPrivilegeService>();
-builder.Services.AddScoped<ITeamService, TeamService>();
-builder.Services.AddScoped<TaskService>(); // Enregistrement de la classe concrète
-builder.Services.AddScoped<ContractService>(); // Enregistrement de la classe concrète
-builder.Services.AddScoped<INotificationService, NotificationService>();
-builder.Services.AddScoped<IAuditService, AuditService>();
-builder.Services.AddScoped<IAuditLogService, AuditLogService>();
+var key = Encoding.UTF8.GetBytes(jwtSecret);
 
-// Service pour la génération des tokens JWT
-builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
-// Service pour les rôles
-builder.Services.AddScoped<IRoleService, RoleService>();
-
-
-// --- 2. Configuration de l'application ---
-
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-
-
-// --- 3. Configuration de l'Authentification JWT ---
-var jwtKey = builder.Configuration["Jwt:Secret"] ?? throw new InvalidOperationException("La clé secrète JWT 'Jwt:Secret' est manquante dans la configuration.");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -83,67 +33,73 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ClockSkew = TimeSpan.Zero
         };
     });
 
-builder.Services.AddAuthorization();
+// Enregistrement des services
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAccessService, AccessService>();
+builder.Services.AddScoped<IRoleDefinitionService, RoleDefinitionService>();
+builder.Services.AddScoped<IPrivilegeService, PrivilegeService>();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
+// Configuration CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 
-// --- 4. Configuration de Swagger ---
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dior API", Version = "v1" });
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
         BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Entrez 'Bearer' [espace] puis votre token JWT."
+        Description = "Entrez le token JWT"
     });
+
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
             },
-            new string[] {}
+            Array.Empty<string>()
         }
     });
 });
 
-
-// --- Création de l'application ---
 var app = builder.Build();
 
-
-# --- 5. Configuration du Pipeline HTTP ---
+// Configuration du pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage(); // Affiche les erreurs détaillées en développement
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dior API v1"));
+    app.UseSwaggerUI();
 }
-else
-{
-    // En production, on peut ajouter une page d'erreur générique et HSTS
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
-}
-
-// Middleware d'authentification de votre backup pour Swagger
-// Assurez-vous que la classe SwaggerAuthMiddleware est bien dans votre projet
-app.UseMiddleware<SwaggerAuthMiddleware>();
 
 app.UseHttpsRedirection();
-
-// La séquence est importante : d'abord on authentifie, ensuite on autorise.
+app.UseCors("AllowAngularApp");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
