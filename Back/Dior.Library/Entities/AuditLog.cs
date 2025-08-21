@@ -12,27 +12,29 @@ namespace Dior.Library.Entities
 
         [Required]
         [MaxLength(50)]
-        public string TableName { get; set; } = string.Empty;
+        public string Action { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(50)]
-        public string Action { get; set; } = string.Empty;
+        public string EntityType { get; set; } = string.Empty; // Changé de TableName à EntityType
 
-        public int? RecordId { get; set; }
+        public int EntityId { get; set; } // Changé de RecordId à EntityId
 
-        public string? Details { get; set; }
         public string? OldValues { get; set; }
         public string? NewValues { get; set; }
 
-        public long? UserId { get; set; }
+        public int UserId { get; set; } // Changé de long? à int
 
         public DateTime Timestamp { get; set; }
-        public DateTime CreatedAt { get; set; }
 
-        [MaxLength(100)]
-        public string CreatedBy { get; set; } = string.Empty;
+        [MaxLength(45)]
+        public string? IpAddress { get; set; } // Ajouté
+
+        [MaxLength(500)]
+        public string? UserAgent { get; set; } // Ajouté
 
         // Navigation
+        [ForeignKey("UserId")]
         public virtual User? User { get; set; }
     }
 }

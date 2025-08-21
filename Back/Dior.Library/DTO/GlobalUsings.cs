@@ -33,9 +33,7 @@ global using UpdateRoleDefinitionDto = Dior.Library.DTO.Role.UpdateRoleDefinitio
 global using PrivilegeDto = Dior.Library.DTO.Role.PrivilegeDto;
 global using CreatePrivilegeDto = Dior.Library.DTO.Role.CreatePrivilegeDto;
 global using UpdatePrivilegeDto = Dior.Library.DTO.Role.UpdatePrivilegeDto;
-global using UserRoleDto = Dior.Library.DTO.Role.UserRoleDto;
-global using CreateUserRoleDto = Dior.Library.DTO.Role.CreateUserRoleDto;
-global using UpdateUserRoleDto = Dior.Library.DTO.Role.UpdateUserRoleDto;
+// UserRoleDto, CreateUserRoleDto, UpdateUserRoleDto sont maintenant dans RoleDefinitionDto.cs
 global using RoleDefinitionPrivilegeDto = Dior.Library.DTO.Role.RoleDefinitionPrivilegeDto;
 global using CreateRoleDefinitionPrivilegeDto = Dior.Library.DTO.Role.CreateRoleDefinitionPrivilegeDto;
 global using UpdateRoleDefinitionPrivilegeDto = Dior.Library.DTO.Role.UpdateRoleDefinitionPrivilegeDto;

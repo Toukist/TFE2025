@@ -22,8 +22,16 @@ builder.Services.AddControllers()
 builder.Services.AddDbContext<DiorDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DIOR_DB")));
 
-// Services simplifiés
+// Services métier
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<TeamService>();
+builder.Services.AddScoped<ProjetService>();
+builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<ContractService>();
+builder.Services.AddScoped<AccessService>();
+builder.Services.AddScoped<RoleService>();
+builder.Services.AddScoped<UserRoleService>();
+builder.Services.AddScoped<AuditLogService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 // Logging

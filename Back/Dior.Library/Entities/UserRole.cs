@@ -8,10 +8,15 @@ namespace Dior.Library.Entities
     public class UserRole
     {
         [Key]
-        public long Id { get; set; } // BIGINT dans la base
+        public int Id { get; set; } // Changé de long à int pour cohérence
 
-        public long RoleDefinitionId { get; set; } // BIGINT
-        public long UserId { get; set; } // BIGINT
+        public int RoleDefinitionId { get; set; } // Changé de long à int
+        public int UserId { get; set; } // Changé de long à int
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Ajouté
+        
+        [MaxLength(50)]
+        public string CreatedBy { get; set; } = string.Empty; // Ajouté
 
         [Required]
         [MaxLength(50)]
@@ -19,7 +24,7 @@ namespace Dior.Library.Entities
 
         public DateTime LastEditAt { get; set; }
 
-        // Navigation properties (utiliser int pour les FK car User.Id est int)
+        // Navigation properties
         [ForeignKey("UserId")]
         public virtual User? User { get; set; }
 

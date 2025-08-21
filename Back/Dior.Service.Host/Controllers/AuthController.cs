@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
-namespace Dior.Service.Host.Controllers.Auth
+namespace Dior.Service.Host.Controllers
 {
     /// <summary>
     /// Contrôleur d'authentification pour le système Dior Enterprise
