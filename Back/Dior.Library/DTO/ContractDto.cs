@@ -1,41 +1,22 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Dior.Library.DTO
+namespace Dior.Library.DTOs
 {
     public class ContractDto
     {
         public int Id { get; set; }
-        
-        // Employé
+        public string ContractNumber { get; set; } = string.Empty;
+        public string ContractType { get; set; } = string.Empty;
         public long UserId { get; set; }
-        public string UserFullName { get; set; } = string.Empty;
-        public string UserTeamName { get; set; } = string.Empty;
-        
-        // Détails contrat
-        public string ContractType { get; set; } = "CDI"; // CDI, CDD, Stage, Alternance
+        public string? UserFullName { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime? EndDate { get; set; } // Null si CDI
-        
+        public DateTime? EndDate { get; set; }
         public decimal Salary { get; set; }
-        public string Currency { get; set; } = "EUR";
-        public string PaymentFrequency { get; set; } = "Mensuel";
-        
-        // Document
-        public string FileName { get; set; } = string.Empty;
-        public string FileUrl { get; set; } = string.Empty;
-        
-        // Statut
-        public string Status { get; set; } = "Actif"; // Actif, Expiré, Résilié
-        
-        // Audit
-        public DateTime UploadDate { get; set; }
-        public string UploadedBy { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
         public DateTime? LastEditAt { get; set; }
         public string? LastEditBy { get; set; }
-
-        // Compatibility properties
-        public DateTime UploadedAt => UploadDate;
-        public bool IsFileAvailable => File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", FileUrl?.TrimStart('/') ?? string.Empty));
     }
 
     public class CreateContractRequest

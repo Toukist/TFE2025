@@ -4,10 +4,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using UserDtoUsers = Dior.Library.DTO.Users.UserDto; // Alias explicite
-using CreateUserDtoUsers = Dior.Library.DTO.Users.CreateUserDto;
-using UpdateUserDtoUsers = Dior.Library.DTO.Users.UpdateUserDto;
-using Dior.Library.DTO;
+using Dior.Library.DTOs;
 
 namespace Dior.Service.Host.Controllers
 {
@@ -32,7 +29,7 @@ namespace Dior.Service.Host.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<UserDtoUsers>>> GetAll()
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetAll()
         {
             try
             {
@@ -51,11 +48,11 @@ namespace Dior.Service.Host.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserDtoUsers>> GetById(int id)
+        public async Task<ActionResult<UserDto>> GetById(int id)
         {
             try
             {
-                UserDtoUsers? dto = null;
+                UserDto? dto = null;
                 await using (var conn = CreateConnection())
                 await using (var cmd = new SqlCommand("sp_GetUserById", conn) { CommandType = CommandType.StoredProcedure })
                 {
@@ -69,7 +66,7 @@ namespace Dior.Service.Host.Controllers
                 }
                 if (dto == null) return NotFound();
 
-                dto.Roles = await GetUserRoleNamesAsync(id);
+                dto.Roles = await GetUserRoleDefinitionsAsync(id);
                 return Ok(dto);
             }
             catch (SqlException ex)
@@ -83,15 +80,13 @@ namespace Dior.Service.Host.Controllers
         /// Obtenir les infos complètes d'un utilisateur avec équipe et manager
         /// </summary>
         [HttpGet("{id}/full")]
-        public async Task<ActionResult<UserDtoUsers>> GetFullInfo(long id)
+        public async Task<ActionResult<UserDto>> GetFullInfo(long id)
         {
             try
             {
-                // Get basic user info
                 var user = await GetUserWithRolesAsync((int)id);
                 if (user == null) return NotFound();
 
-                // The user is already a UserDtoUsers which has all the needed properties
                 return Ok(user);
             }
             catch (Exception ex)
@@ -106,14 +101,12 @@ namespace Dior.Service.Host.Controllers
         /// </summary>
         [HttpGet("my-team")]
         [Authorize(Roles = "Manager")]
-        public async Task<ActionResult<List<UserDtoUsers>>> GetMyTeamMembers()
+        public async Task<ActionResult<List<UserDto>>> GetMyTeamMembers()
         {
             try
             {
                 var managerId = GetCurrentUserId();
-                // TODO: Implémenter la logique pour récupérer l'équipe du manager
-                // Pour l'instant, retourner une liste vide
-                var members = new List<UserDtoUsers>();
+                var members = new List<UserDto>();
                 
                 return Ok(members);
             }
@@ -129,7 +122,7 @@ namespace Dior.Service.Host.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserDtoUsers>> Create([FromBody] CreateUserDtoUsers dto)
+        public async Task<ActionResult<UserDto>> Create([FromBody] UserCreateDto dto)
         {
             if (dto == null) return BadRequest("Payload manquant");
             if (!ModelState.IsValid) return ValidationProblem(ModelState);
@@ -158,7 +151,6 @@ namespace Dior.Service.Host.Controllers
                         AddParam(cmd, "@Email", dto.Email, SqlDbType.NVarChar, 255);
                         AddParam(cmd, "@Phone", (object?)dto.Phone ?? DBNull.Value, SqlDbType.NVarChar, 50);
                         AddParam(cmd, "@PasswordHash", (object?)passwordHash ?? DBNull.Value, SqlDbType.NVarChar, 200);
-                        // TODO: Ajouter @TeamId si la SP le supporte
                         var scalar = await cmd.ExecuteScalarAsync();
                         newId = Convert.ToInt32(scalar);
                     }
@@ -199,7 +191,7 @@ namespace Dior.Service.Host.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateUserDtoUsers dto)
+        public async Task<IActionResult> Update(int id, [FromBody] UserUpdateDto dto)
         {
             if (dto == null) return BadRequest("Payload manquant");
             if (id != dto.Id) return BadRequest("Id incohérent");
@@ -225,13 +217,12 @@ namespace Dior.Service.Host.Controllers
                     {
                         AddParam(cmd, "@Id", id, SqlDbType.Int);
                         AddParam(cmd, "@IsActive", dto.IsActive, SqlDbType.Bit);
-                        AddParam(cmd, "@Username", dto.UserName, SqlDbType.NVarChar, 100);
+                        AddParam(cmd, "@Username", dto.Username, SqlDbType.NVarChar, 100);
                         AddParam(cmd, "@LastName", dto.LastName, SqlDbType.NVarChar, 100);
                         AddParam(cmd, "@FirstName", dto.FirstName, SqlDbType.NVarChar, 100);
                         AddParam(cmd, "@Email", dto.Email, SqlDbType.NVarChar, 255);
                         AddParam(cmd, "@Phone", (object?)dto.Phone ?? DBNull.Value, SqlDbType.NVarChar, 50);
                         AddParam(cmd, "@PasswordHash", (object?)passwordHash ?? DBNull.Value, SqlDbType.NVarChar, 200);
-                        // TODO: Ajouter @TeamId si supporté
                         await cmd.ExecuteNonQueryAsync();
                     }
 
@@ -306,27 +297,29 @@ namespace Dior.Service.Host.Controllers
             p.Value = value ?? DBNull.Value;
         }
 
-        private static UserDtoUsers MapUser(SqlDataReader r)
+        private static UserDto MapUser(SqlDataReader r)
         {
-            return new UserDtoUsers
+            return new UserDto
             {
                 Id = r.GetInt32(r.GetOrdinal("Id")),
-                UserName = SafeString(r, "Username") ?? string.Empty,
+                Username = SafeString(r, "Username") ?? string.Empty,
                 FirstName = SafeString(r, "FirstName") ?? string.Empty,
                 LastName = SafeString(r, "LastName") ?? string.Empty,
-                Email = SafeString(r, "Email") ?? string.Empty,
+                Email = SafeString(r, "Email"),
                 Phone = SafeString(r, "Phone"),
                 TeamName = SafeString(r, "TeamName"),
                 IsActive = SafeBool(r, "IsActive"),
+                CreatedAt = SafeDateTime(r, "CreatedAt"),
+                CreatedBy = SafeString(r, "CreatedBy") ?? string.Empty,
                 LastEditAt = SafeDateTimeNullable(r, "LastEditAt"),
                 LastEditBy = SafeString(r, "LastEditBy"),
-                Roles = new List<string>()
+                Roles = new List<RoleDefinitionDto>()
             };
         }
 
-        private async Task<UserDtoUsers?> GetUserWithRolesAsync(int id)
+        private async Task<UserDto?> GetUserWithRolesAsync(int id)
         {
-            UserDtoUsers? user = null;
+            UserDto? user = null;
             await using (var conn = CreateConnection())
             await using (var cmd = new SqlCommand("sp_GetUserById", conn) { CommandType = CommandType.StoredProcedure })
             {
@@ -340,14 +333,14 @@ namespace Dior.Service.Host.Controllers
             }
             if (user != null)
             {
-                user.Roles = await GetUserRoleNamesAsync(id);
+                user.Roles = await GetUserRoleDefinitionsAsync(id);
             }
             return user;
         }
 
-        private async Task<List<string>> GetUserRoleNamesAsync(int userId)
+        private async Task<List<RoleDefinitionDto>> GetUserRoleDefinitionsAsync(int userId)
         {
-            var roles = new List<string>();
+            var roles = new List<RoleDefinitionDto>();
             await using var conn = CreateConnection();
             await using var cmd = new SqlCommand("sp_GetUserRoleList", conn) { CommandType = CommandType.StoredProcedure };
             cmd.Parameters.AddWithValue("@UserId", userId);
@@ -355,8 +348,15 @@ namespace Dior.Service.Host.Controllers
             await using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                var rn = SafeString(reader, "RoleName");
-                if (!string.IsNullOrWhiteSpace(rn) && !roles.Contains(rn)) roles.Add(rn);
+                var role = new RoleDefinitionDto
+                {
+                    Id = SafeInt(reader, "RoleId") ?? 0,
+                    Name = SafeString(reader, "RoleName") ?? string.Empty
+                };
+                if (role.Id > 0 && !roles.Any(r => r.Id == role.Id))
+                {
+                    roles.Add(role);
+                }
             }
             return roles;
         }
@@ -372,15 +372,15 @@ namespace Dior.Service.Host.Controllers
             while (await reader.ReadAsync())
             {
                 int roleId = SafeInt(reader, "RoleId") ?? 0;
-                int linkId = SafeInt(reader, "Id") ?? 0; // Id de liaison si renvoyé
+                int linkId = SafeInt(reader, "Id") ?? 0;
                 if (roleId > 0 && !map.ContainsKey(roleId)) map.Add(roleId, linkId);
             }
             return map;
         }
 
-        private async Task<List<UserDtoUsers>> GetUsersWithRolesInternal()
+        private async Task<List<UserDto>> GetUsersWithRolesInternal()
         {
-            var dict = new Dictionary<int, UserDtoUsers>();
+            var dict = new Dictionary<int, UserDto>();
             await using var conn = CreateConnection();
             await using var cmd = new SqlCommand("sp_GetUsersWithRoles", conn) { CommandType = CommandType.StoredProcedure };
             await conn.OpenAsync();
@@ -391,24 +391,30 @@ namespace Dior.Service.Host.Controllers
                 if (userId == 0) continue;
                 if (!dict.TryGetValue(userId, out var u))
                 {
-                    u = new UserDtoUsers
+                    u = new UserDto
                     {
                         Id = userId,
-                        UserName = SafeString(reader, "Username") ?? string.Empty,
+                        Username = SafeString(reader, "Username") ?? string.Empty,
                         FirstName = SafeString(reader, "FirstName") ?? string.Empty,
                         LastName = SafeString(reader, "LastName") ?? string.Empty,
-                        Email = SafeString(reader, "Email") ?? string.Empty,
+                        Email = SafeString(reader, "Email"),
                         Phone = SafeString(reader, "Phone"),
                         TeamName = SafeString(reader, "TeamName"),
                         IsActive = SafeBool(reader, "IsActive"),
+                        CreatedAt = SafeDateTime(reader, "CreatedAt"),
+                        CreatedBy = SafeString(reader, "CreatedBy") ?? string.Empty,
                         LastEditAt = SafeDateTimeNullable(reader, "LastEditAt"),
                         LastEditBy = SafeString(reader, "LastEditBy"),
-                        Roles = new List<string>()
+                        Roles = new List<RoleDefinitionDto>()
                     };
                     dict.Add(userId, u);
                 }
+                var roleId = SafeInt(reader, "RoleId") ?? 0;
                 var roleName = SafeString(reader, "RoleName");
-                if (!string.IsNullOrWhiteSpace(roleName) && !u.Roles.Contains(roleName)) u.Roles.Add(roleName);
+                if (roleId > 0 && !string.IsNullOrWhiteSpace(roleName) && !u.Roles.Any(r => r.Id == roleId))
+                {
+                    u.Roles.Add(new RoleDefinitionDto { Id = roleId, Name = roleName });
+                }
             }
             return dict.Values.ToList();
         }
@@ -433,6 +439,11 @@ namespace Dior.Service.Host.Controllers
         {
             int idx; try { idx = r.GetOrdinal(col); } catch { return null; }
             return r.IsDBNull(idx) ? (int?)null : r.GetInt32(idx);
+        }
+        private static DateTime SafeDateTime(SqlDataReader r, string col)
+        {
+            int idx; try { idx = r.GetOrdinal(col); } catch { return DateTime.MinValue; }
+            return r.IsDBNull(idx) ? DateTime.MinValue : r.GetDateTime(idx);
         }
         private static DateTime? SafeDateTimeNullable(SqlDataReader r, string col)
         {

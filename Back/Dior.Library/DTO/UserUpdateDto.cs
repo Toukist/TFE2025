@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Dior.Library.DTO
+namespace Dior.Library.DTOs
 {
     public class UserUpdateDto
     {
         [Required(ErrorMessage = "L'ID est obligatoire")]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Required(ErrorMessage = "Le nom d'utilisateur est obligatoire")]
         [StringLength(100, MinimumLength = 2, ErrorMessage = "Le nom d'utilisateur doit contenir entre 2 et 100 caractères")]

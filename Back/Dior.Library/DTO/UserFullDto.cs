@@ -1,7 +1,9 @@
-﻿#nullable enable
+﻿using Dior.Library.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
-namespace Dior.Library.DTO
+#nullable enable
+namespace Dior.Library.DTOs
 {
     /// <summary>
     /// DTO complet pour l'utilisateur, utilisé pour l'édition et la consultation détaillée.

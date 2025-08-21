@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Dior.Library.DTO
+namespace Dior.Library.DTOs
 {
     /// <summary>
     /// DTO pour la réassignation d'une tâche à un autre opérateur

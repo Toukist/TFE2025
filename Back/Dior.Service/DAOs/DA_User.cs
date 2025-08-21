@@ -22,7 +22,7 @@ namespace Dior.Service.DAOs
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public User? GetUserByUsername(string username)
+        public User GetUserByUsername(string username)
         {
             if (string.IsNullOrWhiteSpace(username)) return null;
 
@@ -50,7 +50,7 @@ namespace Dior.Service.DAOs
             return null;
         }
 
-        public User? GetUserById(long id)
+        public User GetUserById(long id)
         {
             try
             {

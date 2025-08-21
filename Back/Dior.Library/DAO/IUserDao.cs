@@ -1,5 +1,5 @@
-using Dior.Library.DTO;
-using Dior.Library.Entities; // Ajouter pour User entity
+using Dior.Library.DTOs;
+using Dior.Library.Entities;
 
 namespace Dior.Library.DAO
 {
@@ -13,7 +13,6 @@ namespace Dior.Library.DAO
         void Del(int id);
         List<UserDto> GetAllWithTeam();
         List<string> GetUserRoles(long userId);
-
-        List<UserFullDto> GetUsersWithRoles(); // pour table Angular avec rôles 
+        List<UserFullDto> GetUsersWithRoles();
     }
 }

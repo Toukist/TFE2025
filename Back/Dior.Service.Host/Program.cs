@@ -60,6 +60,8 @@ builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 
 // Service pour la génération des tokens JWT
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+// Service pour les rôles
+builder.Services.AddScoped<IRoleService, RoleService>();
 
 
 // --- 2. Configuration de l'application ---
@@ -118,7 +120,7 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 
-// --- 5. Configuration du Pipeline HTTP ---
+# --- 5. Configuration du Pipeline HTTP ---
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage(); // Affiche les erreurs détaillées en développement

@@ -1,6 +1,6 @@
 ﻿using Dior.Library.Entities;
 
-namespace Dior.Library.DTO
+namespace Dior.Library.DTOs
 {
 
     public class AccessDto
@@ -8,11 +8,10 @@ namespace Dior.Library.DTO
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public string? BadgeNumber { get; set; }
-        public string? BadgePhysicalNumber { get; set; }
+        public int? BadgePhysicalNumber { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string? CreatedBy { get; set; }
+        public string CreatedBy { get; set; } = string.Empty;
         public DateTime? LastEditAt { get; set; }
         public string? LastEditBy { get; set; }
 
@@ -22,7 +21,6 @@ namespace Dior.Library.DTO
             Id = access.Id;
             Name = access.Name;
             Description = access.Description;
-            BadgeNumber = access.BadgeNumber;
             BadgePhysicalNumber = access.BadgePhysicalNumber;
             IsActive = access.IsActive;
             CreatedAt = access.CreatedAt;

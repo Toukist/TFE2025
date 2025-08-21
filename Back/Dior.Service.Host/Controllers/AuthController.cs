@@ -1,4 +1,4 @@
-﻿using Dior.Library.DTO;
+﻿using Dior.Library.DTOs;
 using Dior.Service.Host.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -85,16 +85,16 @@ namespace Dior.Service.Host.Controllers
         [ProducesResponseType(typeof(LoginResponseDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-        public IActionResult Login([FromBody] LoginRequestDto dto)
+        public IActionResult Login([FromBody] LoginRequestDTO dto)
         {
             if (dto is null)
                 return BadRequest("Corps de requête manquant.");
 
-            Dior.Library.DTO.UserDto user = null;
+            UserDto user = null;
 
-            if (!string.IsNullOrEmpty(dto.BadgePhysicalNumber))
+            if (!string.IsNullOrEmpty(dto.BadgePhysicalNumber?.ToString()))
             {
-                user = GetUserByBadge(dto.BadgePhysicalNumber);
+                user = GetUserByBadge(dto.BadgePhysicalNumber.ToString());
             }
             else if (!string.IsNullOrEmpty(dto.Username) && !string.IsNullOrEmpty(dto.Password))
             {
@@ -116,10 +116,8 @@ namespace Dior.Service.Host.Controllers
             
             return Ok(new LoginResponseDto 
             { 
-                User = user, 
                 Token = token,
-                ExpiresIn = 28800, // 8 heures en secondes
-                TokenType = "Bearer"
+                User = user
             });
         }
 
@@ -132,9 +130,9 @@ namespace Dior.Service.Host.Controllers
             Summary = "👤 Mon profil",
             Description = "Récupère les informations de l'utilisateur connecté"
         )]
-        [SwaggerResponse(200, "Informations utilisateur", typeof(Dior.Library.DTO.UserDto))]
+        [SwaggerResponse(200, "Informations utilisateur", typeof(UserDto))]
         [SwaggerResponse(401, "Non authentifié")]
-        [ProducesResponseType(typeof(Dior.Library.DTO.UserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
         public IActionResult GetCurrentUser()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -178,7 +176,7 @@ namespace Dior.Service.Host.Controllers
         }
 
         // Recherche utilisateur par badge
-        private Dior.Library.DTO.UserDto GetUserByBadge(string badgePhysicalNumber)
+        private UserDto GetUserByBadge(string badgePhysicalNumber)
         {
             using var conn = new SqlConnection(_connectionString);
             conn.Open();
@@ -189,7 +187,7 @@ namespace Dior.Service.Host.Controllers
         }
 
         // Recherche utilisateur par login/mdp
-        private Dior.Library.DTO.UserDto GetUserByUsernameAndPassword(string username, string password)
+        private UserDto GetUserByUsernameAndPassword(string username, string password)
         {
             using var conn = new SqlConnection(_connectionString);
             conn.Open();
@@ -205,41 +203,20 @@ namespace Dior.Service.Host.Controllers
             return null;
         }
 
-        private static Dior.Library.DTO.UserDto MapUser(SqlDataReader reader)
+        private static UserDto MapUser(SqlDataReader reader)
         {
-            return new Dior.Library.DTO.UserDto
+            return new UserDto
             {
                 Id = Convert.ToInt64(reader["ID"]),
-                Username = reader["Username"] as string,
-                LastName = reader["LastName"] as string,
-                FirstName = reader["FirstName"] as string,
+                Username = reader["Username"] as string ?? string.Empty,
+                LastName = reader["LastName"] as string ?? string.Empty,
+                FirstName = reader["FirstName"] as string ?? string.Empty,
                 IsActive = (bool)reader["IsActive"],
                 Email = reader["Email"] as string,
                 Phone = reader["Phone"] as string,
-                Roles = new List<Dior.Library.DTO.RoleDefinitionDto>() // Initialisé vide, sera rempli plus tard
+                Roles = new List<RoleDefinitionDto>() // Initialisé vide, sera rempli plus tard
             };
         }
-    }
-
-    /// <summary>
-    /// Réponse de connexion avec token JWT
-    /// </summary>
-    public class LoginResponseDto
-    {
-        /// <summary>Informations de l'utilisateur connecté</summary>
-        public Dior.Library.DTO.UserDto User { get; set; }
-        
-        /// <summary>Token JWT pour authentification</summary>
-        /// <example>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</example>
-        public string Token { get; set; }
-        
-        /// <summary>Type de token (toujours "Bearer")</summary>
-        /// <example>Bearer</example>
-        public string TokenType { get; set; } = "Bearer";
-        
-        /// <summary>Durée de validité en secondes</summary>
-        /// <example>28800</example>
-        public int ExpiresIn { get; set; }
     }
 }
 

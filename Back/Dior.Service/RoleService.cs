@@ -1,4 +1,4 @@
-using Dior.Library.DTO;
+using Dior.Library.DTOs;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
@@ -23,15 +23,22 @@ namespace Dior.Service
             var roles = new List<RoleDefinitionDto>();
             using var conn = new SqlConnection(_connectionString);
             conn.Open();
-            using var cmd = new SqlCommand(@"SELECT rd.Id, rd.Name FROM UserRole ur INNER JOIN RoleDefinition rd ON ur.RoleDefinitionId = rd.Id WHERE ur.UserId = @userId", conn);
+            using var cmd = new SqlCommand(@"SELECT rd.Id, rd.Name, rd.Description, rd.ParentRoleId, rd.IsActive, rd.CreatedAt, rd.CreatedBy, rd.LastEditAt, rd.LastEditBy FROM UserRole ur INNER JOIN RoleDefinition rd ON ur.RoleDefinitionId = rd.Id WHERE ur.UserId = @userId", conn);
             cmd.Parameters.AddWithValue("@userId", userId);
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 roles.Add(new RoleDefinitionDto
                 {
-                    Id = reader.GetInt32(0),
-                    Name = reader.GetString(1)
+                    Id = reader.GetInt32("Id"),
+                    Name = reader.GetString("Name"),
+                    Description = reader.IsDBNull("Description") ? null : reader.GetString("Description"),
+                    ParentRoleId = reader.IsDBNull("ParentRoleId") ? null : reader.GetInt32("ParentRoleId"),
+                    IsActive = reader.GetBoolean("IsActive"),
+                    CreatedAt = reader.GetDateTime("CreatedAt"),
+                    CreatedBy = reader.IsDBNull("CreatedBy") ? null : reader.GetString("CreatedBy"),
+                    LastEditAt = reader.IsDBNull("LastEditAt") ? null : reader.GetDateTime("LastEditAt"),
+                    LastEditBy = reader.IsDBNull("LastEditBy") ? null : reader.GetString("LastEditBy")
                 });
             }
             return roles;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Dior.Library.DTO
+namespace Dior.Library.DTOs
 {
     public class UserDto
     {

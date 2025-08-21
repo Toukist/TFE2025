@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Dior.Library.DTO
+namespace Dior.Library.DTOs
 {
     /// <summary>
     /// DTO pour la création d'une nouvelle tâche avec validation

@@ -1,7 +1,7 @@
 using Dior.Library.Interfaces.Services;
 using Dior.Library.Interfaces.DAOs;
 using Dior.Library.Entities;
-using Dior.Library.DTO;
+using Dior.Library.DTOs;
 
 namespace Dior.Service.Services
 {
@@ -14,7 +14,7 @@ namespace Dior.Service.Services
             _DA_User = daUser ?? throw new ArgumentNullException(nameof(daUser));
         }
 
-        public User? Authenticate(string username, string password)
+        public User Authenticate(string username, string password)
         {
             if (string.IsNullOrWhiteSpace(username)) return null;
             if (string.IsNullOrWhiteSpace(password)) return null;
@@ -40,7 +40,7 @@ namespace Dior.Service.Services
             return new List<PrivilegeDto>();
         }
 
-        public User? GetUserById(long userId)
+        public User GetUserById(long userId)
         {
             return _DA_User.GetUserById(userId);
         }

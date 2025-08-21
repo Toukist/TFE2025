@@ -1,4 +1,4 @@
-namespace Dior.Library.DTO
+namespace Dior.Library.DTOs
 {
     public sealed class JwtOptions
     {

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Dior.Library.DTO
+namespace Dior.Library.DTOs
 {
     /// <summary>
     /// DTO pour la mise à jour du statut d'une tâche par un opérateur
@@ -13,7 +13,7 @@ namespace Dior.Library.DTO
         /// </summary>
         [Required(ErrorMessage = "Le statut est obligatoire")]
         [StringLength(50, ErrorMessage = "Le statut ne peut pas dépasser 50 caractères")]
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
 
         /// <summary>
         /// Nom/ID de l'utilisateur qui effectue la mise à jour
