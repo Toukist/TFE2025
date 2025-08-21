@@ -13,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { DataTableUtilsService } from '../../shared/services/data-table-utils.service';
 
 @Component({
   selector: 'app-rapports',
@@ -181,6 +182,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 `]
 })
 export class RapportsComponent {
+  constructor(private dataTableUtils: DataTableUtilsService) {}
   equipmentList = [
     'Compresseur Atlas Copco GA30',
     'Pompe Grundfos CR32',
@@ -239,19 +241,207 @@ export class RapportsComponent {
         user: 'admin',
         status: 'Généré'
       });
-      window.alert('Rapport généré avec succès !');
+      // Générer automatiquement le PDF du rapport
+      const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '').replace('T', '_');
+      const filename = `rapport_${this.selectedReport.replace(/\s+/g, '_').toLowerCase()}_${timestamp}.pdf`;
+      
+      const reportData = {
+        title: this.selectedReport,
+        summary: {
+          'Période': this.getSelectedPeriod(),
+          'Équipement': this.filters.equipment || 'Tous',
+          'Équipe': this.filters.team || 'Toutes',
+          'Généré le': new Date().toLocaleDateString('fr-FR')
+        },
+        tables: [
+          {
+            title: 'Données du rapport',
+            data: this.getCurrentChartData(),
+            columns: [
+              { key: 'name', label: 'Élément' },
+              { key: 'value', label: 'Valeur' }
+            ]
+          }
+        ]
+      };
+      
+      this.dataTableUtils.exportReportToPDF(reportData, filename);
     }, 2000);
-  }
-
-  exportExcel() {
-    window.alert('Export Excel à venir !');
   }
 
   scheduleSend() {
     window.alert('Programmation de l\'envoi à venir !');
   }
 
+  private getSelectedPeriod(): string {
+    // Logique pour déterminer la période sélectionnée
+    // Peut être basée sur les filtres de date
+    return 'Période courante';
+  }
+
+  exportExcel() {
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '').replace('T', '_');
+    const filename = `rapport_${this.selectedReport.replace(/\s+/g, '_').toLowerCase()}_${timestamp}.xlsx`;
+
+    // Préparer les données selon le type de rapport sélectionné
+    const reportData = this.getReportData();
+    
+    if (reportData.sheets && reportData.sheets.length > 0) {
+      this.dataTableUtils.exportMultiSheetExcel(reportData.sheets, filename);
+    } else {
+      // Fallback: exporter les données de graphiques
+      this.dataTableUtils.exportToExcel(
+        reportData.data,
+        reportData.columns,
+        filename,
+        this.selectedReport
+      );
+    }
+  }
+
   downloadReport(h: any) {
-    window.alert('Téléchargement du rapport : ' + h.report);
+    // Simuler le téléchargement d'un rapport existant
+    const timestamp = new Date(h.date).toISOString().slice(0, 19).replace(/[:-]/g, '').replace('T', '_');
+    const filename = `${h.report.replace(/\s+/g, '_').toLowerCase()}_${timestamp}.pdf`;
+    
+    // Générer un PDF du rapport
+    const reportData = this.getReportDataForHistory(h);
+    this.dataTableUtils.exportReportToPDF(reportData, filename);
+  }
+
+  private getReportData() {
+    const currentData = this.getCurrentChartData();
+    
+    switch (this.selectedReport) {
+      case 'Synthèse quotidienne':
+        return {
+          data: this.productionChartNgx,
+          columns: [
+            { key: 'name', label: 'Jour' },
+            { key: 'value', label: 'Production' }
+          ],
+          sheets: [
+            {
+              name: 'Production Quotidienne',
+              data: this.productionChartNgx,
+              columns: [
+                { key: 'name', label: 'Jour' },
+                { key: 'value', label: 'Production (unités)' }
+              ]
+            },
+            {
+              name: 'Statistiques',
+              data: this.getProductionStats(),
+              columns: [
+                { key: 'metric', label: 'Métrique' },
+                { key: 'value', label: 'Valeur' }
+              ]
+            }
+          ]
+        };
+
+      case 'Pannes récurrentes':
+        return {
+          data: this.failuresChartNgx,
+          columns: [
+            { key: 'name', label: 'Type de panne' },
+            { key: 'value', label: 'Nombre d\'occurrences' }
+          ],
+          sheets: [
+            {
+              name: 'Pannes Récurrentes',
+              data: this.failuresChartNgx,
+              columns: [
+                { key: 'name', label: 'Type de panne' },
+                { key: 'value', label: 'Occurrences' }
+              ]
+            }
+          ]
+        };
+
+      case "Vue d'ensemble":
+        return {
+          data: this.oeeChartNgx,
+          columns: [
+            { key: 'name', label: 'Ligne de production' },
+            { key: 'value', label: 'OEE (%)' }
+          ],
+          sheets: [
+            {
+              name: 'OEE par Ligne',
+              data: this.oeeChartNgx,
+              columns: [
+                { key: 'name', label: 'Ligne' },
+                { key: 'value', label: 'OEE (%)' }
+              ]
+            },
+            {
+              name: 'Production',
+              data: this.productionChartNgx,
+              columns: [
+                { key: 'name', label: 'Jour' },
+                { key: 'value', label: 'Production' }
+              ]
+            }
+          ]
+        };
+
+      default:
+        return {
+          data: currentData,
+          columns: [
+            { key: 'name', label: 'Nom' },
+            { key: 'value', label: 'Valeur' }
+          ]
+        };
+    }
+  }
+
+  private getCurrentChartData() {
+    switch (this.selectedReport) {
+      case 'Synthèse quotidienne':
+        return this.productionChartNgx;
+      case 'Pannes récurrentes':
+        return this.failuresChartNgx;
+      case "Vue d'ensemble":
+        return this.oeeChartNgx;
+      default:
+        return [];
+    }
+  }
+
+  private getProductionStats() {
+    const total = this.productionChartNgx.reduce((sum, item) => sum + item.value, 0);
+    const average = total / this.productionChartNgx.length;
+    const max = Math.max(...this.productionChartNgx.map(item => item.value));
+    const min = Math.min(...this.productionChartNgx.map(item => item.value));
+
+    return [
+      { metric: 'Production Totale', value: total },
+      { metric: 'Production Moyenne', value: Math.round(average) },
+      { metric: 'Production Maximale', value: max },
+      { metric: 'Production Minimale', value: min }
+    ];
+  }
+
+  private getReportDataForHistory(historyItem: any) {
+    return {
+      title: historyItem.report,
+      summary: {
+        'Généré le': new Date(historyItem.date).toLocaleDateString('fr-FR'),
+        'Utilisateur': historyItem.user,
+        'Statut': historyItem.status
+      },
+      tables: [
+        {
+          title: 'Données du rapport',
+          data: this.getCurrentChartData(),
+          columns: [
+            { key: 'name', label: 'Élément' },
+            { key: 'value', label: 'Valeur' }
+          ]
+        }
+      ]
+    };
   }
 }
