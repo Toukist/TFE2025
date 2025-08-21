@@ -1,6 +1,11 @@
-﻿using Dior.Library.DTO;
+﻿using Dior.Library.DTO.User;
+using System.Collections.Generic;
 
-public interface IJwtTokenService
+namespace Dior.Service.Host.Services
 {
-    string GenerateToken(UserDto user);
+    public interface IJwtTokenService
+    {
+        string GenerateToken(string userId, string userName, List<string>? roles = null);
+        string GenerateToken(UserDto user);
+    }
 }

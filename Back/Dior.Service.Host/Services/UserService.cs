@@ -1,10 +1,10 @@
-using Dior.Library.Entities;
+using Dior.Library.DTO.User;
+using Dior.Library.DTO.Access;
 using Microsoft.EntityFrameworkCore;
-using Dior.Service.Services.Interfaces;
 
-namespace Dior.Service.Services
+namespace Dior.Service.Host.Services
 {
-    public class UserService : IUserService
+    public class UserService
     {
         private readonly DiorDbContext _context;
         private readonly ILogger<UserService> _logger;
@@ -15,7 +15,7 @@ namespace Dior.Service.Services
             _logger = logger;
         }
 
-        public async Task<IEnumerable<UserDto>> GetAllAsync()
+        public async Task<List<UserDto>> GetAllAsync()
         {
             var users = await _context.Users
                 .Include(u => u.Team)
@@ -23,7 +23,7 @@ namespace Dior.Service.Services
                 .ThenInclude(ur => ur.RoleDefinition)
                 .ToListAsync();
 
-            return users.Select(MapToDto);
+            return users.Select(MapToDto).ToList();
         }
 
         public async Task<UserDto?> GetByIdAsync(int id)
@@ -34,42 +34,27 @@ namespace Dior.Service.Services
                 .ThenInclude(ur => ur.RoleDefinition)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
-            return user == null ? null : MapToDto(user);
+            return user != null ? MapToDto(user) : null;
         }
 
-        public async Task<UserDto?> GetByEmailAsync(string email)
+        public async Task<bool> ExistsAsync(int id)
         {
-            var user = await _context.Users
-                .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.RoleDefinition)
-                .FirstOrDefaultAsync(u => u.Email == email);
-
-            return user == null ? null : MapToDto(user);
+            return await _context.Users.AnyAsync(u => u.Id == id);
         }
 
-        public async Task<UserDto?> GetByUsernameAsync(string username)
+        public async Task<UserDto> CreateAsync(CreateUserDto createDto)
         {
-            var user = await _context.Users
-                .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.RoleDefinition)
-                .FirstOrDefaultAsync(u => u.UserName == username);
-
-            return user == null ? null : MapToDto(user);
-        }
-
-        public async Task<UserDto> CreateAsync(CreateUserDto createUserDto)
-        {
-            var user = new User
+            var user = new Dior.Library.Entities.User
             {
-                UserName = createUserDto.UserName,
-                FirstName = createUserDto.FirstName,
-                LastName = createUserDto.LastName,
-                Email = createUserDto.Email,
-                Phone = createUserDto.Phone,
-                IsActive = createUserDto.IsActive,
-                TeamId = createUserDto.TeamId,
-                BadgePhysicalNumber = createUserDto.BadgePhysicalNumber,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password),
+                UserName = createDto.UserName,
+                FirstName = createDto.FirstName,
+                LastName = createDto.LastName,
+                Email = createDto.Email,
+                Phone = createDto.Phone,
+                IsActive = createDto.IsActive,
+                TeamId = createDto.TeamId,
+                BadgePhysicalNumber = createDto.BadgePhysicalNumber,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(createDto.Password),
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "System"
             };
@@ -80,27 +65,25 @@ namespace Dior.Service.Services
             return MapToDto(user);
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateUserDto updateUserDto)
+        public async Task<bool> UpdateAsync(int id, UpdateUserDto updateDto)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return false;
 
-            if (!string.IsNullOrEmpty(updateUserDto.UserName))
-                user.UserName = updateUserDto.UserName;
-            if (!string.IsNullOrEmpty(updateUserDto.FirstName))
-                user.FirstName = updateUserDto.FirstName;
-            if (!string.IsNullOrEmpty(updateUserDto.LastName))
-                user.LastName = updateUserDto.LastName;
-            if (!string.IsNullOrEmpty(updateUserDto.Email))
-                user.Email = updateUserDto.Email;
-            if (updateUserDto.Phone != null)
-                user.Phone = updateUserDto.Phone;
-            if (updateUserDto.IsActive.HasValue)
-                user.IsActive = updateUserDto.IsActive.Value;
-            if (updateUserDto.TeamId.HasValue)
-                user.TeamId = updateUserDto.TeamId.Value;
-            if (!string.IsNullOrEmpty(updateUserDto.BadgePhysicalNumber))
-                user.BadgePhysicalNumber = updateUserDto.BadgePhysicalNumber;
+            if (!string.IsNullOrEmpty(updateDto.UserName))
+                user.UserName = updateDto.UserName;
+            if (!string.IsNullOrEmpty(updateDto.FirstName))
+                user.FirstName = updateDto.FirstName;
+            if (!string.IsNullOrEmpty(updateDto.LastName))
+                user.LastName = updateDto.LastName;
+            if (!string.IsNullOrEmpty(updateDto.Email))
+                user.Email = updateDto.Email;
+            if (updateDto.Phone != null)
+                user.Phone = updateDto.Phone;
+            if (updateDto.IsActive.HasValue)
+                user.IsActive = updateDto.IsActive.Value;
+            if (updateDto.TeamId.HasValue)
+                user.TeamId = updateDto.TeamId.Value;
 
             user.LastEditAt = DateTime.UtcNow;
             user.LastEditBy = "System";
@@ -117,19 +100,6 @@ namespace Dior.Service.Services
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return true;
-        }
-
-        public async Task<bool> ExistsAsync(int id)
-        {
-            return await _context.Users.AnyAsync(u => u.Id == id);
-        }
-
-        public async Task<bool> AuthenticateAsync(string email, string password)
-        {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == email && u.IsActive);
-
-            return user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
         }
 
         public async Task<List<UserFullDto>> GetFullUsersAsync()
@@ -164,16 +134,19 @@ namespace Dior.Service.Services
                     Id = uac.AccessCompetency.Id,
                     Name = uac.AccessCompetency.Name,
                     Description = uac.AccessCompetency.Description,
+                    ParentId = null, // Propriété non disponible dans l'entité
                     IsActive = uac.AccessCompetency.IsActive,
                     CreatedAt = uac.AccessCompetency.CreatedAt,
-                    CreatedBy = uac.AccessCompetency.CreatedBy
+                    CreatedBy = uac.AccessCompetency.CreatedBy ?? string.Empty,
+                    LastEditAt = uac.AccessCompetency.LastEditAt,
+                    LastEditBy = uac.AccessCompetency.LastEditBy
                 })
                 .ToListAsync();
 
             return competencies;
         }
 
-        private static UserDto MapToDto(User user)
+        private static UserDto MapToDto(Dior.Library.Entities.User user)
         {
             return new UserDto
             {
@@ -195,7 +168,7 @@ namespace Dior.Service.Services
             };
         }
 
-        private static UserFullDto MapToFullDto(User user)
+        private static UserFullDto MapToFullDto(Dior.Library.Entities.User user)
         {
             return new UserFullDto
             {
@@ -218,10 +191,13 @@ namespace Dior.Service.Services
                 {
                     Id = user.Team.Id,
                     Name = user.Team.Name,
-                    Description = user.Team.Description,
+                    Description = user.Team.Description ?? string.Empty,
                     IsActive = user.Team.IsActive,
                     CreatedAt = user.Team.CreatedAt,
-                    CreatedBy = user.Team.CreatedBy
+                    CreatedBy = user.Team.CreatedBy ?? string.Empty,
+                    LastEditAt = user.Team.LastEditAt,
+                    LastEditBy = user.Team.LastEditBy,
+                    MemberCount = 0
                 } : null
             };
         }

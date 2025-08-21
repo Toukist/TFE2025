@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Dior.Library.DTOs;
+using Dior.Library.DTO.User;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -9,66 +9,61 @@ namespace Dior.Service.Host.Services
 {
     public class JwtTokenService : IJwtTokenService
     {
-        private readonly JwtOptions _jwtOptions;
         private readonly IConfiguration _configuration;
 
-        public JwtTokenService(JwtOptions jwtOptions, IConfiguration configuration)
+        public JwtTokenService(IConfiguration configuration)
         {
-            _jwtOptions = jwtOptions;
             _configuration = configuration;
         }
 
-        public string GenerateToken(UserDto user)
+        public string GenerateToken(string userId, string userName, List<string>? roles = null)
         {
-            if (user == null) throw new ArgumentNullException(nameof(user));
-
-            var secret = _jwtOptions.Secret;
+            var secret = _configuration["Jwt:Secret"];
             if (string.IsNullOrWhiteSpace(secret))
-                throw new InvalidOperationException("JWT secret manquant dans JwtOptions.");
+                throw new InvalidOperationException("JWT secret manquant dans la configuration.");
 
-            byte[] keyBytes;
-            try { keyBytes = Convert.FromBase64String(secret); }
-            catch { keyBytes = Encoding.UTF8.GetBytes(secret); }
-
-            // Exige de nouveau ≥ 32 octets (256 bits)
+            var keyBytes = Encoding.UTF8.GetBytes(secret);
             if (keyBytes.Length < 32)
-                throw new InvalidOperationException(
-                    $"JWT secret trop court: {keyBytes.Length * 8} bits. Il faut ≥ 256 bits (32 octets). Génère une clé base64 de 32 octets.");
+                throw new InvalidOperationException("JWT secret trop court. Il faut au moins 32 caractères.");
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username ?? string.Empty)
+                new Claim(ClaimTypes.NameIdentifier, userId),
+                new Claim(ClaimTypes.Name, userName),
+                new Claim("userId", userId)
             };
 
-            // FIX: user.Roles est maintenant List<RoleDefinitionDto>
-            if (user.Roles != null)
+            // Ajouter les rôles
+            if (roles != null)
             {
-                foreach (var role in user.Roles)
+                foreach (var role in roles)
                 {
-                    if (role != null && !string.IsNullOrWhiteSpace(role.Name))
-                        claims.Add(new Claim(ClaimTypes.Role, role.Name));
+                    if (!string.IsNullOrWhiteSpace(role))
+                        claims.Add(new Claim(ClaimTypes.Role, role));
                 }
             }
 
             var signingKey = new SymmetricSecurityKey(keyBytes);
             var creds = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
-            var issuer = _jwtOptions.Issuer ?? _configuration["Jwt:Issuer"];
-            var audience = _jwtOptions.Audience ?? _configuration["Jwt:Audience"];
-            var expirationMinutes = _jwtOptions.ExpirationMinutes > 0
-                ? _jwtOptions.ExpirationMinutes
-                : int.Parse(_configuration["Jwt:ExpirationMinutes"] ?? "60");
+            var expirationMinutes = int.Parse(_configuration["Jwt:ExpirationMinutes"] ?? "480"); // 8 heures par défaut
 
             var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(expirationMinutes),
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public string GenerateToken(UserDto user)
+        {
+            if (user == null) throw new ArgumentNullException(nameof(user));
+
+            return GenerateToken(user.Id.ToString(), user.UserName, user.Roles);
         }
     }
 }

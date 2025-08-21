@@ -1,4 +1,6 @@
-using Dior.Library.DTO;
+using Dior.Library.DTO.Notification;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Dior.Library.Interfaces.UserInterface.Services
 {
@@ -19,5 +21,10 @@ namespace Dior.Library.Interfaces.UserInterface.Services
         Task<NotificationDto> CreateAsync(CreateNotificationRequest request, string createdBy = "System");
         Task<bool> SendBulkNotificationsAsync(List<long> userIds, string message, string type, string createdBy = "System");
         Task<bool> DeleteAsync(int id);
+        Task<List<NotificationDto>> GetUserNotificationsAsync(int userId);
+        Task<List<NotificationDto>> GetAllNotificationsAsync();
+        Task<NotificationDto?> GetByIdAsync(int id);
+        Task<NotificationDto> CreateAsync(CreateNotificationDto createDto);
+        Task<NotificationDto> CreateNotificationAsync(CreateNotificationRequest request);
     }
 }

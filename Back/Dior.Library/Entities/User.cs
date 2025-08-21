@@ -19,7 +19,7 @@ public class User
 
     [Required]
     [MaxLength(100)]
-    public string UserName { get; set; } = string.Empty;
+    public string UserName { get; set; } = string.Empty; // Standardisé en UserName
 
     [Required]
     [MaxLength(255)]
@@ -32,7 +32,7 @@ public class User
     public bool IsActive { get; set; } = true;
 
     [MaxLength(20)]
-    public string? PhoneNumber { get; set; }
+    public string? Phone { get; set; } // Changé de PhoneNumber à Phone
 
     [MaxLength(50)]
     public string? BadgePhysicalNumber { get; set; }

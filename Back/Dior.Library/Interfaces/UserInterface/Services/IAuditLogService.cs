@@ -1,17 +1,16 @@
-﻿namespace Dior.Library.Interfaces.UserInterface.Services
+﻿using Dior.Library.DTO.Audit;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Dior.Library.Interfaces.UserInterface.Services
 {
     public interface IAuditLogService
     {
-        // Méthodes synchrones (BO)
-        List<BO.UserInterface.AuditLog> GetList();
-        BO.UserInterface.AuditLog? Get(long id);
-        long Add(BO.UserInterface.AuditLog log, string editBy);
-        void Set(BO.UserInterface.AuditLog log, string editBy);
-        void Del(long id);
-
-        // Méthodes asynchrones (Entities)
-        Task<List<Entities.AuditLog>> GetAllAsync();
-        Task<Entities.AuditLog?> GetByIdAsync(int id);
-        Task<List<Entities.AuditLog>> SearchAsync(int? userId, string? action);
+        Task<IEnumerable<AuditLogDto>> GetAllAsync();
+        Task<AuditLogDto?> GetByIdAsync(int id);
+        Task<AuditLogDto> CreateAsync(CreateAuditLogDto createDto);
+        Task<List<AuditLogDto>> GetByEntityAsync(string entityType, int entityId);
+        Task<List<AuditLogDto>> GetByUserAsync(int userId);
+        Task<List<AuditLogDto>> GetRecentAsync(int count = 50);
     }
 }

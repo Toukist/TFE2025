@@ -1,57 +1,66 @@
-using AutoMapper;
-using Dior.Database.Data;
-using Dior.Database.DTOs.Access;
-using Dior.Database.Entities;
-using Dior.Database.Services.Interfaces;
+using Dior.Library.DTO.Access;
+using Dior.Library.Interfaces.UserInterface.Services;
+using Dior.Service.Services;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace Dior.Database.Services.Implementations
+namespace Dior.Service.Services.Implementations
 {
     public class AccessService : IAccessService
     {
         private readonly DiorDbContext _context;
-        private readonly IMapper _mapper;
+        private readonly ILogger<AccessService> _logger;
 
-        public AccessService(DiorDbContext context, IMapper mapper)
+        public AccessService(DiorDbContext context, ILogger<AccessService> logger)
         {
             _context = context;
-            _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<AccessDto>> GetAllAsync()
         {
             var accesses = await _context.Accesses.ToListAsync();
-            return _mapper.Map<IEnumerable<AccessDto>>(accesses);
+            return accesses.Select(MapToDto);
         }
 
-        public async Task<AccessDto> GetByIdAsync(int id)
+        public async Task<AccessDto?> GetByIdAsync(int id)
         {
             var access = await _context.Accesses.FindAsync(id);
-            return access != null ? _mapper.Map<AccessDto>(access) : null;
+            return access != null ? MapToDto(access) : null;
         }
 
-        public async Task<AccessDto> CreateAsync(CreateAccessDto createAccessDto)
+        public async Task<AccessDto> CreateAsync(CreateAccessDto createDto)
         {
-            var access = _mapper.Map<Access>(createAccessDto);
-            access.CreatedAt = DateTime.UtcNow;
+            var access = new Dior.Library.Entities.Access
+            {
+                BadgePhysicalNumber = createDto.BadgePhysicalNumber,
+                IsActive = createDto.IsActive,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = "System"
+            };
 
             _context.Accesses.Add(access);
             await _context.SaveChangesAsync();
-
-            return _mapper.Map<AccessDto>(access);
+            
+            return MapToDto(access);
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateAccessDto updateAccessDto)
+        public async Task<bool> UpdateAsync(int id, UpdateAccessDto updateDto)
         {
             var access = await _context.Accesses.FindAsync(id);
             if (access == null)
                 return false;
 
-            _mapper.Map(updateAccessDto, access);
-            
+            if (!string.IsNullOrEmpty(updateDto.BadgePhysicalNumber))
+                access.BadgePhysicalNumber = updateDto.BadgePhysicalNumber;
+            if (updateDto.IsActive.HasValue)
+                access.IsActive = updateDto.IsActive.Value;
+
+            access.LastEditAt = DateTime.UtcNow;
+            access.LastEditBy = "System";
+
             await _context.SaveChangesAsync();
             return true;
         }
@@ -65,6 +74,25 @@ namespace Dior.Database.Services.Implementations
             _context.Accesses.Remove(access);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<bool> ExistsAsync(int id)
+        {
+            return await _context.Accesses.AnyAsync(a => a.Id == id);
+        }
+
+        private static AccessDto MapToDto(Dior.Library.Entities.Access access)
+        {
+            return new AccessDto
+            {
+                Id = access.Id,
+                BadgePhysicalNumber = access.BadgePhysicalNumber,
+                IsActive = access.IsActive,
+                CreatedAt = access.CreatedAt,
+                CreatedBy = access.CreatedBy,
+                LastEditAt = access.LastEditAt,
+                LastEditBy = access.LastEditBy
+            };
         }
     }
 }
