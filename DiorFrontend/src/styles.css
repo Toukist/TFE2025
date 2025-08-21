@@ -1,11 +1,11 @@
 /* Import Angular Material theme */
 @import '@angular/material/prebuilt-themes/azure-blue.css';
 
-/* Import des icônes Material - commenté temporairement pour les tests de build */
-/* @import 'https://fonts.googleapis.com/icon?family=Material+Icons'; */
+/* Import des icônes Material */
+@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
 
-/* Import de la police Inter pour un look moderne - commenté temporairement pour les tests de build */
-/* @import 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'; */
+/* Import de la police Inter pour un look moderne */
+@import 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap';
 
 @tailwind base;
 @tailwind components;
