@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RoleDefinition } from '../../models/role-definition.model';
+import { DataTableUtilsService } from '../../shared/services/data-table-utils.service';
 
 interface User {
 isActive: any;
@@ -411,6 +412,7 @@ interface RecentActivity {
 })
 export class AdminReportsComponent implements OnInit {
   private readonly http = inject(HttpClient);
+  private readonly dataTableUtils = inject(DataTableUtilsService);
 
   // Signals
   loading = signal(false);
@@ -543,16 +545,118 @@ export class AdminReportsComponent implements OnInit {
   exportReport(): void {
     const data = this.reportData();
     if (!data) return;
-    const reportContent = {
-      'Utilisateurs': data.users.length,
-      'Tâches': data.tasks.length,
-      'Contrats': data.contracts.length,
-      'Notifications': data.notifications.length,
+
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '').replace('T', '_');
+    const filename = `rapport_admin_${timestamp}.xlsx`;
+
+    // Préparer les données pour l'export multi-feuilles
+    const sheets = [];
+
+    // Feuille Utilisateurs
+    if (data.users && data.users.length > 0) {
+      sheets.push({
+        name: 'Utilisateurs',
+        data: data.users,
+        columns: [
+          { key: 'id', label: 'ID' },
+          { key: 'firstName', label: 'Prénom' },
+          { key: 'lastName', label: 'Nom' },
+          { key: 'email', label: 'Email' },
+          { key: 'isActive', label: 'Actif' },
+          { key: 'lastEditAt', label: 'Dernière modification' }
+        ]
+      });
+    }
+
+    // Feuille Tâches
+    if (data.tasks && data.tasks.length > 0) {
+      const tasksWithUserNames = data.tasks.map(task => ({
+        ...task,
+        assignedToUserName: this.getUserNameById(task.assignedToUserId),
+        createdByUserName: this.getUserNameById(task.createdByUserId)
+      }));
+
+      sheets.push({
+        name: 'Tâches',
+        data: tasksWithUserNames,
+        columns: [
+          { key: 'id', label: 'ID' },
+          { key: 'title', label: 'Titre' },
+          { key: 'status', label: 'Statut' },
+          { key: 'assignedToUserName', label: 'Assigné à' },
+          { key: 'createdByUserName', label: 'Créé par' },
+          { key: 'createdAt', label: 'Date de création' },
+          { key: 'dueDate', label: 'Date d\'échéance' }
+        ]
+      });
+    }
+
+    // Feuille Contrats
+    if (data.contracts && data.contracts.length > 0) {
+      const contractsWithUserNames = data.contracts.map(contract => ({
+        ...contract,
+        userName: this.getUserNameById(contract.userId)
+      }));
+
+      sheets.push({
+        name: 'Contrats',
+        data: contractsWithUserNames,
+        columns: [
+          { key: 'id', label: 'ID' },
+          { key: 'fileName', label: 'Nom du fichier' },
+          { key: 'userName', label: 'Utilisateur' },
+          { key: 'description', label: 'Description' },
+          { key: 'uploadedAt', label: 'Date d\'upload' }
+        ]
+      });
+    }
+
+    // Feuille Notifications
+    if (data.notifications && data.notifications.length > 0) {
+      const notificationsWithUserNames = data.notifications.map(notification => ({
+        ...notification,
+        userName: this.getUserNameById(notification.userId)
+      }));
+
+      sheets.push({
+        name: 'Notifications',
+        data: notificationsWithUserNames,
+        columns: [
+          { key: 'id', label: 'ID' },
+          { key: 'type', label: 'Type' },
+          { key: 'message', label: 'Message' },
+          { key: 'userName', label: 'Utilisateur' },
+          { key: 'isRead', label: 'Lu' },
+          { key: 'createdAt', label: 'Date de création' }
+        ]
+      });
+    }
+
+    // Feuille Résumé
+    const summary = {
+      'Total Utilisateurs': data.users?.length || 0,
+      'Utilisateurs Actifs': this.userReport()?.activeUsers || 0,
+      'Total Tâches': data.tasks?.length || 0,
+      'Tâches En Cours': this.getActiveTasks(),
+      'Tâches En Retard': this.taskReport()?.overdueTasks || 0,
+      'Total Contrats': data.contracts?.length || 0,
+      'Total Notifications': data.notifications?.length || 0,
+      'Notifications Non Lues': this.systemReport()?.unreadNotifications || 0,
       'Période': this.selectedPeriod(),
-      'Généré le': new Date().toISOString()
+      'Date de Génération': new Date().toLocaleString('fr-FR')
     };
-    console.log('Export rapport:', reportContent);
-    alert('Fonctionnalité d\'export Excel à implémenter');
+
+    sheets.unshift({
+      name: 'Résumé',
+      data: Object.entries(summary).map(([key, value]) => ({ metric: key, value: value })),
+      columns: [
+        { key: 'metric', label: 'Métrique' },
+        { key: 'value', label: 'Valeur' }
+      ]
+    });
+
+    // Exporter le fichier Excel
+    this.dataTableUtils.exportMultiSheetExcel(sheets, filename);
   }
 
   // Méthodes utilitaires à compléter selon le template

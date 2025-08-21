@@ -92,6 +92,12 @@ export const routes: Routes = [
     path: 'team/:id/members',
     loadComponent: () => import('./components/team-members/team-members.component').then(m => m.TeamMembersComponent)
   },
+  // Route de test pour les fonctionnalités de téléchargement
+  {
+    path: 'test-download',
+    loadComponent: () => import('./test-download.component').then(m => m.TestDownloadComponent),
+    title: 'Test Téléchargements'
+  },
   // Catch-all - redirection vers login si route inconnue
   { path: '**', redirectTo: 'login' }
 ];

@@ -14,6 +14,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core'; // requis pour le datepicker
 import { MatListModule } from '@angular/material/list';
 
+// Services
+import { DataTableUtilsService } from '../../shared/services/data-table-utils.service';
 
 // Autres
 import { FormsModule } from '@angular/forms';
@@ -93,7 +95,7 @@ export class MaintenanceComponent {
 
   activeTab = 0;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, private dataTableUtils: DataTableUtilsService) {}
 
   filteredTickets(): Ticket[] {
     return this.tickets.filter(t =>
@@ -121,7 +123,84 @@ export class MaintenanceComponent {
   }
 
   exportReport() {
-    alert('Export rapport à venir');
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '').replace('T', '_');
+    const filename = `rapport_maintenance_${timestamp}.xlsx`;
+
+    const sheets = [];
+
+    // Feuille Tickets de maintenance
+    sheets.push({
+      name: 'Tickets',
+      data: this.filteredTickets(),
+      columns: [
+        { key: 'id', label: 'ID' },
+        { key: 'equipment', label: 'Équipement' },
+        { key: 'issue', label: 'Problème' },
+        { key: 'priority', label: 'Priorité' },
+        { key: 'technician', label: 'Technicien' }
+      ]
+    });
+
+    // Feuille Maintenance préventive
+    const preventiveWithDates = this.preventiveEquipments.map(eq => ({
+      ...eq,
+      nextDueFormatted: eq.nextDue.toLocaleDateString('fr-FR')
+    }));
+
+    sheets.push({
+      name: 'Maintenance Préventive',
+      data: preventiveWithDates,
+      columns: [
+        { key: 'equipment', label: 'Équipement' },
+        { key: 'nextDueFormatted', label: 'Prochaine échéance' }
+      ]
+    });
+
+    // Feuille Tâches préventives
+    sheets.push({
+      name: 'Tâches Préventives',
+      data: this.preventiveTasks,
+      columns: [
+        { key: 'label', label: 'Tâche' },
+        { key: 'done', label: 'Terminée' }
+      ]
+    });
+
+    // Feuille Statistiques
+    const stats = this.getMaintenanceStats();
+    sheets.push({
+      name: 'Statistiques',
+      data: stats,
+      columns: [
+        { key: 'metric', label: 'Métrique' },
+        { key: 'value', label: 'Valeur' }
+      ]
+    });
+
+    this.dataTableUtils.exportMultiSheetExcel(sheets, filename);
+  }
+
+  private getMaintenanceStats() {
+    const totalTickets = this.tickets.length;
+    const urgentTickets = this.tickets.filter(t => t.priority === 'Urgent').length;
+    const averageTickets = this.tickets.filter(t => t.priority === 'Moyenne').length;
+    const lowTickets = this.tickets.filter(t => t.priority === 'Faible').length;
+    
+    const completedTasks = this.preventiveTasks.filter(t => t.done).length;
+    const totalTasks = this.preventiveTasks.length;
+    const taskCompletionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+    return [
+      { metric: 'Total Tickets', value: totalTickets },
+      { metric: 'Tickets Urgents', value: urgentTickets },
+      { metric: 'Tickets Priorité Moyenne', value: averageTickets },
+      { metric: 'Tickets Priorité Faible', value: lowTickets },
+      { metric: 'Équipements en Maintenance', value: this.preventiveEquipments.length },
+      { metric: 'Tâches Préventives Terminées', value: completedTasks },
+      { metric: 'Total Tâches Préventives', value: totalTasks },
+      { metric: 'Taux de Completion (%)', value: taskCompletionRate },
+      { metric: 'Date de Génération', value: new Date().toLocaleString('fr-FR') }
+    ];
   }
 
   createTicket() {

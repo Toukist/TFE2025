@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 @Injectable({
   providedIn: 'root'
@@ -334,6 +337,191 @@ export class DataTableUtilsService {
       link.click();
       document.body.removeChild(link);
     }
+  }
+
+  /**
+   * Exportation des données en Excel
+   */
+  exportToExcel<T>(data: T[], columns: {key: string; label: string}[], filename = 'export.xlsx', sheetName = 'Data'): void {
+    const workbook = XLSX.utils.book_new();
+    
+    // Préparer les données avec les en-têtes
+    const headers = columns.map(col => col.label);
+    const rows = data.map(item => 
+      columns.map(col => {
+        const value = this.getNestedValue(item, col.key);
+        // Nettoyer la valeur (enlever HTML, etc.)
+        return String(value || '').replace(/<[^>]*>/g, '');
+      })
+    );
+    
+    const worksheetData = [headers, ...rows];
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+    
+    // Ajuster la largeur des colonnes
+    const colWidths = columns.map((col, index) => {
+      const columnValues = worksheetData.map(row => String(row[index] || ''));
+      const maxLength = Math.max(...columnValues.map(val => val.length));
+      return { wch: Math.min(Math.max(maxLength + 2, col.label.length + 2), 50) };
+    });
+    worksheet['!cols'] = colWidths;
+    
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+    XLSX.writeFile(workbook, filename);
+  }
+
+  /**
+   * Exportation des données en PDF
+   */
+  exportToPDF<T>(data: T[], columns: {key: string; label: string}[], filename = 'export.pdf', title = 'Rapport'): void {
+    const doc = new jsPDF();
+    
+    // Titre du document
+    doc.setFontSize(16);
+    doc.text(title, 14, 22);
+    
+    // Date de génération
+    doc.setFontSize(10);
+    doc.text(`Généré le: ${new Date().toLocaleDateString('fr-FR')}`, 14, 30);
+    
+    // Préparer les données pour le tableau
+    const headers = columns.map(col => col.label);
+    const rows = data.map(item => 
+      columns.map(col => {
+        const value = this.getNestedValue(item, col.key);
+        // Nettoyer et formater la valeur
+        return String(value || '').replace(/<[^>]*>/g, '').substring(0, 50);
+      })
+    );
+    
+    // Générer le tableau
+    (doc as any).autoTable({
+      head: [headers],
+      body: rows,
+      startY: 40,
+      styles: {
+        fontSize: 8,
+        cellPadding: 3,
+      },
+      headStyles: {
+        fillColor: [41, 128, 185],
+        textColor: 255,
+      },
+      columnStyles: {
+        // Ajuster les largeurs de colonnes si nécessaire
+      },
+      margin: { top: 40 },
+    });
+    
+    doc.save(filename);
+  }
+
+  /**
+   * Génération d'un rapport Excel avec plusieurs feuilles
+   */
+  exportMultiSheetExcel(sheets: {name: string; data: any[]; columns: {key: string; label: string}[]}[], filename = 'rapport.xlsx'): void {
+    const workbook = XLSX.utils.book_new();
+    
+    sheets.forEach(sheet => {
+      const headers = sheet.columns.map(col => col.label);
+      const rows = sheet.data.map(item => 
+        sheet.columns.map(col => {
+          const value = this.getNestedValue(item, col.key);
+          return String(value || '').replace(/<[^>]*>/g, '');
+        })
+      );
+      
+      const worksheetData = [headers, ...rows];
+      const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+      
+      // Ajuster la largeur des colonnes
+      const colWidths = sheet.columns.map((col, index) => {
+        const columnValues = worksheetData.map(row => String(row[index] || ''));
+        const maxLength = Math.max(...columnValues.map(val => val.length));
+        return { wch: Math.min(Math.max(maxLength + 2, col.label.length + 2), 50) };
+      });
+      worksheet['!cols'] = colWidths;
+      
+      XLSX.utils.book_append_sheet(workbook, worksheet, sheet.name);
+    });
+    
+    XLSX.writeFile(workbook, filename);
+  }
+
+  /**
+   * Génération d'un rapport PDF avec statistiques
+   */
+  exportReportToPDF(reportData: {
+    title: string;
+    summary: {[key: string]: any};
+    tables: {title: string; data: any[]; columns: {key: string; label: string}[]}[];
+  }, filename = 'rapport.pdf'): void {
+    const doc = new jsPDF();
+    let currentY = 20;
+    
+    // Titre principal
+    doc.setFontSize(18);
+    doc.text(reportData.title, 14, currentY);
+    currentY += 15;
+    
+    // Date de génération
+    doc.setFontSize(10);
+    doc.text(`Généré le: ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}`, 14, currentY);
+    currentY += 20;
+    
+    // Résumé/statistiques
+    if (reportData.summary && Object.keys(reportData.summary).length > 0) {
+      doc.setFontSize(14);
+      doc.text('Résumé:', 14, currentY);
+      currentY += 10;
+      
+      doc.setFontSize(10);
+      Object.entries(reportData.summary).forEach(([key, value]) => {
+        doc.text(`${key}: ${value}`, 20, currentY);
+        currentY += 7;
+      });
+      currentY += 10;
+    }
+    
+    // Tableaux
+    reportData.tables.forEach(table => {
+      // Vérifier si on a assez d'espace, sinon nouvelle page
+      if (currentY > 250) {
+        doc.addPage();
+        currentY = 20;
+      }
+      
+      doc.setFontSize(12);
+      doc.text(table.title, 14, currentY);
+      currentY += 10;
+      
+      const headers = table.columns.map(col => col.label);
+      const rows = table.data.map(item => 
+        table.columns.map(col => {
+          const value = this.getNestedValue(item, col.key);
+          return String(value || '').replace(/<[^>]*>/g, '').substring(0, 40);
+        })
+      );
+      
+      (doc as any).autoTable({
+        head: [headers],
+        body: rows,
+        startY: currentY,
+        styles: {
+          fontSize: 8,
+          cellPadding: 2,
+        },
+        headStyles: {
+          fillColor: [52, 73, 94],
+          textColor: 255,
+        },
+        margin: { top: 10, bottom: 10 },
+      });
+      
+      currentY = (doc as any).lastAutoTable.finalY + 15;
+    });
+    
+    doc.save(filename);
   }
 
   /**
