@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Dior.Library.DTO.User;
 
 namespace Dior.Library.DTO.Auth
 {
@@ -13,7 +14,7 @@ namespace Dior.Library.DTO.Auth
     }
 
     /// <summary>
-    /// DTO pour les réponses de connexion
+    /// DTO pour les rÃ©ponses de connexion
     /// </summary>
     public class LoginResponseDto
     {
@@ -22,10 +23,11 @@ namespace Dior.Library.DTO.Auth
         public int UserId { get; set; }
         public string UserName { get; set; } = string.Empty;
         public List<string> Roles { get; set; } = new();
+        public UserDto? User { get; set; }
     }
 
     /// <summary>
-    /// DTO complet pour les réponses de connexion avec informations utilisateur
+    /// DTO complet pour les rÃ©ponses de connexion avec informations utilisateur
     /// </summary>
     public class LoginResponseCompleteDto : LoginResponseDto
     {

@@ -98,6 +98,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAngular"); // CORS avant Authentication
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 // Redirection racine vers Swagger
