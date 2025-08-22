@@ -1,280 +1,265 @@
-using Dior.Library.DTO.Auth;
 using Dior.Library.DTO.User;
+using Dior.Library.DTO.Auth;
 using Dior.Service.Host.Services;
+using Dior.Service;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
+using Microsoft.Data.SqlClient;
+using BCrypt.Net;
 
 namespace Dior.Service.Host.Controllers
 {
-    /// <summary>
-    /// ContrÙleur d'authentification pour le systËme Dior Enterprise
-    /// Support complet : Badge physique + Username/Password
-    /// </summary>
     [ApiController]
     [Route("api/auth")]
-    [Produces("application/json")]
     public class AuthController : ControllerBase
     {
-        private readonly AuthenticationService _authService;
+        private readonly string _connectionString;
         private readonly IJwtTokenService _jwtTokenService;
+        // private readonly IRoleService _roleService; // Temporairement d√©sactiv√©
         private readonly ILogger<AuthController> _logger;
 
         public AuthController(
-            AuthenticationService authService,
+            IConfiguration config,
             IJwtTokenService jwtTokenService,
+            // IRoleService roleService, // Temporairement d√©sactiv√©
             ILogger<AuthController> logger)
         {
-            _authService = authService;
+            _connectionString = config.GetConnectionString("DIOR_DB") ?? 
+                              "Data Source=PC-CORENTIN\\CLEAN22;Initial Catalog=Dior.Database;Integrated Security=True;TrustServerCertificate=True";
             _jwtTokenService = jwtTokenService;
+            // _roleService = roleService; // Temporairement d√©sactiv√©
             _logger = logger;
         }
 
         /// <summary>
-        /// Authentification utilisateur - Support Badge ET Username/Password
+        /// Authentification utilisateur
         /// </summary>
-        /// <param name="request">RequÍte de connexion avec badge OU username/password</param>
-        /// <returns>RÈponse complËte avec utilisateur, token et permissions</returns>
         [HttpPost("login")]
-        [ProducesResponseType(typeof(LoginResponseCompleteDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
+        [ProducesResponseType(typeof(LoginResponseDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        public IActionResult Login([FromBody] LoginRequestDto dto)
         {
-            if (request == null)
-            {
-                _logger.LogWarning("Tentative de connexion avec un corps de requÍte null");
-                return BadRequest("Corps de requÍte manquant");
-            }
-
-            if (!request.IsValid())
-            {
-                _logger.LogWarning("Tentative de connexion avec des paramËtres invalides");
-                return BadRequest("Username/Password ou BadgePhysicalNumber requis");
-            }
-
             try
             {
-                UserDto? user = null;
+                _logger.LogInformation($"üîê Tentative de connexion pour: {dto?.Username}");
 
-                // Authentification par badge physique
-                if (!string.IsNullOrEmpty(request.BadgePhysicalNumber))
+                if (dto == null)
                 {
-                    _logger.LogInformation("Tentative d'authentification par badge: {Badge}", 
-                        request.BadgePhysicalNumber);
-                    user = await _authService.AuthenticateByBadgeAsync(request.BadgePhysicalNumber);
-                }
-                // Authentification par username/password
-                else if (!string.IsNullOrEmpty(request.Username) && !string.IsNullOrEmpty(request.Password))
-                {
-                    _logger.LogInformation("Tentative d'authentification par credentials: {Username}", 
-                        request.Username);
-                    user = await _authService.AuthenticateByCredentialsAsync(request.Username, request.Password);
+                    _logger.LogWarning("Corps de requ√™te manquant");
+                    return BadRequest(new { message = "Corps de requ√™te manquant" });
                 }
 
-                if (user == null || !user.IsActive)
+                // Validation des donn√©es
+                if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.Password))
                 {
-                    _logger.LogWarning("…chec d'authentification - Identifiants invalides ou compte dÈsactivÈ");
-                    return Unauthorized("Identifiants invalides ou compte dÈsactivÈ");
+                    return BadRequest(new { message = "Username et Password sont requis" });
                 }
 
-                // Charger les informations complËtes de l'utilisateur
-                await LoadUserCompleteInfoAsync(user);
+                // Authentification
+                var user = AuthenticateUser(dto.Username.Trim(), dto.Password);
+                
+                if (user == null)
+                {
+                    _logger.LogWarning($"‚ùå √âchec de connexion pour: {dto.Username}");
+                    return Unauthorized(new { message = "Identifiants invalides" });
+                }
 
-                // GÈnÈrer le token JWT
+                if (!user.IsActive)
+                {
+                    _logger.LogWarning($"‚ö†Ô∏è Compte inactif: {dto.Username}");
+                    return Unauthorized(new { message = "Compte d√©sactiv√©" });
+                }
+
+                // Charger les r√¥les - TEMPORAIREMENT D√âSACTIV√â
+                try
+                {
+                    // var rolesList = _roleService.GetRolesByUserId(user.Id);
+                    // user.Roles = rolesList?.Select(r => r.Name ?? "").Where(n => !string.IsNullOrEmpty(n)).ToList() ?? new List<string>();
+                    user.Roles = new List<string> { "User" }; // R√¥le par d√©faut temporaire
+                    _logger.LogInformation($"üìã R√¥le temporaire assign√© pour {user.UserName}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Erreur lors du chargement des r√¥les");
+                    user.Roles = new List<string>();
+                }
+
+                // G√©n√©rer le token JWT
                 var token = _jwtTokenService.GenerateToken(user);
-                var expiresAt = DateTime.UtcNow.AddMinutes(60); // Configurable
 
-                var response = new LoginResponseCompleteDto
+                _logger.LogInformation($"‚úÖ Connexion r√©ussie pour: {user.UserName} (ID: {user.Id})");
+
+                // R√©ponse structur√©e
+                return Ok(new LoginResponseDto
                 {
                     Token = token,
-                    ExpiresAt = expiresAt,
-                    UserId = user.Id,
-                    UserName = user.Username,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                    TeamId = user.TeamId,
-                    TeamName = user.TeamName,
-                    Roles = user.Roles?.Select(r => r.Name).ToList() ?? new List<string>(),
-                    AccessCompetencies = user.AccessCompetencies ?? new List<string>(),
-                    IsActive = user.IsActive,
-                    Phone = user.Phone,
-                    BadgePhysicalNumber = user.BadgePhysicalNumber
-                };
-
-                _logger.LogInformation("Connexion rÈussie pour l'utilisateur: {Username} (ID: {UserId})", 
-                    user.Username, user.Id);
-
-                return Ok(response);
+                    User = user
+                });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erreur lors de la tentative de connexion");
-                return StatusCode(500, "Erreur interne du serveur");
+                _logger.LogError(ex, "‚ùå Erreur critique lors de la connexion");
+                return StatusCode(500, new { message = "Erreur serveur", detail = ex.Message });
             }
         }
 
         /// <summary>
-        /// Validation d'un token JWT
+        /// Test de sant√© de l'API Auth
         /// </summary>
-        /// <returns>Informations du token si valide</returns>
-        [HttpGet("validate")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public IActionResult ValidateToken()
+        [HttpGet("health")]
+        public IActionResult Health()
+        {
+            return Ok(new 
+            { 
+                status = "healthy",
+                controller = "AuthController",
+                timestamp = DateTime.Now,
+                database = !string.IsNullOrEmpty(_connectionString)
+            });
+        }
+
+        /// <summary>
+        /// Liste des utilisateurs pour test
+        /// </summary>
+        [HttpGet("users")]
+        [ProducesResponseType(200)]
+        public IActionResult GetUsers()
         {
             try
             {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                var username = User.FindFirst(ClaimTypes.Name)?.Value;
-                var roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList();
-                var accessCompetencies = User.FindAll("access_competency").Select(c => c.Value).ToList();
-
-                var response = new
+                var users = new List<object>();
+                
+                using var conn = new SqlConnection(_connectionString);
+                conn.Open();
+                
+                using var cmd = new SqlCommand(@"
+                    SELECT TOP 10 
+                        ID, 
+                        Username, 
+                        FirstName, 
+                        LastName, 
+                        IsActive,
+                        Email,
+                        CASE 
+                            WHEN passwordHash IS NULL THEN 'NO_PASSWORD'
+                            WHEN LEFT(passwordHash, 2) = '$2' THEN 'BCRYPT'
+                            ELSE 'PLAIN_TEXT'
+                        END as PasswordType
+                    FROM [USER]
+                    ORDER BY ID", conn);
+                
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    valid = true,
-                    message = "Token JWT valide",
-                    userId = userId,
-                    username = username,
-                    roles = roles,
-                    accessCompetencies = accessCompetencies,
-                    expiresAt = User.FindFirst("exp")?.Value
-                };
-
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erreur lors de la validation du token");
-                return Unauthorized();
-            }
-        }
-
-        /// <summary>
-        /// DÈconnexion utilisateur (cÙtÈ client principalement)
-        /// </summary>
-        [HttpPost("logout")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult Logout()
-        {
-            try
-            {
-                var username = User.FindFirst(ClaimTypes.Name)?.Value ?? "Unknown";
-                _logger.LogInformation("DÈconnexion de l'utilisateur: {Username}", username);
-
-                return Ok(new { message = "DÈconnexion rÈussie" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erreur lors de la dÈconnexion");
-                return Ok(new { message = "DÈconnexion effectuÈe" });
-            }
-        }
-
-        /// <summary>
-        /// Changement de mot de passe pour l'utilisateur connectÈ
-        /// </summary>
-        [HttpPost("change-password")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto request)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!long.TryParse(userIdClaim, out var userId))
-                {
-                    return Unauthorized("Token invalide");
+                    users.Add(new
+                    {
+                        id = Convert.ToInt32(reader["ID"]),
+                        username = reader["Username"]?.ToString(),
+                        name = $"{reader["FirstName"]} {reader["LastName"]}",
+                        email = reader["Email"]?.ToString(),
+                        isActive = Convert.ToBoolean(reader["IsActive"]),
+                        passwordType = reader["PasswordType"]?.ToString()
+                    });
                 }
 
-                var success = await _authService.ChangePasswordAsync(
-                    userId, request.CurrentPassword, request.NewPassword);
-
-                if (!success)
-                {
-                    return BadRequest("Mot de passe actuel incorrect");
-                }
-
-                _logger.LogInformation("Mot de passe changÈ avec succËs pour l'utilisateur: {UserId}", userId);
-                return Ok(new { message = "Mot de passe changÈ avec succËs" });
+                _logger.LogInformation($"üìä {users.Count} utilisateurs r√©cup√©r√©s");
+                return Ok(users);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erreur lors du changement de mot de passe");
-                return StatusCode(500, "Erreur interne du serveur");
+                _logger.LogError(ex, "Erreur lors de la r√©cup√©ration des utilisateurs");
+                return StatusCode(500, new { message = "Erreur", detail = ex.Message });
             }
         }
 
-        /// <summary>
-        /// Obtenir les informations de l'utilisateur connectÈ
-        /// </summary>
-        [HttpGet("me")]
-        [Authorize]
-        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        private UserDto? AuthenticateUser(string username, string password)
         {
             try
             {
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!long.TryParse(userIdClaim, out var userId))
+                using var conn = new SqlConnection(_connectionString);
+                conn.Open();
+
+                using var cmd = new SqlCommand(@"
+                    SELECT 
+                        ID,
+                        Username,
+                        passwordHash,
+                        LastName,
+                        FirstName,
+                        IsActive,
+                        Email,
+                        Phone,
+                        TeamId
+                    FROM [USER] 
+                    WHERE Username = @username", conn);
+
+                cmd.Parameters.AddWithValue("@username", username);
+
+                using var reader = cmd.ExecuteReader();
+                if (!reader.Read())
                 {
-                    return Unauthorized("Token invalide");
+                    _logger.LogDebug($"Utilisateur non trouv√©: {username}");
+                    return null;
                 }
 
-                // Pour cette version, on reconstruit l'utilisateur depuis les claims
-                var user = new UserDto
-                {
-                    Id = userId,
-                    Username = User.FindFirst(ClaimTypes.Name)?.Value ?? "",
-                    FirstName = User.FindFirst("firstName")?.Value ?? "",
-                    LastName = User.FindFirst("lastName")?.Value ?? "",
-                    Email = User.FindFirst("email")?.Value ?? "",
-                    Phone = User.FindFirst("phone")?.Value,
-                    IsActive = bool.Parse(User.FindFirst("isActive")?.Value ?? "true"),
-                    TeamId = int.TryParse(User.FindFirst("teamId")?.Value, out var teamId) ? teamId : null,
-                    TeamName = User.FindFirst("teamName")?.Value,
-                    BadgePhysicalNumber = User.FindFirst("badgeNumber")?.Value,
-                    Roles = User.FindAll(ClaimTypes.Role).Select(r => new RoleDefinitionDto 
-                    { 
-                        Name = r.Value, 
-                        IsActive = true 
-                    }).ToList(),
-                    AccessCompetencies = User.FindAll("access_competency").Select(c => c.Value).ToList()
-                };
+                var storedHash = reader["passwordHash"]?.ToString();
 
-                return Ok(user);
+                if (string.IsNullOrEmpty(storedHash))
+                {
+                    _logger.LogWarning($"‚ö†Ô∏è Pas de mot de passe pour: {username}");
+                    return null;
+                }
+
+                // V√©rification du mot de passe
+                bool passwordValid = false;
+
+                if (storedHash.StartsWith("$2"))
+                {
+                    // Hash BCrypt
+                    try
+                    {
+                        passwordValid = BCrypt.Net.BCrypt.Verify(password, storedHash);
+                        _logger.LogDebug($"V√©rification BCrypt: {passwordValid}");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Erreur BCrypt pour {username}");
+                        return null;
+                    }
+                }
+                else
+                {
+                    // Mot de passe en clair (temporaire)
+                    passwordValid = (password == storedHash);
+                    if (passwordValid)
+                    {
+                        _logger.LogWarning($"‚ö†Ô∏è Mot de passe en clair d√©tect√© pour {username} - √Ä migrer!");
+                    }
+                }
+
+                if (!passwordValid)
+                {
+                    _logger.LogDebug($"Mot de passe incorrect pour: {username}");
+                    return null;
+                }
+
+                // Cr√©er le DTO - CONVERSION EN INT
+                return new UserDto
+                {
+                    Id = Convert.ToInt32(reader["ID"]),  // Conversion explicite en int
+                    UserName = reader["Username"]?.ToString() ?? "",
+                    LastName = reader["LastName"]?.ToString() ?? "",
+                    FirstName = reader["FirstName"]?.ToString() ?? "",
+                    IsActive = Convert.ToBoolean(reader["IsActive"]),
+                    Email = reader["Email"]?.ToString() ?? "",
+                    Phone = reader["Phone"]?.ToString(),
+                    TeamId = reader["TeamId"] == DBNull.Value ? null : Convert.ToInt32(reader["TeamId"])
+                };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erreur lors de la rÈcupÈration des informations utilisateur");
-                return StatusCode(500, "Erreur interne du serveur");
-            }
-        }
-
-        /// <summary>
-        /// MÈthode privÈe pour charger les informations complËtes d'un utilisateur
-        /// </summary>
-        private async Task LoadUserCompleteInfoAsync(UserDto user)
-        {
-            // Charger les rÙles
-            user.Roles = await _authService.GetUserRolesAsync(user.Id);
-
-            // Charger les compÈtences d'accËs
-            user.AccessCompetencies = await _authService.GetUserAccessCompetenciesAsync(user.Id);
-
-            // Charger le nom de l'Èquipe
-            if (user.TeamId.HasValue)
-            {
-                user.TeamName = await _authService.GetUserTeamNameAsync(user.TeamId.Value);
+                _logger.LogError(ex, $"Erreur lors de l'authentification de {username}");
+                return null;
             }
         }
     }
