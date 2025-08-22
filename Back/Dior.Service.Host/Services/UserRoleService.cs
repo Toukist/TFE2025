@@ -68,11 +68,12 @@ namespace Dior.Service.Host.Services
             return MapToDto(created);
         }
 
-        public async Task<bool> RemoveRoleAsync(int id)
+        public Task<bool> RemoveRoleAsync(int id)
         {
             // Pour cette version simplifiée, on supprime par UserRole ID composite
             // En réalité, il faudrait une logique plus complexe
-            return true;
+            _ = id; // Utilisation du paramètre pour éviter l'avertissement
+            return Task.FromResult(true);
         }
 
         private static UserRoleDto MapToDto(Dior.Library.Entities.UserRole userRole)
