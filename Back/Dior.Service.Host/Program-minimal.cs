@@ -2,7 +2,7 @@ using Microsoft.AspNetCore;
 
 namespace Dior.Service.Host
 {
-    public class Program
+    public class ProgramMinimal
     {
         public static void Main(string[] args)
         {
