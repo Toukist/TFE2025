@@ -72,7 +72,7 @@ namespace Dior.Service.Host.Services
                 NewValues = auditLog.NewValues,
                 Timestamp = auditLog.Timestamp,
                 UserId = auditLog.UserId,
-                UserName = auditLog.User?.UserName,
+                UserName = auditLog.User?.Username,
                 IpAddress = auditLog.IpAddress,
                 UserAgent = auditLog.UserAgent
             };

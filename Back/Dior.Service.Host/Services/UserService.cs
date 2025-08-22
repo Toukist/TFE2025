@@ -32,21 +32,21 @@ namespace Dior.Service.Host.Services
                 .Include(u => u.Team)
                 .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.RoleDefinition)
-                .FirstOrDefaultAsync(u => u.Id == id);
+                .FirstOrDefaultAsync(u => u.ID == id); // Utiliser ID au lieu de Id
 
             return user != null ? MapToDto(user) : null;
         }
 
         public async Task<bool> ExistsAsync(int id)
         {
-            return await _context.Users.AnyAsync(u => u.Id == id);
+            return await _context.Users.AnyAsync(u => u.ID == id); // Utiliser ID au lieu de Id
         }
 
         public async Task<UserDto> CreateAsync(CreateUserDto createDto)
         {
             var user = new Dior.Library.Entities.User
             {
-                UserName = createDto.UserName,
+                Username = createDto.Username, // Utiliser Username au lieu de UserName
                 FirstName = createDto.FirstName,
                 LastName = createDto.LastName,
                 Email = createDto.Email,
@@ -54,7 +54,7 @@ namespace Dior.Service.Host.Services
                 IsActive = createDto.IsActive,
                 TeamId = createDto.TeamId,
                 BadgePhysicalNumber = createDto.BadgePhysicalNumber,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(createDto.Password),
+                passwordHash = BCrypt.Net.BCrypt.HashPassword(createDto.Password), // Utiliser passwordHash
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = "System"
             };
@@ -67,11 +67,11 @@ namespace Dior.Service.Host.Services
 
         public async Task<bool> UpdateAsync(int id, UpdateUserDto updateDto)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.ID == id); // Utiliser ID
             if (user == null) return false;
 
             if (!string.IsNullOrEmpty(updateDto.UserName))
-                user.UserName = updateDto.UserName;
+                user.Username = updateDto.UserName; // Utiliser Username
             if (!string.IsNullOrEmpty(updateDto.FirstName))
                 user.FirstName = updateDto.FirstName;
             if (!string.IsNullOrEmpty(updateDto.LastName))
@@ -94,7 +94,7 @@ namespace Dior.Service.Host.Services
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.ID == id); // Utiliser ID
             if (user == null) return false;
 
             _context.Users.Remove(user);
@@ -150,8 +150,8 @@ namespace Dior.Service.Host.Services
         {
             return new UserDto
             {
-                Id = user.Id,
-                UserName = user.UserName,
+                Id = user.ID, // Utiliser ID au lieu de Id
+                Username = user.Username, // Utiliser Username au lieu de UserName
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
@@ -164,7 +164,7 @@ namespace Dior.Service.Host.Services
                 CreatedBy = user.CreatedBy,
                 LastEditAt = user.LastEditAt,
                 LastEditBy = user.LastEditBy,
-                Roles = user.UserRoles?.Select(ur => ur.RoleDefinition.Name).ToList() ?? new List<string>()
+                AccessCompetencies = user.UserRoles?.Select(ur => ur.RoleDefinition.Name).ToList() ?? new List<string>()
             };
         }
 
@@ -172,8 +172,8 @@ namespace Dior.Service.Host.Services
         {
             return new UserFullDto
             {
-                Id = user.Id,
-                UserName = user.UserName,
+                Id = user.ID, // Utiliser ID au lieu de Id
+                Username = user.Username, // Utiliser Username au lieu de UserName
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
@@ -186,7 +186,7 @@ namespace Dior.Service.Host.Services
                 CreatedBy = user.CreatedBy,
                 LastEditAt = user.LastEditAt,
                 LastEditBy = user.LastEditBy,
-                Roles = user.UserRoles?.Select(ur => ur.RoleDefinition.Name).ToList() ?? new List<string>(),
+                AccessCompetencies = user.UserRoles?.Select(ur => ur.RoleDefinition.Name).ToList() ?? new List<string>(),
                 Team = user.Team != null ? new Dior.Library.DTO.Team.TeamDto
                 {
                     Id = user.Team.Id,

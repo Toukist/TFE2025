@@ -82,7 +82,7 @@ namespace Dior.Service.Host.Services
             {
                 Id = userRole.UserId, // Utilisé comme identifiant composite
                 UserId = userRole.UserId,
-                UserName = userRole.User?.UserName,
+                UserName = userRole.User?.Username,
                 RoleDefinitionId = userRole.RoleDefinitionId,
                 RoleName = userRole.RoleDefinition?.Name,
                 CreatedAt = userRole.CreatedAt,
