@@ -125,6 +125,6 @@
     <Build Include="dbo\Stored Procedures\sp_AddUser.sql" />
   </ItemGroup>
   <ItemGroup>
-    <RefactorLog Include="Dior.Database.refactorlog" />
+    <RefactorLog Include="dbo\Dior.Database.refactorlog" />
   </ItemGroup>
 </Project>
