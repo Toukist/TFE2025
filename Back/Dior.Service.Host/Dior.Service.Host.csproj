@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Dior.Service\Dior.Service.csproj" />
     <ProjectReference Include="..\Dior.Library\Dior.Library.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Services\**\*.cs" />
+  </ItemGroup>
+
 </Project>
