@@ -92,6 +92,12 @@ export const routes: Routes = [
     path: 'team/:id/members',
     loadComponent: () => import('./components/team-members/team-members.component').then(m => m.TeamMembersComponent)
   },
-  // Catch-all - redirection vers login si route inconnue
-  { path: '**', redirectTo: 'login' }
+  {
+    path: 'users/collaborateur',
+    canActivate: [authGuard, RoleGuard],
+    data: { roles: ['admin', 'manager', 'rh'] },
+    loadComponent: () => import('./components/collaborateur-users/collaborateur-users.component').then(m => m.CollaborateurUsersComponent),
+    title: 'Collaborateurs - DiorSystem'
+  },
+{ path: '**', redirectTo: 'login' }
 ];
