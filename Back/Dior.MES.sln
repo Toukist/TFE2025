@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dior.Service.Host", "Dior.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dior.Library", "Dior.Library\Dior.Library.csproj", "{5037D8BB-152E-43D7-BCDD-E5F528E65881}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Dior.Database", "Dior.Database\Dior.Database.sqlproj", "{A76D0570-6FCD-42D6-9E30-8353566E80A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dior.Database", "Dior.Database\Dior.Database.sqlproj", "{VOTRE-GUID}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dior.Service", "Dior.Service\Dior.Service.csproj", "{69E5C37D-F51D-4EC7-A999-6C9BC71ACDA9}"
 EndProject

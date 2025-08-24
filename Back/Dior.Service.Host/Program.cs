@@ -1,18 +1,10 @@
 using Dior.Database.Extensions;
 using Dior.Service.Host.Extensions;
-using Dior.Service.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-// ======================== JSON CONFIG ========================
+// Configuration JSON avec camelCase
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -21,11 +13,11 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-// ======================== DB CONTEXT ========================
+// DbContext
 builder.Services.AddDbContext<DiorDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DIOR_DB")));
 
-// ======================== SERVICES MÃ‰TIER ========================
+// Services métier
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TeamService>();
 builder.Services.AddScoped<ProjetService>();
@@ -37,28 +29,16 @@ builder.Services.AddScoped<UserRoleService>();
 builder.Services.AddScoped<AuditLogService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
-// ======================== LOGGING ========================
+// Logging
 builder.Services.AddLogging(config =>
 {
     config.AddConsole();
     config.AddDebug();
 });
 
-// ======================== JWT CONFIG ========================
-var jwtSecret = builder.Configuration["Jwt:Secret"];
-SymmetricSecurityKey signingKey;
-
-try
-{
-    var keyBytes = Convert.FromBase64String(jwtSecret);
-    signingKey = new SymmetricSecurityKey(keyBytes);
-    Console.WriteLine("âœ… JWT Secret dÃ©codÃ© en Base64.");
-}
-catch
-{
-    signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret ?? "DiorSuperSecretKeyForDevOnly!"));
-    Console.WriteLine("âš ï¸ JWT Secret utilisÃ© en clair (pas Base64).");
-}
+// JWT Configuration
+var jwtSecret = builder.Configuration["Jwt:Secret"] 
+    ?? "DiorSuperSecretKeyForJWTTokenGeneration2024!"; // Clé par défaut pour développement
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -69,12 +49,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = signingKey,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
             ClockSkew = TimeSpan.Zero
         };
     });
 
-// ======================== CORS ========================
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("DevelopmentPolicy", policy =>
@@ -86,7 +66,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// ======================== SWAGGER ========================
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -97,6 +77,7 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API Backend pour l'application Dior"
     });
 
+    // Support JWT dans Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -104,7 +85,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Entrez votre token JWT sous la forme: Bearer {token}"
+        Description = "Entrez votre token JWT"
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -122,6 +103,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 
+    // Inclure les commentaires XML
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     if (File.Exists(xmlPath))
@@ -132,7 +114,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// ======================== PIPELINE ========================
+// Pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -141,14 +123,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
-app.UseCors("DevelopmentPolicy");
+app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow, environment = app.Environment.EnvironmentName }));
 
-// ======================== TEST ENDPOINT ========================
+// Test endpoint
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.Run();
