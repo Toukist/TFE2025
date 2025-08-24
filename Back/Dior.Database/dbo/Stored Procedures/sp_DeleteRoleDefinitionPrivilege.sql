@@ -1,6 +1,5 @@
-﻿
-CREATE PROCEDURE [dbo].[sp_DeleteRoleDefinitionPrivilege]
-    @id INT
+﻿CREATE OR ALTER PROCEDURE dbo.sp_DeleteRoleDefinitionPrivilege
+    @Id BIGINT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -9,7 +8,7 @@ BEGIN
         BEGIN TRANSACTION;
 
         DELETE FROM ROLE_DEFINITION_PRIVILEGE
-        WHERE id = @id;
+        WHERE Id = @Id;
 
         COMMIT TRANSACTION;
     END TRY
@@ -22,7 +21,7 @@ BEGIN
             @ErrorSeverity INT           = ERROR_SEVERITY(),
             @ErrorState   INT            = ERROR_STATE();
 
-        -- Réémettre l’erreur
         RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
     END CATCH
 END
+GOEND

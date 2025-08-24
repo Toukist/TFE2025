@@ -1,10 +1,10 @@
-﻿
-CREATE   PROCEDURE dbo.sp_DeleteUserRole
-  @UserId INT,
-  @RoleDefinitionId INT
+﻿CREATE OR ALTER PROCEDURE dbo.sp_DeleteUserRole
+  @UserId BIGINT,
+  @RoleDefinitionId BIGINT
 AS
 BEGIN
   SET NOCOUNT ON;
   DELETE FROM dbo.[User_Role]
-  WHERE UserID=@UserId AND RoleDefinitionId=@RoleDefinitionId;
+  WHERE UserId = @UserId AND RoleDefinitionId = @RoleDefinitionId;
 END
+GO

@@ -50,5 +50,35 @@ namespace Dior.Service.Services.UserInterfaces
             await _context.SaveChangesAsync(ct).ConfigureAwait(false);
             return true;
         }
+
+        public Task<IEnumerable<AccessDto>> GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AccessDto?> GetByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AccessDto> CreateAsync(CreateAccessDto createDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UpdateAsync(int id, UpdateAccessDto updateDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> ExistsAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,7 +1,7 @@
-﻿CREATE   PROCEDURE dbo.sp_UpdateUserAccess
-  @id       INT,
+﻿CREATE OR ALTER PROCEDURE dbo.sp_UpdateUserAccess
+  @id       BIGINT,
   @userId   BIGINT,
-  @accessId INT,
+  @accessId BIGINT,
   @By       NVARCHAR(100)=NULL
 AS
 BEGIN
@@ -9,13 +9,16 @@ BEGIN
   IF @By IS NULL SET @By = SUSER_SNAME();
 
   UPDATE dbo.USER_ACCESS
-  SET userId=@userId, accessId=@accessId,
-      lastEditAt=GETDATE(), lastEditBy=@By
-  WHERE id=@id;
+  SET UserId = @userId,
+      AccessId = @accessId,
+      LastEditAt = GETDATE(),
+      LastEditBy = @By
+  WHERE Id = @id;
 
-  DECLARE @details NVARCHAR(200) = N'accessId=' + CAST(@accessId AS NVARCHAR(50));
+  DECLARE @details NVARCHAR(200) = N'AccessId=' + CAST(@accessId AS NVARCHAR(50));
 
   EXEC dbo.sp_AddAuditLog
-       @userId=@userId, @action=N'UPDATE', @tableName=N'USER_ACCESS',
-       @recordId=@id, @details=@details, @timestamp=NULL;
+       @userId = @userId, @action = N'UPDATE', @tableName = N'USER_ACCESS',
+       @recordId = @id, @details = @details, @timestamp = NULL;
 END
+GO

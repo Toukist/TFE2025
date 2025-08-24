@@ -4,23 +4,41 @@ using System.ComponentModel.DataAnnotations;
 namespace Dior.Library.DTO.Contract
 {
     /// <summary>
-    /// DTO pour les contrats
+    /// DTO pour les contrats (lecture/retour API)
     /// </summary>
     public class ContractDto
     {
-        public int Id { get; set; }
-        public string ContractNumber { get; set; } = string.Empty;
-        public string Title { get; set; } = string.Empty;
+        // Identifiants
+        public long Id { get; set; }
+        public long UserId { get; set; }
+
+        // Métadonnées utilisateur liées (jointures)
+        public string? UserFullName { get; set; }
+        public string? UserTeamName { get; set; }
+
+        // Informations de contrat (optionnelles selon source)
+        public string? ContractNumber { get; set; }
+        public string? Title { get; set; }
         public string? Description { get; set; }
-        public int UserId { get; set; }
-        public string? UserName { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
-        public string Status { get; set; } = string.Empty;
+        public string? Status { get; set; }
         public decimal? Salary { get; set; }
         public string? ContractType { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public string CreatedBy { get; set; } = string.Empty;
+        public string? Currency { get; set; }
+        public string? PaymentFrequency { get; set; }
+
+        // Fichier stocké
+        public string? FileName { get; set; }
+        public string? FileUrl { get; set; }
+
+        // Dates (toutes nullable)
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public DateTime? UploadDate { get; set; }
+        public DateTime? CreatedAt { get; set; }
+
+        // Audit
+        public string? UploadedBy { get; set; }
+        public string? CreatedBy { get; set; }
     }
 
     /// <summary>

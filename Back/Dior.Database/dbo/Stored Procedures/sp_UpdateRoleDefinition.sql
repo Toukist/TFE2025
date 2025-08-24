@@ -1,8 +1,8 @@
-﻿CREATE PROCEDURE dbo.sp_UpdateRoleDefinition
-    @id             INT,
+﻿CREATE OR ALTER PROCEDURE dbo.sp_UpdateRoleDefinition
+    @Id             BIGINT,
     @Name           NVARCHAR(100),
     @Description    NVARCHAR(MAX)   = NULL,
-    @ParentRoleId   INT             = NULL,
+    @ParentRoleId   BIGINT          = NULL,
     @IsActive       BIT
 AS
 BEGIN
@@ -12,9 +12,10 @@ BEGIN
     SET 
         [Name]         = @Name,
         [Description]  = @Description,
-        parentRoleId   = @ParentRoleId,
-        isActive       = @IsActive,
-        lastEditAt     = GETDATE(),       -- date/heure serveur
-        lastEditBy     = SUSER_SNAME()    -- login SQL Server courant
-    WHERE id = @id;
+        ParentRoleId   = @ParentRoleId,
+        IsActive       = @IsActive,
+        LastEditAt     = GETDATE(),
+        LastEditBy     = SUSER_SNAME()
+    WHERE Id = @Id;
 END
+GO

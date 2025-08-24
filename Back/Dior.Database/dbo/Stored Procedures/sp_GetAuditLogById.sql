@@ -1,23 +1,23 @@
-﻿
--- =============================================
+﻿-- =============================================
 -- Author:    VotreNom
 -- Create date: 2025-06-11
 -- Description: Récupère une entrée du journal d’audit par son identifiant
 -- =============================================
-CREATE PROCEDURE dbo.sp_GetAuditLogById
-    @id INT
+CREATE OR ALTER PROCEDURE dbo.sp_GetAuditLogById
+    @Id BIGINT
 AS
 BEGIN
     SET NOCOUNT ON;
 
     SELECT
-        id,
-        userId,
-        action,
-        tableName,
-        recordId,
-        details,
-        [timestamp]
+        Id,
+        UserId,
+        Action,
+        TableName,
+        RecordId,
+        Details,
+        [Timestamp]
     FROM dbo.AUDIT_LOG
-    WHERE id = @id;
+    WHERE Id = @Id;
 END
+GO

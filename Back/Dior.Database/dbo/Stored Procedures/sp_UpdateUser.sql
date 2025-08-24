@@ -1,16 +1,15 @@
-﻿
-/* =======================
-   2) UPDATE USER (password kept if NULL/empty)
+﻿/* =======================
+   UPDATE USER (password kept if NULL/empty)
    ======================= */
-CREATE   PROCEDURE dbo.sp_UpdateUser
-  @Id           INT,
+CREATE OR ALTER PROCEDURE dbo.sp_UpdateUser
+  @Id           BIGINT,
   @IsActive     BIT,
   @UserName     NVARCHAR(100),
   @FirstName    NVARCHAR(100),
   @LastName     NVARCHAR(100),
   @Email        NVARCHAR(255),
   @Phone        NVARCHAR(50) = NULL,
-  @TeamId       INT = NULL,
+  @TeamId       BIGINT = NULL,
   @PasswordHash NVARCHAR(200) = NULL,
   @By           NVARCHAR(100) = NULL
 AS
@@ -33,4 +32,4 @@ BEGIN
   FROM dbo.[User] u
   WHERE u.Id = @Id;
 END
-GO
+GOGO

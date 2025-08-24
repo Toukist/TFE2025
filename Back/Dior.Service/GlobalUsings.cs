@@ -24,3 +24,4 @@ global using CreateProjetRequest = Dior.Library.DTO.Project.CreateProjetDto;
 global using UpdateTaskRequest = Dior.Library.DTO.Task.UpdateTaskDto;
 global using CreateTaskRequest = Dior.Library.DTO.Task.CreateTaskDto;
 global using UpdateContractRequest = Dior.Library.DTO.Contract.UpdateContractDto;
+global using CreateContractRequest = Dior.Library.DTO.Contract.CreateContractDto;

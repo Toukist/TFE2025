@@ -133,5 +133,35 @@ namespace Dior.Service.Services.UserInterfaces
             
             return newValues ?? oldValues ?? string.Empty;
         }
+
+        Task<IEnumerable<AuditLogDto>> IAuditLogService.GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<AuditLogDto?> IAuditLogService.GetByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AuditLogDto> CreateAsync(CreateAuditLogDto createDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<AuditLogDto>> GetByEntityAsync(string entityType, int entityId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<AuditLogDto>> GetByUserAsync(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<AuditLogDto>> GetRecentAsync(int count = 50)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

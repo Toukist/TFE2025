@@ -1,23 +1,23 @@
-﻿
--- =============================================
+﻿-- =============================================
 -- Author:    VotreNom
 -- Create date: 2025-06-11
 -- Description: Récupère une association rôle-privilege par son identifiant
 -- =============================================
-CREATE PROCEDURE dbo.sp_GetRoleDefinitionPrivilegeById
-    @id INT
+CREATE OR ALTER PROCEDURE dbo.sp_GetRoleDefinitionPrivilegeById
+    @Id BIGINT
 AS
 BEGIN
     SET NOCOUNT ON;
 
     SELECT
-        id,
-        roleDefinitionId,
-        privilegeId,
-        createdAt,
-        createdBy,
-        lastEditAt,
-        lastEditBy
+        Id,
+        RoleDefinitionId,
+        PrivilegeId,
+        CreatedAt,
+        CreatedBy,
+        LastEditAt,
+        LastEditBy
     FROM dbo.ROLE_DEFINITION_PRIVILEGE
-    WHERE id = @id;
+    WHERE Id = @Id;
 END
+GO

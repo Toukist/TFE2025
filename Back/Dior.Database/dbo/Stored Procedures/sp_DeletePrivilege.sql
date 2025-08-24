@@ -1,6 +1,5 @@
-﻿
-CREATE PROCEDURE [dbo].[sp_DeletePrivilege]
-    @ID BIGINT
+﻿CREATE OR ALTER PROCEDURE dbo.sp_DeletePrivilege
+    @Id BIGINT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -9,7 +8,7 @@ BEGIN
         BEGIN TRANSACTION;
 
         DELETE FROM PRIVILEGE
-        WHERE ID = @ID;
+        WHERE Id = @Id;
 
         COMMIT TRANSACTION;
     END TRY
@@ -25,3 +24,4 @@ BEGIN
         RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
     END CATCH
 END
+GO

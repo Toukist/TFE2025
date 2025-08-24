@@ -1,13 +1,12 @@
-﻿
--- =============================================
+﻿-- =============================================
 -- Author:    VotreNom
 -- Create date: 2025-06-11
 -- Description: Met à jour une association rôle/privilege en renseignant automatiquement LastEditAt et LastEditBy
 -- =============================================
-CREATE PROCEDURE dbo.sp_UpdateRoleDefinitionPrivilege
-    @id                INT,
-    @roleDefinitionId  INT,
-    @privilegeId       INT
+CREATE OR ALTER PROCEDURE dbo.sp_UpdateRoleDefinitionPrivilege
+    @Id               BIGINT,
+    @RoleDefinitionId BIGINT,
+    @PrivilegeId      BIGINT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -17,11 +16,11 @@ BEGIN
 
         UPDATE dbo.ROLE_DEFINITION_PRIVILEGE
         SET 
-            roleDefinitionId = @roleDefinitionId,
-            privilegeId      = @privilegeId,
-            lastEditAt       = GETDATE(),       -- date/heure serveur
-            lastEditBy       = SUSER_SNAME()    -- utilisateur connecté
-        WHERE id = @id;
+            RoleDefinitionId = @RoleDefinitionId,
+            PrivilegeId      = @PrivilegeId,
+            LastEditAt       = GETDATE(),
+            LastEditBy       = SUSER_SNAME()
+        WHERE Id = @Id;
 
         COMMIT TRANSACTION;
     END TRY
@@ -37,3 +36,4 @@ BEGIN
         RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
     END CATCH
 END
+GO

@@ -1,25 +1,29 @@
-﻿
-CREATE PROCEDURE [dbo].[sp_AddRoleDefinitionPrivilege]
-    @roleDefinitionId INT,
-    @privilegeId      INT
+﻿CREATE OR ALTER PROCEDURE dbo.sp_AddRoleDefinitionPrivilege
+    @RoleDefinitionId BIGINT,
+    @PrivilegeId      BIGINT,
+    @By               NVARCHAR(100) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
+    IF @By IS NULL SET @By = SUSER_SNAME();
 
     INSERT INTO ROLE_DEFINITION_PRIVILEGE
-        (roleDefinitionId,
-         privilegeId,
-         createdAt,
-         createdBy,
-         lastEditAt,
-         lastEditBy)
+        (RoleDefinitionId,
+         PrivilegeId,
+         CreatedAt,
+         CreatedBy,
+         LastEditAt,
+         LastEditBy)
     VALUES
         (
-            @roleDefinitionId,
-            @privilegeId,
-            GETDATE(),        -- date/heure du serveur au moment de l’insertion
-            SUSER_SNAME(),    -- utilisateur connecté
-            GETDATE(),        -- date/heure du serveur au moment de l’insertion
-            SUSER_SNAME()     -- utilisateur connecté
+            @RoleDefinitionId,
+            @PrivilegeId,
+            GETDATE(),
+            @By,
+            GETDATE(),
+            @By
         );
+
+    SELECT CAST(SCOPE_IDENTITY() AS BIGINT) AS Id;
 END
+GO

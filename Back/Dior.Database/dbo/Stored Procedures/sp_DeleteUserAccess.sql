@@ -1,6 +1,6 @@
 ﻿
-CREATE PROCEDURE [dbo].[sp_DeleteUserAccess]
-    @id INT
+CREATE OR ALTER PROCEDURE dbo.sp_DeleteUserAccess
+    @Id BIGINT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -9,7 +9,7 @@ BEGIN
         BEGIN TRANSACTION;
 
         DELETE FROM USER_ACCESS
-        WHERE id = @id;
+        WHERE Id = @Id;
 
         COMMIT TRANSACTION;
     END TRY
@@ -25,3 +25,4 @@ BEGIN
         RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
     END CATCH
 END
+GO

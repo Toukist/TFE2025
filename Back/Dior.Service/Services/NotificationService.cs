@@ -160,5 +160,30 @@ namespace Dior.Service.Services
                 }
             });
         }
+
+        public Task<List<NotificationDto>> GetUserNotificationsAsync(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<NotificationDto>> GetAllNotificationsAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<NotificationDto?> GetByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<NotificationDto> CreateAsync(CreateNotificationDto createDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<NotificationDto> CreateNotificationAsync(CreateNotificationRequest request)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

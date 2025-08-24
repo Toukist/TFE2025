@@ -1,6 +1,5 @@
-﻿
-CREATE PROCEDURE [dbo].[sp_DeleteRoleDefinition]
-    @id INT
+﻿CREATE OR ALTER PROCEDURE dbo.sp_DeleteRoleDefinition
+    @Id BIGINT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -9,7 +8,7 @@ BEGIN
         BEGIN TRANSACTION;
 
         DELETE FROM ROLE_DEFINITION
-        WHERE id = @id;
+        WHERE Id = @Id;
 
         COMMIT TRANSACTION;
     END TRY
@@ -25,3 +24,4 @@ BEGIN
         RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
     END CATCH
 END
+GO
