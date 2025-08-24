@@ -1,11 +1,16 @@
-using Dior.Database.Data;
-using Dior.Database.Infrastructure;
-using Dior.Database.Services.Implementations;
-using Dior.Database.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Text;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
+using Dior.Service.Host.Extensions;
+using Dior.Service.Host.Services;
+using Dior.Service.Services;
 
 namespace Dior.Database.Extensions
 {
@@ -13,35 +18,80 @@ namespace Dior.Database.Extensions
     {
         public static void ConfigureDiorServices(this IServiceCollection services, IConfiguration configuration)
         {
-            // Configuration de la base de données
+            // DbContext
             services.AddDbContext<DiorDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(configuration.GetConnectionString("DIOR_DB")));
 
-            // Configuration des services AutoMapper
-            services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
-
-            // Enregistrement des services métiers
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IAccessService, AccessService>();
-            services.AddScoped<IRoleDefinitionService, RoleDefinitionService>();
-            services.AddScoped<IPrivilegeService, PrivilegeService>();
-            services.AddScoped<IAccessCompetencyService, AccessCompetencyService>();
-            services.AddScoped<IUserRoleService, UserRoleService>();
-            services.AddScoped<IUserAccessCompetencyService, UserAccessCompetencyService>();
-            services.AddScoped<IUserAccessService, UserAccessService>();
-            services.AddScoped<IRoleDefinitionPrivilegeService, RoleDefinitionPrivilegeService>();
-            services.AddScoped<IAuditLogService, AuditLogService>();
-        }
-
-        public static void ConfigureSwagger(this IServiceCollection services)
-        {
-            services.AddSwaggerGen(options =>
+            // Auto-enregistrement des services mÃ©tier (toutes classes *Service en Scoped)
+            var svcAsm = typeof(ContractService).Assembly;
+            foreach (var type in svcAsm.GetTypes().Where(t => t.IsClass && !t.IsAbstract && t.Name.EndsWith("Service")))
             {
-                options.SwaggerDoc("v1", new OpenApiInfo
+                var iface = type.GetInterfaces().FirstOrDefault();
+                if (iface != null)
+                    services.AddScoped(iface, type);
+                else
+                    services.AddScoped(type);
+            }
+
+            // Auth JWT
+            var jwtSection = configuration.GetSection("Jwt");
+            var issuer = jwtSection["Issuer"];
+            var audience = jwtSection["Audience"];
+            var secret = jwtSection["Secret"];
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
-                    Version = "v1",
-                    Title = "Dior Database API",
-                    Description = "API de gestion des utilisateurs, rôles et compétences pour Dior"
+                    options.RequireHttpsMetadata = true;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = issuer,
+                        ValidAudience = audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret ?? "CHANGE_ME"))
+                    };
+                });
+
+            // Authorization + AccessCompetency policy
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("competency:PARTYKIT_ACCESS", policy =>
+                    policy.Requirements.Add(new AccessCompetencyRequirement("PARTYKIT_ACCESS")));
+                options.AddPolicy("competency:USER_CRUD", policy =>
+                    policy.Requirements.Add(new AccessCompetencyRequirement("USER_CRUD")));
+            });
+            services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationHandler, AccessCompetencyHandler>();
+
+            // CORS
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Frontend", b => b
+                    .WithOrigins("http://localhost:4200", "https://localhost:4200")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials());
+            });
+
+            // Swagger + Bearer
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dior API", Version = "v1" });
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter JWT Bearer token only"
+                };
+                c.AddSecurityDefinition("Bearer", securityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    { securityScheme, Array.Empty<string>() }
                 });
             });
         }

@@ -89,8 +89,8 @@ namespace Dior.Service.Host.Services
 
             return users.Select(u => new UserDto
             {
-                Id = u.Id,
-                UserName = u.UserName,
+                Id = u.ID, // Utiliser ID au lieu de Id
+                Username = u.Username, // Utiliser Username au lieu de UserName
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 Email = u.Email,
@@ -103,7 +103,7 @@ namespace Dior.Service.Host.Services
                 CreatedBy = u.CreatedBy,
                 LastEditAt = u.LastEditAt,
                 LastEditBy = u.LastEditBy,
-                Roles = u.UserRoles.Select(ur => ur.RoleDefinition.Name).ToList()
+                AccessCompetencies = u.UserRoles.Select(ur => ur.RoleDefinition.Name).ToList()
             }).ToList();
         }
 

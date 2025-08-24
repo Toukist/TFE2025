@@ -15,7 +15,7 @@ namespace Dior.Service.Host.Services
         {
             var contracts = new List<ContractDto>
             {
-                new ContractDto
+                new()
                 {
                     Id = 1,
                     ContractNumber = "CT-2024-001",
@@ -99,6 +99,7 @@ namespace Dior.Service.Host.Services
 
         public Task<bool> DeleteAsync(int id)
         {
+            _ = id; // Utilisation du paramètre pour éviter l'avertissement
             return Task.FromResult(true);
         }
     }

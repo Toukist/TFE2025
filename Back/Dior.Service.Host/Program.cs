@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Dior.Database.Extensions;
+using Dior.Service.Host.Extensions;
+using Dior.Service.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Dior.Service.Host.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration;
 
 // ======================== JSON CONFIG ========================
 builder.Services.AddControllers()
@@ -47,14 +50,12 @@ SymmetricSecurityKey signingKey;
 
 try
 {
-    // Si c’est une chaîne Base64 valide → on décode
     var keyBytes = Convert.FromBase64String(jwtSecret);
     signingKey = new SymmetricSecurityKey(keyBytes);
     Console.WriteLine("✅ JWT Secret décodé en Base64.");
 }
 catch
 {
-    // Sinon → on considère que c’est une clé texte brut
     signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret ?? "DiorSuperSecretKeyForDevOnly!"));
     Console.WriteLine("⚠️ JWT Secret utilisé en clair (pas Base64).");
 }
@@ -96,7 +97,6 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API Backend pour l'application Dior"
     });
 
-    // Support JWT dans Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -122,7 +122,6 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 
-    // Inclure les commentaires XML si présents
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     if (File.Exists(xmlPath))
@@ -136,21 +135,18 @@ var app = builder.Build();
 // ======================== PIPELINE ========================
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Dior API V1");
-        c.RoutePrefix = "swagger";
-    });
+    app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseCors("DevelopmentPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow, environment = app.Environment.EnvironmentName }));
 
 // ======================== TEST ENDPOINT ========================
 app.MapGet("/", () => Results.Redirect("/swagger"));

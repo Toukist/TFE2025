@@ -1,6 +1,7 @@
 using Dior.Library.DTO.Auth;
 using Dior.Library.DTO.User;
 using Dior.Service.Host.Services;
+using Dior.Service.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +10,8 @@ using System.Security.Claims;
 
 namespace Dior.Service.Host.Controllers
 {
-    /// <summary>
-    /// Contrôleur d'authentification pour le système Dior Enterprise
-    /// </summary>
     [ApiController]
     [Route("api/auth")]
-    [Produces("application/json")]
     public class AuthController : ControllerBase
     {
         private readonly DiorDbContext _db;
@@ -30,9 +27,6 @@ namespace Dior.Service.Host.Controllers
             _passwordHasher = new PasswordHasher<string>();
         }
 
-        /// <summary>
-        /// Authentification utilisateur - Retourne un token JWT
-        /// </summary>
         [HttpPost("login")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(LoginResponseCompleteDto), StatusCodes.Status200OK)]
@@ -53,16 +47,16 @@ namespace Dior.Service.Host.Controllers
                     u.LastName,
                     u.Email,
                     u.TeamId,
-                    u.Team.Name,
+                    TeamName = u.Team != null ? u.Team.Name : null,
                     u.IsActive,
                     u.PasswordHash,
                     Roles = u.UserRoles.Select(ur => ur.RoleDefinition.Name).ToList()
                 })
                 .FirstOrDefaultAsync();
 
-            if (user == null || !user.IsActive  != null)
+            if (user == null || !user.IsActive)
             {
-                _logger.LogWarning("Échec login pour {User} : inexistant/inactif/supprimé", dto.Username);
+                _logger.LogWarning("Échec login pour {User} : inexistant/inactif", dto.Username);
                 return Unauthorized("Authentification échouée");
             }
 
@@ -87,7 +81,7 @@ namespace Dior.Service.Host.Controllers
                 LastName = user.LastName,
                 Email = user.Email,
                 TeamId = user.TeamId,
-                TeamName = user.Name,
+                TeamName = user.TeamName,
                 Roles = user.Roles
             };
 

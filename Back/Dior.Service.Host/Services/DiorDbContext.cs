@@ -29,7 +29,7 @@ namespace Dior.Service.Host.Services
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasIndex(e => e.Email).IsUnique();
-                entity.HasIndex(e => e.UserName).IsUnique();
+                entity.HasIndex(e => e.Username).IsUnique();
                 entity.HasIndex(e => e.BadgePhysicalNumber).IsUnique()
                     .HasFilter("[BadgePhysicalNumber] IS NOT NULL");
             });
