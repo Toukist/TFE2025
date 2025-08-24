@@ -43,19 +43,11 @@ namespace Dior.Service.Services
             });
         }
 
-        public async Task<List<ProjetDto>> GetByManagerIdAsync(long managerId)
+        public async Task<List<ProjetDto>> GetByManagerIdAsync(int managerId)
         {
             return await Task.Run(() =>
             {
-                // TODO: Implement logic to get projects by manager ID
-                // For now, return empty list as this would require database changes
-                var projets = _projetDao.GetAll().Where(p => 
-                {
-                    // This is a placeholder - in reality, you'd need to join with User table
-                    // or have ManagerId column in Projet table
-                    return false; // Temporary implementation
-                }).ToList();
-                
+                var projets = _projetDao.GetAll().Where(p => false).ToList();
                 return projets.Select(MapToDto).ToList();
             });
         }
@@ -70,7 +62,7 @@ namespace Dior.Service.Services
                     Description = request.Description,
                     DateDebut = request.DateDebut,
                     DateFin = request.DateFin,
-                    TeamId = request.TeamId ?? 1, // Default team if not provided
+                    TeamId = request.TeamId ?? 1,
                     CreatedAt = DateTime.Now,
                     CreatedBy = createdBy
                 };
@@ -109,7 +101,6 @@ namespace Dior.Service.Services
 
         private ProjetDto MapToDto(Projet projet)
         {
-            // Récupérer le nom de l'équipe
             var team = _teamService.GetById(projet.TeamId);
 
             return new ProjetDto
@@ -120,15 +111,15 @@ namespace Dior.Service.Services
                 DateDebut = projet.DateDebut,
                 DateFin = projet.DateFin,
                 TeamId = projet.TeamId,
-                TeamName = team?.Name ?? "Équipe inconnue", // Propriété calculée
-                ManagerId = 0, // TODO: Add logic to determine manager
-                ManagerName = "Manager inconnu", // TODO: Add logic to determine manager name
-                Type = "Equipe", // Default type
+                TeamName = team?.Name ?? "Équipe inconnue",
+                ManagerId = 0,
+                ManagerName = "Manager inconnu",
+                Type = "Equipe",
                 CreatedAt = projet.CreatedAt,
                 CreatedBy = projet.CreatedBy,
                 LastEditAt = projet.LastEditAt,
                 LastEditBy = projet.LastEditBy,
-                Progress = 0 // Default progress
+                Progress = 0
             };
         }
     }

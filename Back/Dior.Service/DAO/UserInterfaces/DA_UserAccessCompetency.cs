@@ -1,4 +1,4 @@
-﻿using Dior.Library.Entities; // Changed from Dior.Library.BO.UserInterface
+﻿using Dior.Library.Entities;
 using Dior.Library.Service.DAO;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +16,7 @@ namespace Dior.Service.DAO.UserInterfaces
             _connectionString = configuration.GetConnectionString(activeDbKey);
         }
 
-        public long Add(UserAccessCompetency userAccessCompetency, string editBy)
+        public int Add(UserAccessCompetency userAccessCompetency, string editBy)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_UserAccessCompetency_Add", conn)
@@ -28,7 +28,7 @@ namespace Dior.Service.DAO.UserInterfaces
             cmd.Parameters.AddWithValue("@UAC_UserID", userAccessCompetency.UserId);
             cmd.Parameters.AddWithValue("@UAC_LastEditBy", editBy ?? (object)DBNull.Value);
 
-            var outParam = new SqlParameter("@UAC_ID", SqlDbType.BigInt)
+            var outParam = new SqlParameter("@UAC_ID", SqlDbType.Int)
             {
                 Direction = ParameterDirection.Output
             };
@@ -37,7 +37,7 @@ namespace Dior.Service.DAO.UserInterfaces
             conn.Open();
             cmd.ExecuteNonQuery();
 
-            return outParam.Value != DBNull.Value ? (long)outParam.Value : -1;
+            return outParam.Value != DBNull.Value ? Convert.ToInt32(outParam.Value) : -1;
         }
 
         public void Set(UserAccessCompetency userAccessCompetency, string editBy)
@@ -57,7 +57,7 @@ namespace Dior.Service.DAO.UserInterfaces
             cmd.ExecuteNonQuery();
         }
 
-        public UserAccessCompetency Get(long id)
+        public UserAccessCompetency Get(int id)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_UserAccessCompetency_Get", conn)
@@ -74,9 +74,9 @@ namespace Dior.Service.DAO.UserInterfaces
             {
                 return new UserAccessCompetency
                 {
-                    Id = Convert.ToInt32(reader.GetInt64(reader.GetOrdinal("Id"))),
-                    UserId = Convert.ToInt32(reader.GetInt64(reader.GetOrdinal("UserId"))),
-                    AccessCompetencyId = Convert.ToInt32(reader.GetInt64(reader.GetOrdinal("AccessCompetencyId"))),
+                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                    UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
+                    AccessCompetencyId = reader.GetInt32(reader.GetOrdinal("AccessCompetencyId")),
                     CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
                     CreatedBy = reader.GetString(reader.GetOrdinal("CreatedBy")),
                     LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? null : (DateTime?)reader.GetDateTime(reader.GetOrdinal("LastEditAt")),
@@ -104,17 +104,13 @@ namespace Dior.Service.DAO.UserInterfaces
             {
                 var entry = new UserAccessCompetency
                 {
-                    Id = reader.GetInt32(reader.GetOrdinal("Id")), // ✅ directement int
-                    UserId = reader.GetInt32(reader.GetOrdinal("UserId")), // ✅
-                    AccessCompetencyId = reader.GetInt32(reader.GetOrdinal("AccessCompetencyId")), // ✅
+                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                    UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
+                    AccessCompetencyId = reader.GetInt32(reader.GetOrdinal("AccessCompetencyId")),
                     CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
                     CreatedBy = reader.GetString(reader.GetOrdinal("CreatedBy")),
-                    LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt"))
-                                 ? null
-                                 : (DateTime?)reader.GetDateTime(reader.GetOrdinal("LastEditAt")),
-                    LastEditBy = reader.IsDBNull(reader.GetOrdinal("LastEditBy"))
-                                 ? null
-                                 : reader.GetString(reader.GetOrdinal("LastEditBy"))
+                    LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? null : (DateTime?)reader.GetDateTime(reader.GetOrdinal("LastEditAt")),
+                    LastEditBy = reader.IsDBNull(reader.GetOrdinal("LastEditBy")) ? null : reader.GetString(reader.GetOrdinal("LastEditBy"))
                 };
 
                 list.Add(entry);
@@ -123,8 +119,7 @@ namespace Dior.Service.DAO.UserInterfaces
             return list;
         }
 
-
-        public void Del(long id)
+        public void Del(int id)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_UserAccessCompetency_Del", conn)
@@ -137,6 +132,7 @@ namespace Dior.Service.DAO.UserInterfaces
             conn.Open();
             cmd.ExecuteNonQuery();
         }
+
         public bool HasAccessCompetency(int userId, string competencyName)
         {
             using var conn = new SqlConnection(_connectionString);

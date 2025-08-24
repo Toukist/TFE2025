@@ -1,11 +1,7 @@
 using AutoMapper;
-using Dior.Database.Data;
-using Dior.Database.DTOs.Privilege;
-using Dior.Database.Entities;
 using Dior.Database.Services.Interfaces;
+using Dior.Library.BO.UserInterface;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Dior.Database.Services.Implementations
 {

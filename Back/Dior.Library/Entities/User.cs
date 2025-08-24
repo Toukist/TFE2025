@@ -18,11 +18,11 @@ public class User
     }
 
     [Key]
-    public long ID { get; set; } // BIGINT IDENTITY dans la DB
+    public int Id { get; set; } // BIGINT IDENTITY dans la DB
 
     [Required]
     [MaxLength(50)]
-    public string Username { get; set; } = string.Empty;
+    public string UserName { get; set; } = string.Empty;
 
     [Required]
     [MaxLength(100)]
@@ -42,7 +42,7 @@ public class User
 
     [Required]
     [MaxLength(255)]
-    public string passwordHash { get; set; } = string.Empty; // Correspond exactement à la DB
+    public string PasswordHash { get; set; } = string.Empty; // Correspond exactement à la DB
 
     public bool IsActive { get; set; } = true;
 

@@ -139,7 +139,7 @@ namespace Dior.Service.Services.UserInterfaces
             throw new NotImplementedException();
         }
 
-        Task<Dior.Library.DTO.Audit.AuditLogDto?> IAuditLogService.GetByIdAsync(long id)
+        Task<Dior.Library.DTO.Audit.AuditLogDto?> IAuditLogService.GetByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
@@ -149,32 +149,17 @@ namespace Dior.Service.Services.UserInterfaces
             throw new NotImplementedException();
         }
 
-        Task<List<Dior.Library.DTO.Audit.AuditLogDto>> IAuditLogService.GetByEntityAsync(string entityType, long entityId)
+        Task<List<Dior.Library.DTO.Audit.AuditLogDto>> IAuditLogService.GetByEntityAsync(string entityType, int entityId)
         {
             throw new NotImplementedException();
         }
 
-        Task<List<Dior.Library.DTO.Audit.AuditLogDto>> IAuditLogService.GetByUserAsync(long userId)
+        Task<List<Dior.Library.DTO.Audit.AuditLogDto>> IAuditLogService.GetByUserAsync(int userId)
         {
             throw new NotImplementedException();
         }
 
         Task<List<Dior.Library.DTO.Audit.AuditLogDto>> IAuditLogService.GetRecentAsync(int count)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<AuditLogDto?> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<AuditLogDto>> GetByEntityAsync(string entityType, int entityId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<AuditLogDto>> GetByUserAsync(int userId)
         {
             throw new NotImplementedException();
         }
