@@ -9,7 +9,7 @@ using Dior.Service.Host.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuration JSON avec camelCase
+// ======================== JSON CONFIG ========================
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -18,11 +18,11 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-// DbContext
+// ======================== DB CONTEXT ========================
 builder.Services.AddDbContext<DiorDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DIOR_DB")));
 
-// Services métier
+// ======================== SERVICES MÉTIER ========================
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TeamService>();
 builder.Services.AddScoped<ProjetService>();
@@ -34,16 +34,30 @@ builder.Services.AddScoped<UserRoleService>();
 builder.Services.AddScoped<AuditLogService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
-// Logging
+// ======================== LOGGING ========================
 builder.Services.AddLogging(config =>
 {
     config.AddConsole();
     config.AddDebug();
 });
 
-// JWT Configuration
-var jwtSecret = builder.Configuration["Jwt:Secret"] 
-    ?? "DiorSuperSecretKeyForJWTTokenGeneration2024!"; // Clé par défaut pour développement
+// ======================== JWT CONFIG ========================
+var jwtSecret = builder.Configuration["Jwt:Secret"];
+SymmetricSecurityKey signingKey;
+
+try
+{
+    // Si c’est une chaîne Base64 valide → on décode
+    var keyBytes = Convert.FromBase64String(jwtSecret);
+    signingKey = new SymmetricSecurityKey(keyBytes);
+    Console.WriteLine("✅ JWT Secret décodé en Base64.");
+}
+catch
+{
+    // Sinon → on considère que c’est une clé texte brut
+    signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret ?? "DiorSuperSecretKeyForDevOnly!"));
+    Console.WriteLine("⚠️ JWT Secret utilisé en clair (pas Base64).");
+}
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -54,12 +68,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
+            IssuerSigningKey = signingKey,
             ClockSkew = TimeSpan.Zero
         };
     });
 
-// CORS
+// ======================== CORS ========================
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("DevelopmentPolicy", policy =>
@@ -71,7 +85,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Swagger
+// ======================== SWAGGER ========================
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -90,7 +104,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Entrez votre token JWT"
+        Description = "Entrez votre token JWT sous la forme: Bearer {token}"
     });
 
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -108,7 +122,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 
-    // Inclure les commentaires XML
+    // Inclure les commentaires XML si présents
     var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     if (File.Exists(xmlPath))
@@ -119,7 +133,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Pipeline
+// ======================== PIPELINE ========================
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -135,9 +149,10 @@ app.UseHttpsRedirection();
 app.UseCors("DevelopmentPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
-// Test endpoint
+// ======================== TEST ENDPOINT ========================
 app.MapGet("/", () => Results.Redirect("/swagger"));
 
 app.Run();
