@@ -97,5 +97,10 @@ namespace Dior.Service.Services.Implementations
         {
             throw new NotImplementedException();
         }
+
+        public async Task GetLogsAsync(DateTime? from, DateTime? to)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

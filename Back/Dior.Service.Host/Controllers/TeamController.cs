@@ -1,6 +1,4 @@
-using Dior.Library.DTO.Team;
-using Dior.Library.DTO.User;
-using Dior.Service.Host.Services;
+using Dior.Service.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
