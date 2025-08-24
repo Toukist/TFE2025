@@ -5,9 +5,9 @@ namespace Dior.Library.DAO
     public interface IContractDao
     {
         List<ContractBO> GetAll();
-        List<ContractBO> GetByUserId(long userId);
-        ContractBO? GetById(long id);
+        List<ContractBO> GetByUserId(int userId);
+        ContractBO? GetById(int id);
         void Create(ContractBO contract);
-        void Delete(long id);
+        void Delete(int id);
     }
 }

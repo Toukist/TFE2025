@@ -16,7 +16,7 @@ namespace Dior.Service.DAO.UserInterfaces
             _connectionString = configuration.GetConnectionString(activeDbKey);
         }
 
-        public long Add(RoleDefinition roleDefinition, string editBy)
+        public int Add(RoleDefinition roleDefinition, string editBy)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_RoleDefinition_Add", conn)
@@ -75,7 +75,7 @@ namespace Dior.Service.DAO.UserInterfaces
             }
         }
 
-        public void Del(long id)
+        public void Del(int id)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_RoleDefinition_Del", conn)
@@ -116,50 +116,10 @@ namespace Dior.Service.DAO.UserInterfaces
                 {
                     return new RoleDefinition
                     {
-                        Id = Convert.ToInt32(reader.GetInt64(reader.GetOrdinal("Id"))),
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
                         Name = reader.GetString(reader.GetOrdinal("Name")),
                         Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
-                        ParentRoleId = reader.IsDBNull(reader.GetOrdinal("ParentRoleId")) ? null : (int?)Convert.ToInt32(reader.GetInt64(reader.GetOrdinal("ParentRoleId"))),
-                        IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
-                        CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-                        CreatedBy = reader.GetString(reader.GetOrdinal("CreatedBy")),
-                        LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? null : (DateTime?)reader.GetDateTime(reader.GetOrdinal("LastEditAt")),
-                        LastEditBy = reader.IsDBNull(reader.GetOrdinal("LastEditBy")) ? null : reader.GetString(reader.GetOrdinal("LastEditBy"))
-                    };
-                }
-
-                return null;
-            }
-            catch (SqlException ex)
-            {
-                throw new Exception("Erreur lors de la récupération de la définition de rôle : " + ex.Message, ex);
-            }
-        }
-
-        // Méthode Get avec un ID long
-        public RoleDefinition Get(long id)
-        {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("SP_RoleDefinition_Get", conn)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
-
-            cmd.Parameters.AddWithValue("@PR_ID", id);
-
-            try
-            {
-                conn.Open();
-                using var reader = cmd.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    return new RoleDefinition
-                    {
-                        Id = Convert.ToInt32(reader.GetInt64(reader.GetOrdinal("Id"))),
-                        Name = reader.GetString(reader.GetOrdinal("Name")),
-                        Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
-                        ParentRoleId = reader.IsDBNull(reader.GetOrdinal("ParentRoleId")) ? null : (int?)Convert.ToInt32(reader.GetInt64(reader.GetOrdinal("ParentRoleId"))),
+                        ParentRoleId = reader.IsDBNull(reader.GetOrdinal("ParentRoleId")) ? null : (int?)reader.GetInt32(reader.GetOrdinal("ParentRoleId")),
                         IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
                         CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
                         CreatedBy = reader.GetString(reader.GetOrdinal("CreatedBy")),
@@ -179,8 +139,41 @@ namespace Dior.Service.DAO.UserInterfaces
         // Méthode Get avec un ID int (pour satisfaire l'interface Dior.Library.Interfaces.UserInterface.Services.IDA_RoleDefinition)
         public RoleDefinition Get(int id)
         {
-            // Réutilise la méthode Get(long id) en convertissant l'ID int en long
-            return Get((long)id);
+            using var conn = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("SP_RoleDefinition_Get", conn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            cmd.Parameters.AddWithValue("@PR_ID", id);
+
+            try
+            {
+                conn.Open();
+                using var reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    return new RoleDefinition
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                        Name = reader.GetString(reader.GetOrdinal("Name")),
+                        Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
+                        ParentRoleId = reader.IsDBNull(reader.GetOrdinal("ParentRoleId")) ? null : (int?)reader.GetInt32(reader.GetOrdinal("ParentRoleId")),
+                        IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
+                        CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                        CreatedBy = reader.GetString(reader.GetOrdinal("CreatedBy")),
+                        LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? null : (DateTime?)reader.GetDateTime(reader.GetOrdinal("LastEditAt")),
+                        LastEditBy = reader.IsDBNull(reader.GetOrdinal("LastEditBy")) ? null : reader.GetString(reader.GetOrdinal("LastEditBy"))
+                    };
+                }
+
+                return null;
+            }
+            catch (SqlException ex)
+            {
+                throw new Exception("Erreur lors de la récupération de la définition de rôle : " + ex.Message, ex);
+            }
         }
 
         public List<RoleDefinition> GetList()
@@ -202,10 +195,10 @@ namespace Dior.Service.DAO.UserInterfaces
                 {
                     var roleDefinition = new RoleDefinition
                     {
-                        Id = Convert.ToInt32(reader.GetInt64(reader.GetOrdinal("Id"))),
+                        Id = reader.GetInt32(reader.GetOrdinal("Id")),
                         Name = reader.GetString(reader.GetOrdinal("Name")),
                         Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
-                        ParentRoleId = reader.IsDBNull(reader.GetOrdinal("ParentRoleId")) ? null : (int?)Convert.ToInt32(reader.GetInt64(reader.GetOrdinal("ParentRoleId"))),
+                        ParentRoleId = reader.IsDBNull(reader.GetOrdinal("ParentRoleId")) ? null : (int?)reader.GetInt32(reader.GetOrdinal("ParentRoleId")),
                         IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive")),
                         CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
                         CreatedBy = reader.GetString(reader.GetOrdinal("CreatedBy")),

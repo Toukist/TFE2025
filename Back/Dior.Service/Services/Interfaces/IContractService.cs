@@ -1,4 +1,4 @@
-using Dior.Library.DTO;
+using Dior.Library.DTO.Contract;
 
 namespace Dior.Service.Services.Interfaces
 {
@@ -6,10 +6,10 @@ namespace Dior.Service.Services.Interfaces
     {
         Task<List<ContractDto>> GetAllAsync();
         Task<ContractDto?> GetByIdAsync(int id);
-        Task<List<ContractDto>> GetByUserIdAsync(long userId);
+        Task<List<ContractDto>> GetByUserIdAsync(int userId);
         Task<List<ContractDto>> GetActiveContractsAsync();
-        Task<ContractDto> CreateAsync(CreateContractRequest request);
-        Task<bool> UpdateAsync(int id, UpdateContractRequest request);
+        Task<ContractDto> CreateAsync(CreateContractDto request);
+        Task<bool> UpdateAsync(int id, UpdateContractDto request);
         Task<bool> DeleteAsync(int id);
         Task<bool> TerminateAsync(int id, DateTime endDate);
     }

@@ -9,8 +9,8 @@ namespace Dior.Library.DTO.Contract
     public class ContractDto
     {
         // Identifiants
-        public long Id { get; set; }
-        public long UserId { get; set; }
+        public int Id { get; set; }
+        public int UserId { get; set; }
 
         // Métadonnées utilisateur liées (jointures)
         public string? UserFullName { get; set; }
@@ -67,6 +67,12 @@ namespace Dior.Library.DTO.Contract
         
         public decimal? Salary { get; set; }
         public string? ContractType { get; set; }
+
+        // Champs optionnels utilisés par ContractService
+        public string? Currency { get; set; }
+        public string? PaymentFrequency { get; set; }
+        public string? FileName { get; set; }
+        public string? FileUrl { get; set; }
     }
 
     /// <summary>

@@ -27,7 +27,7 @@ namespace Dior.Service.Services.UserInterfaces
 
         public AuditLog? Get(long id)
         {
-            var entityAuditLog = _context.AuditLogs.Find((int)id);
+            var entityAuditLog = _context.AuditLogs.Find(id);
             return entityAuditLog == null ? null : MapToBusinessObject(entityAuditLog);
         }
 
@@ -38,10 +38,10 @@ namespace Dior.Service.Services.UserInterfaces
 
             var entityAuditLog = new EntityAuditLog
             {
-                UserId = log.UserId > 0 ? (int)log.UserId : null,
+                UserId = log.UserId > 0 ? log.UserId : (long?)null,
                 Action = log.Action ?? string.Empty,
                 TableName = log.TableName ?? string.Empty,
-                RecordId = log.RecordId > 0 ? (int)log.RecordId : null,
+                RecordId = log.RecordId > 0 ? log.RecordId : (long?)null,
                 NewValues = log.Details,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = editBy
@@ -58,13 +58,13 @@ namespace Dior.Service.Services.UserInterfaces
             if (log == null) throw new ArgumentNullException(nameof(log));
             if (string.IsNullOrWhiteSpace(editBy)) throw new ArgumentException("EditBy cannot be null or empty", nameof(editBy));
 
-            var entityAuditLog = _context.AuditLogs.Find((int)log.Id);
+            var entityAuditLog = _context.AuditLogs.Find(log.Id);
             if (entityAuditLog != null)
             {
-                entityAuditLog.UserId = log.UserId > 0 ? (int)log.UserId : null;
+                entityAuditLog.UserId = log.UserId > 0 ? log.UserId : (long?)null;
                 entityAuditLog.Action = log.Action ?? string.Empty;
                 entityAuditLog.TableName = log.TableName ?? string.Empty;
-                entityAuditLog.RecordId = log.RecordId > 0 ? (int)log.RecordId : null;
+                entityAuditLog.RecordId = log.RecordId > 0 ? log.RecordId : (long?)null;
                 entityAuditLog.NewValues = log.Details;
                 _context.SaveChanges();
             }
@@ -72,7 +72,7 @@ namespace Dior.Service.Services.UserInterfaces
 
         public void Del(long id)
         {
-            var entityAuditLog = _context.AuditLogs.Find((int)id);
+            var entityAuditLog = _context.AuditLogs.Find(id);
             if (entityAuditLog != null)
             {
                 _context.AuditLogs.Remove(entityAuditLog);
@@ -89,14 +89,14 @@ namespace Dior.Service.Services.UserInterfaces
                 .ConfigureAwait(false);
         }
 
-        public async Task<EntityAuditLog?> GetByIdAsync(int id)
+        public async Task<EntityAuditLog?> GetByIdAsync(long id)
         {
             return await _context.AuditLogs
                 .FirstOrDefaultAsync(a => a.Id == id)
                 .ConfigureAwait(false);
         }
 
-        public async Task<List<EntityAuditLog>> SearchAsync(int? userId, string? action)
+        public async Task<List<EntityAuditLog>> SearchAsync(long? userId, string? action)
         {
             var query = _context.AuditLogs.AsQueryable();
 
@@ -134,17 +134,37 @@ namespace Dior.Service.Services.UserInterfaces
             return newValues ?? oldValues ?? string.Empty;
         }
 
-        Task<IEnumerable<AuditLogDto>> IAuditLogService.GetAllAsync()
+        Task<IEnumerable<Dior.Library.DTO.Audit.AuditLogDto>> IAuditLogService.GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        Task<AuditLogDto?> IAuditLogService.GetByIdAsync(int id)
+        Task<Dior.Library.DTO.Audit.AuditLogDto?> IAuditLogService.GetByIdAsync(long id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<AuditLogDto> CreateAsync(CreateAuditLogDto createDto)
+        Task<Dior.Library.DTO.Audit.AuditLogDto> IAuditLogService.CreateAsync(Dior.Library.DTO.Audit.CreateAuditLogDto createDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<List<Dior.Library.DTO.Audit.AuditLogDto>> IAuditLogService.GetByEntityAsync(string entityType, long entityId)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<List<Dior.Library.DTO.Audit.AuditLogDto>> IAuditLogService.GetByUserAsync(long userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<List<Dior.Library.DTO.Audit.AuditLogDto>> IAuditLogService.GetRecentAsync(int count)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AuditLogDto?> GetByIdAsync(int id)
         {
             throw new NotImplementedException();
         }
@@ -155,11 +175,6 @@ namespace Dior.Service.Services.UserInterfaces
         }
 
         public Task<List<AuditLogDto>> GetByUserAsync(int userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<AuditLogDto>> GetRecentAsync(int count = 50)
         {
             throw new NotImplementedException();
         }

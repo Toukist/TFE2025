@@ -66,6 +66,7 @@
     <Folder Include="dbo\Stored Procedures\User_Role" />
     <Folder Include="dbo\Stored Procedures\UserAccessCompetency" />
     <Folder Include="dbo\User Defined Types\" />
+    <Folder Include="dbo\Tables\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\User Defined Types\UserType.sql" />
@@ -123,6 +124,40 @@
     <Build Include="dbo\Stored Procedures\sp_AddAccess.sql" />
     <Build Include="dbo\Stored Procedures\GetAccessCompetencyList.sql" />
     <Build Include="dbo\Stored Procedures\sp_AddUser.sql" />
+    <Build Include="dbo\Tables\UserAccessCompetency.sql" />
+    <Build Include="dbo\Tables\UserAccess.sql" />
+    <Build Include="dbo\Tables\USER_ROLE.sql" />
+    <Build Include="dbo\Tables\USER.sql" />
+    <Build Include="dbo\Tables\Team.sql" />
+    <Build Include="dbo\Tables\Task.sql" />
+    <Build Include="dbo\Tables\RoleDefinitionPrivilege.sql" />
+    <Build Include="dbo\Tables\ROLE_DEFINITION.sql" />
+    <Build Include="dbo\Tables\Projet.sql" />
+    <Build Include="dbo\Tables\PRIVILEGE.sql" />
+    <Build Include="dbo\Tables\Payslips.sql" />
+    <Build Include="dbo\Tables\PASSWORD_HISTORY.sql" />
+    <Build Include="dbo\Tables\NOTIFICATIONS.sql" />
+    <Build Include="dbo\Tables\Messages.sql" />
+    <Build Include="dbo\Tables\Contract.sql" />
+    <Build Include="dbo\Tables\AUDIT_LOGS.sql" />
+    <Build Include="dbo\Tables\ACCESS_COMPETENCY.sql" />
+    <Build Include="dbo\Tables\ACCESS.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateUserAccess_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateUser_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateRoleDefinitionPrivilege_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_UpdateRoleDefinition_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetUserById_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetRoleDefinitionPrivilegeById_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_GetAuditLogById_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteUserRole_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteUserAccess_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteRoleDefinitionPrivilege_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeleteRoleDefinition_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_DeletePrivilege_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_AddUserRole_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_AddUser_1.sql" />
+    <Build Include="dbo\Stored Procedures\sp_AddRoleDefinitionPrivilege_1.sql" />
+    <Build Include="dbo\Stored Procedures\GetAccessCompetencyList_1.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="dbo\Dior.Database.refactorlog" />

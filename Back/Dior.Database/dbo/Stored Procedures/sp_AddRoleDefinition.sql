@@ -1,31 +1,17 @@
 ﻿
-CREATE PROCEDURE [dbo].[sp_AddRoleDefinition]
-    @name          NVARCHAR(100),
-    @description   NVARCHAR(MAX) = NULL,
-    @parentRoleId  INT           = NULL,
-    @isActive      BIT
+CREATE   PROCEDURE dbo.sp_AddRoleDefinition
+    @Name NVARCHAR(100),
+    @Description NVARCHAR(255) = NULL,
+    @ParentRoleId BIGINT = NULL,
+    @IsActive BIT = 1,
+    @By NVARCHAR(100) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
+    IF @By IS NULL SET @By = SUSER_SNAME();
 
-    INSERT INTO ROLE_DEFINITION
-        (name,
-         description,
-         parentRoleId,
-         isActive,
-         createdAt,
-         createdBy,
-         lastEditAt,
-         lastEditBy)
-    VALUES
-        (
-            @name,
-            @description,
-            @parentRoleId,
-            @isActive,
-            GETDATE(),        -- date/heure du serveur au moment de l’insertion
-            SUSER_SNAME(),    -- utilisateur connecté
-            GETDATE(),        -- date/heure du serveur au moment de l’insertion
-            SUSER_SNAME()     -- utilisateur connecté
-        );
+    INSERT INTO dbo.Role_Definition (Name, Description, ParentRoleId, IsActive, CreatedAt, CreatedBy, LastEditAt, LastEditBy)
+    VALUES (@Name, @Description, @ParentRoleId, @IsActive, GETDATE(), @By, GETDATE(), @By);
+
+    SELECT CAST(SCOPE_IDENTITY() AS BIGINT) AS Id;
 END

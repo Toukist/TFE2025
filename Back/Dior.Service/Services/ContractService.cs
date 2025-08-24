@@ -26,12 +26,12 @@ namespace Dior.Service.Services
             return _dao.GetAll().Select(MapToDto).ToList();
         }
 
-        public List<ContractDto> GetByUserId(long userId)
+        public List<ContractDto> GetByUserId(int userId)
         {
             return _dao.GetByUserId(userId).Select(MapToDto).ToList();
         }
 
-        public ContractDto? GetById(long id)
+        public ContractDto? GetById(int id)
         {
             var bo = _dao.GetById(id);
             return bo == null ? null : MapToDto(bo);
@@ -44,7 +44,7 @@ namespace Dior.Service.Services
             _dao.Create(bo);
         }
 
-        public void Delete(long id) => _dao.Delete(id);
+        public void Delete(int id) => _dao.Delete(id);
 
         // New async methods implementing IContractService
         public async Task<List<ContractDto>> GetAllAsync()
@@ -73,7 +73,7 @@ namespace Dior.Service.Services
             return contracts;
         }
         
-        public async Task<ContractDto?> GetByIdAsync(long id)
+        public async Task<ContractDto?> GetByIdAsync(int id)
         {
             using var conn = new SqlConnection(_connectionString);
             var query = @"
@@ -98,7 +98,7 @@ namespace Dior.Service.Services
             return null;
         }
         
-        public async Task<List<ContractDto>> GetByUserIdAsync(long userId)
+        public async Task<List<ContractDto>> GetByUserIdAsync(int userId)
         {
             var contracts = new List<ContractDto>();
             
@@ -154,7 +154,7 @@ namespace Dior.Service.Services
             return contracts;
         }
         
-        public async Task<ContractDto> CreateAsync(CreateContractRequest request)
+        public async Task<ContractDto> CreateAsync(CreateContractDto request)
         {
             using var conn = new SqlConnection(_connectionString);
             
@@ -168,17 +168,17 @@ namespace Dior.Service.Services
                 conn.Open();
                 using var cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@UserId", request.UserId);
-                cmd.Parameters.AddWithValue("@ContractType", request.ContractType ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@ContractType", (object?)request.ContractType ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@StartDate", request.StartDate);
                 cmd.Parameters.AddWithValue("@EndDate", (object?)request.EndDate ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Salary", (object?)request.Salary ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@Currency", (object?)request.Currency ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@PaymentFrequency", (object?)request.PaymentFrequency ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@FileName", request.FileName ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@FileUrl", request.FileUrl ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@FileName", (object?)request.FileName ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@FileUrl", (object?)request.FileUrl ?? DBNull.Value);
                 
                 var newId = await cmd.ExecuteScalarAsync();
-                var contractId = Convert.ToInt64(newId);
+                var contractId = Convert.ToInt32(newId);
                 
                 return await GetByIdAsync(contractId) ?? throw new InvalidOperationException("Erreur lors de la création du contrat");
             }
@@ -191,17 +191,17 @@ namespace Dior.Service.Services
                     
                 using var basicCmd = new SqlCommand(basicQuery, conn);
                 basicCmd.Parameters.AddWithValue("@UserId", request.UserId);
-                basicCmd.Parameters.AddWithValue("@FileName", request.FileName ?? (object)DBNull.Value);
-                basicCmd.Parameters.AddWithValue("@FileUrl", request.FileUrl ?? (object)DBNull.Value);
+                basicCmd.Parameters.AddWithValue("@FileName", (object?)request.FileName ?? DBNull.Value);
+                basicCmd.Parameters.AddWithValue("@FileUrl", (object?)request.FileUrl ?? DBNull.Value);
                 
                 var newId = await basicCmd.ExecuteScalarAsync();
-                var contractId = Convert.ToInt64(newId);
+                var contractId = Convert.ToInt32(newId);
                 
                 return await GetByIdAsync(contractId) ?? throw new InvalidOperationException("Erreur lors de la création du contrat");
             }
         }
         
-        public async Task<bool> UpdateAsync(long id, UpdateContractRequest request)
+        public async Task<bool> UpdateAsync(int id, UpdateContractDto request)
         {
             var setClauses = new List<string>();
             var parameters = new List<SqlParameter>();
@@ -245,7 +245,7 @@ namespace Dior.Service.Services
             return rowsAffected > 0;
         }
         
-        public async Task<bool> DeleteAsync(long id)
+        public async Task<bool> DeleteAsync(int id)
         {
             using var conn = new SqlConnection(_connectionString);
             var query = "DELETE FROM Contract WHERE Id = @Id";
@@ -258,7 +258,7 @@ namespace Dior.Service.Services
             return rowsAffected > 0;
         }
         
-        public async Task<bool> TerminateAsync(long id, DateTime endDate)
+        public async Task<bool> TerminateAsync(int id, DateTime endDate)
         {
             using var conn = new SqlConnection(_connectionString);
             var query = @"
@@ -299,8 +299,8 @@ namespace Dior.Service.Services
         {
             return new ContractDto
             {
-                Id = reader.GetInt64(reader.GetOrdinal("Id")),
-                UserId = reader.GetInt64(reader.GetOrdinal("UserId")),
+                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
                 UserFullName = SafeGetString(reader, "UserFullName") ?? string.Empty,
                 UserTeamName = SafeGetString(reader, "UserTeamName") ?? string.Empty,
                 ContractType = SafeGetString(reader, "ContractType") ?? "CDI",
@@ -354,26 +354,6 @@ namespace Dior.Service.Services
             {
                 return null;
             }
-        }
-
-        public Task<ContractDto?> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> UpdateAsync(int id, UpdateContractRequest request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> TerminateAsync(int id, DateTime endDate)
-        {
-            throw new NotImplementedException();
         }
     }
 }

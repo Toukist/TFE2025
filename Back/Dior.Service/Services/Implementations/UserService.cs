@@ -213,7 +213,6 @@ namespace Dior.Database.Services.Implementations
                 Email = user.Email,
                 Phone = user.Phone,
                 IsActive = user.IsActive,
-                TeamId = user.TeamId,
                 TeamName = user.Team?.Name,
                 BadgePhysicalNumber = user.BadgePhysicalNumber,
                 CreatedAt = user.CreatedAt,

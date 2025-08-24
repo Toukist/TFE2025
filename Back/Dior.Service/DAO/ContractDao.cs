@@ -28,7 +28,7 @@ namespace Dior.Service.DAO
             return contracts;
         }
 
-        public List<ContractBO> GetByUserId(long userId)
+        public List<ContractBO> GetByUserId(int userId)
         {
             var contracts = new List<ContractBO>();
             using var conn = new SqlConnection(_connectionString);
@@ -43,7 +43,7 @@ namespace Dior.Service.DAO
             return contracts;
         }
 
-        public ContractBO? GetById(long id)
+        public ContractBO? GetById(int id)
         {
             using var conn = new SqlConnection(_connectionString);
             conn.Open();
@@ -68,7 +68,7 @@ namespace Dior.Service.DAO
             cmd.ExecuteNonQuery();
         }
 
-        public void Delete(long id)
+        public void Delete(int id)
         {
             using var conn = new SqlConnection(_connectionString);
             conn.Open();
@@ -81,8 +81,8 @@ namespace Dior.Service.DAO
         {
             return new ContractBO
             {
-                Id = record.GetInt64(record.GetOrdinal("Id")),
-                UserId = record.GetInt64(record.GetOrdinal("UserId")),
+                Id = record.GetInt32(record.GetOrdinal("Id")),
+                UserId = record.GetInt32(record.GetOrdinal("UserId")),
                 FileName = record.GetString(record.GetOrdinal("FileName")),
                 FileUrl = record.GetString(record.GetOrdinal("FileUrl")),
                 UploadedAt = record.GetDateTime(record.GetOrdinal("UploadedAt")),
