@@ -4,9 +4,9 @@ namespace Dior.Library.Service.DAO
 {
     public interface INotificationDao
     {
-        List<NotificationDto> GetByUserId(int userId);
-        void MarkAsRead(int id);
-        void Delete(int id);
-        int Add(NotificationDto dto, string createdBy);
+        List<NotificationDto> GetByUserId(long userId);
+        void MarkAsRead(long id);
+        void Delete(long id);
+        long Add(NotificationDto dto, string createdBy);
     }
 }

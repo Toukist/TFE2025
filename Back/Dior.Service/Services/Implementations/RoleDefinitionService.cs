@@ -5,30 +5,37 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dior.Data.Services.Implementations
 {
+    /// <summary>
+    /// Service de gestion des définitions de rôle
+    /// </summary>
     public class RoleDefinitionService : IRoleDefinitionService
     {
         private readonly DiorDbContext _context;
         private readonly IMapper _mapper;
 
+        /// <summary>Constructor</summary>
         public RoleDefinitionService(DiorDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
+        /// <summary>Retourne toutes les définitions de rôle</summary>
         public async Task<IEnumerable<RoleDefinitionDto>> GetAllAsync()
         {
             var roles = await _context.RoleDefinitions.ToListAsync();
             return _mapper.Map<IEnumerable<RoleDefinitionDto>>(roles);
         }
 
-        public async Task<RoleDefinitionDto> GetByIdAsync(int id)
+        /// <summary>Retourne une définition de rôle par id</summary>
+        public async Task<RoleDefinitionDto> GetByIdAsync(long id)
         {
             var role = await _context.RoleDefinitions.FindAsync(id);
             return role != null ? _mapper.Map<RoleDefinitionDto>(role) : null;
         }
 
-        public async Task<IEnumerable<RoleDefinitionDto>> GetChildRolesAsync(int parentId)
+        /// <summary>Retourne les rôles enfants d'un parent</summary>
+        public async Task<IEnumerable<RoleDefinitionDto>> GetChildRolesAsync(long parentId)
         {
             var childRoles = await _context.RoleDefinitions
                 .Where(r => r.ParentRoleId == parentId)
@@ -37,6 +44,7 @@ namespace Dior.Data.Services.Implementations
             return _mapper.Map<IEnumerable<RoleDefinitionDto>>(childRoles);
         }
 
+        /// <summary>Crée une définition de rôle</summary>
         public async Task<RoleDefinitionDto> CreateAsync(CreateRoleDefinitionDto createRoleDefinitionDto)
         {
             // Correction : Utiliser le bon type d'entité pour l'ajout dans le DbSet
@@ -49,7 +57,8 @@ namespace Dior.Data.Services.Implementations
             return _mapper.Map<RoleDefinitionDto>(roleEntity);
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateRoleDefinitionDto updateRoleDefinitionDto)
+        /// <summary>Met à jour une définition de rôle</summary>
+        public async Task<bool> UpdateAsync(long id, UpdateRoleDefinitionDto updateRoleDefinitionDto)
         {
             var role = await _context.RoleDefinitions.FindAsync(id);
             if (role == null)
@@ -62,7 +71,8 @@ namespace Dior.Data.Services.Implementations
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        /// <summary>Supprime une définition de rôle</summary>
+        public async Task<bool> DeleteAsync(long id)
         {
             var role = await _context.RoleDefinitions.FindAsync(id);
             if (role == null)

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 public interface ITeamService
 {
+<<<<<<< Updated upstream
     Task<IEnumerable<TeamDto>> GetAllAsync();
     Task<TeamDto?> GetByIdAsync(int id);
     Task<TeamDto> CreateAsync(CreateTeamDto createDto);
@@ -13,4 +14,16 @@ public interface ITeamService
     Task<bool> DeleteAsync(int id);
     Task<bool> ExistsAsync(int id);
     Task<List<UserDto>> GetTeamMembersAsync(int teamId);
+=======
+    public interface ITeamService
+    {
+        Task<IEnumerable<TeamDto>> GetAllAsync();
+        Task<TeamDto?> GetByIdAsync(long id);
+        Task<TeamDto> CreateAsync(CreateTeamDto createDto);
+        Task<bool> UpdateAsync(long id, UpdateTeamDto updateDto);
+        Task<bool> DeleteAsync(long id);
+        Task<bool> ExistsAsync(long id);
+        Task<List<UserDto>> GetTeamMembersAsync(long teamId);
+    }
+>>>>>>> Stashed changes
 }

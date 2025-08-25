@@ -8,9 +8,9 @@ namespace Dior.Library.Entities
     public class Notification
     {
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
-        public int UserId { get; set; }
+        public long UserId { get; set; }
 
         [MaxLength(50)]
         public string Type { get; set; } = "INFO";

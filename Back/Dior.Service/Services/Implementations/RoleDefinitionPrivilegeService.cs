@@ -1,35 +1,49 @@
 using AutoMapper;
+<<<<<<< Updated upstream
 using Dior.Data.DTO;
 using Dior.Database.Services.Interfaces;
 using Dior.Library.BO.UserInterface;
+=======
+using Dior.Service.Host.Services;
+using Dior.Library.DTO.Role;
+using Dior.Library.Entities;
+using Dior.Service.Services.Interfaces;
+>>>>>>> Stashed changes
 using Microsoft.EntityFrameworkCore;
 
-namespace Dior.Database.Services.Implementations
+namespace Dior.Service.Services.Implementations
 {
+    /// <summary>
+    /// Service liaisons rôle-privilège
+    /// </summary>
     public class RoleDefinitionPrivilegeService : IRoleDefinitionPrivilegeService
     {
         private readonly DiorDbContext _context;
         private readonly IMapper _mapper;
 
+        /// <summary>Constructor</summary>
         public RoleDefinitionPrivilegeService(DiorDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
+        /// <summary>Retourne toutes les liaisons</summary>
         public async Task<IEnumerable<RoleDefinitionPrivilegeDto>> GetAllAsync()
         {
             var roleDefPrivileges = await _context.RoleDefinitionPrivileges.ToListAsync();
             return _mapper.Map<IEnumerable<RoleDefinitionPrivilegeDto>>(roleDefPrivileges);
         }
 
-        public async Task<RoleDefinitionPrivilegeDto> GetByIdAsync(int id)
+        /// <summary>Retourne une liaison par id</summary>
+        public async Task<RoleDefinitionPrivilegeDto?> GetByIdAsync(long id)
         {
             var roleDefPrivilege = await _context.RoleDefinitionPrivileges.FindAsync(id);
             return roleDefPrivilege != null ? _mapper.Map<RoleDefinitionPrivilegeDto>(roleDefPrivilege) : null;
         }
 
-        public async Task<IEnumerable<RoleDefinitionPrivilegeDto>> GetByRoleDefinitionIdAsync(int roleDefinitionId)
+        /// <summary>Retourne les liaisons d'un rôle</summary>
+        public async Task<IEnumerable<RoleDefinitionPrivilegeDto>> GetByRoleDefinitionIdAsync(long roleDefinitionId)
         {
             var roleDefPrivileges = await _context.RoleDefinitionPrivileges
                 .Where(rdp => rdp.RoleDefinitionId == roleDefinitionId)
@@ -38,6 +52,7 @@ namespace Dior.Database.Services.Implementations
             return _mapper.Map<IEnumerable<RoleDefinitionPrivilegeDto>>(roleDefPrivileges);
         }
 
+        /// <summary>Crée une liaison</summary>
         public async Task<RoleDefinitionPrivilegeDto> CreateAsync(CreateRoleDefinitionPrivilegeDto createDto)
         {
             var roleDefPrivilege = _mapper.Map<RoleDefinitionPrivilege>(createDto);
@@ -49,7 +64,8 @@ namespace Dior.Database.Services.Implementations
             return _mapper.Map<RoleDefinitionPrivilegeDto>(roleDefPrivilege);
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateRoleDefinitionPrivilegeDto updateDto)
+        /// <summary>Met à jour une liaison</summary>
+        public async Task<bool> UpdateAsync(long id, UpdateRoleDefinitionPrivilegeDto updateDto)
         {
             var roleDefPrivilege = await _context.RoleDefinitionPrivileges.FindAsync(id);
             if (roleDefPrivilege == null)
@@ -62,7 +78,8 @@ namespace Dior.Database.Services.Implementations
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        /// <summary>Supprime une liaison</summary>
+        public async Task<bool> DeleteAsync(long id)
         {
             var roleDefPrivilege = await _context.RoleDefinitionPrivileges.FindAsync(id);
             if (roleDefPrivilege == null)

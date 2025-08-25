@@ -7,11 +7,15 @@ using Microsoft.Extensions.Configuration;
 
 namespace Dior.Service.Services
 {
+    /// <summary>
+    /// Service de gestion des contrats (mix DAO/ADO.NET)
+    /// </summary>
     public class ContractService : IContractService
     {
         private readonly IContractDao _dao;
         private readonly string _connectionString;
 
+        /// <summary>Constructor</summary>
         public ContractService(IContractDao dao, IConfiguration configuration)
         {
             _dao = dao;
@@ -21,22 +25,26 @@ namespace Dior.Service.Services
         }
 
         // Legacy methods for compatibility
+        /// <summary>Retour legacy - tous les contrats</summary>
         public List<ContractDto> GetAll()
         {
             return _dao.GetAll().Select(MapToDto).ToList();
         }
 
-        public List<ContractDto> GetByUserId(int userId)
+        /// <summary>Retour legacy - par userId</summary>
+        public List<ContractDto> GetByUserId(long userId)
         {
-            return _dao.GetByUserId(userId).Select(MapToDto).ToList();
+            return _dao.GetByUserId((int)userId).Select(MapToDto).ToList();
         }
 
-        public ContractDto? GetById(int id)
+        /// <summary>Retour legacy - par id</summary>
+        public ContractDto? GetById(long id)
         {
-            var bo = _dao.GetById(id);
+            var bo = _dao.GetById((int)id);
             return bo == null ? null : MapToDto(bo);
         }
 
+        /// <summary>Création legacy</summary>
         public void Create(ContractDto dto)
         {
             var bo = MapToBo(dto);
@@ -44,9 +52,11 @@ namespace Dior.Service.Services
             _dao.Create(bo);
         }
 
-        public void Delete(int id) => _dao.Delete(id);
+        /// <summary>Suppression legacy</summary>
+        public void Delete(long id) => _dao.Delete((int)id);
 
         // New async methods implementing IContractService
+        /// <summary>Retourne tous les contrats</summary>
         public async Task<List<ContractDto>> GetAllAsync()
         {
             var contracts = new List<ContractDto>();
@@ -73,7 +83,8 @@ namespace Dior.Service.Services
             return contracts;
         }
         
-        public async Task<ContractDto?> GetByIdAsync(int id)
+        /// <summary>Retourne un contrat par id</summary>
+        public async Task<ContractDto?> GetByIdAsync(long id)
         {
             using var conn = new SqlConnection(_connectionString);
             var query = @"
@@ -98,7 +109,12 @@ namespace Dior.Service.Services
             return null;
         }
         
+<<<<<<< Updated upstream
         public async Task<List<ContractDto>> GetByUserIdAsync(int userId)
+=======
+        /// <summary>Retourne les contrats d'un utilisateur</summary>
+        public async Task<List<ContractDto>> GetByUserIdAsync(long userId)
+>>>>>>> Stashed changes
         {
             var contracts = new List<ContractDto>();
             
@@ -126,6 +142,7 @@ namespace Dior.Service.Services
             return contracts;
         }
         
+        /// <summary>Retourne les contrats actifs</summary>
         public async Task<List<ContractDto>> GetActiveContractsAsync()
         {
             var contracts = new List<ContractDto>();
@@ -154,7 +171,12 @@ namespace Dior.Service.Services
             return contracts;
         }
         
+<<<<<<< Updated upstream
         public async Task<ContractDto> CreateAsync(CreateContractDto request)
+=======
+        /// <summary>Crée un contrat</summary>
+        public async Task<ContractDto> CreateAsync(CreateContractRequest request)
+>>>>>>> Stashed changes
         {
             using var conn = new SqlConnection(_connectionString);
             
@@ -178,7 +200,7 @@ namespace Dior.Service.Services
                 cmd.Parameters.AddWithValue("@FileUrl", (object?)request.FileUrl ?? DBNull.Value);
                 
                 var newId = await cmd.ExecuteScalarAsync();
-                var contractId = Convert.ToInt32(newId);
+                var contractId = Convert.ToInt64(newId);
                 
                 return await GetByIdAsync(contractId) ?? throw new InvalidOperationException("Erreur lors de la création du contrat");
             }
@@ -195,13 +217,18 @@ namespace Dior.Service.Services
                 basicCmd.Parameters.AddWithValue("@FileUrl", (object?)request.FileUrl ?? DBNull.Value);
                 
                 var newId = await basicCmd.ExecuteScalarAsync();
-                var contractId = Convert.ToInt32(newId);
+                var contractId = Convert.ToInt64(newId);
                 
                 return await GetByIdAsync(contractId) ?? throw new InvalidOperationException("Erreur lors de la création du contrat");
             }
         }
         
+<<<<<<< Updated upstream
         public async Task<bool> UpdateAsync(int id, UpdateContractDto request)
+=======
+        /// <summary>Met à jour un contrat</summary>
+        public async Task<bool> UpdateAsync(long id, UpdateContractRequest request)
+>>>>>>> Stashed changes
         {
             var setClauses = new List<string>();
             var parameters = new List<SqlParameter>();
@@ -245,7 +272,8 @@ namespace Dior.Service.Services
             return rowsAffected > 0;
         }
         
-        public async Task<bool> DeleteAsync(int id)
+        /// <summary>Supprime un contrat</summary>
+        public async Task<bool> DeleteAsync(long id)
         {
             using var conn = new SqlConnection(_connectionString);
             var query = "DELETE FROM Contract WHERE Id = @Id";
@@ -258,7 +286,8 @@ namespace Dior.Service.Services
             return rowsAffected > 0;
         }
         
-        public async Task<bool> TerminateAsync(int id, DateTime endDate)
+        /// <summary>Résilie un contrat</summary>
+        public async Task<bool> TerminateAsync(long id, DateTime endDate)
         {
             using var conn = new SqlConnection(_connectionString);
             var query = @"
@@ -299,8 +328,13 @@ namespace Dior.Service.Services
         {
             return new ContractDto
             {
+<<<<<<< Updated upstream
                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
                 UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
+=======
+                Id = reader.GetInt64(reader.GetOrdinal("Id")),
+                UserId = reader.GetInt64(reader.GetOrdinal("UserId")),
+>>>>>>> Stashed changes
                 UserFullName = SafeGetString(reader, "UserFullName") ?? string.Empty,
                 UserTeamName = SafeGetString(reader, "UserTeamName") ?? string.Empty,
                 ContractType = SafeGetString(reader, "ContractType") ?? "CDI",

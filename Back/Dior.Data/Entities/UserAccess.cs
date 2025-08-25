@@ -8,10 +8,15 @@ namespace Dior.Library.Entities
     public class UserAccess
     {
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
+<<<<<<< Updated upstream:Back/Dior.Data/Entities/UserAccess.cs
         public int UserId { get; set; }
         public int AccessId { get; set; }
+=======
+        public long UserId { get; set; }
+        public long AccessId { get; set; }
+>>>>>>> Stashed changes:Back/Dior.Library/Entities/UserAccess.cs
 
         public DateTime CreatedAt { get; set; }
 

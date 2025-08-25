@@ -8,10 +8,10 @@ namespace Dior.Library.Interfaces.UserInterface.Services
     public interface IAccessService
     {
         Task<IEnumerable<AccessDto>> GetAllAsync();
-        Task<AccessDto?> GetByIdAsync(int id);
+        Task<AccessDto?> GetByIdAsync(long id);
         Task<AccessDto> CreateAsync(CreateAccessDto createDto);
-        Task<bool> UpdateAsync(int id, UpdateAccessDto updateDto);
-        Task<bool> DeleteAsync(int id);
-        Task<bool> ExistsAsync(int id);
+        Task<bool> UpdateAsync(long id, UpdateAccessDto updateDto);
+        Task<bool> DeleteAsync(long id);
+        Task<bool> ExistsAsync(long id);
     }
 }

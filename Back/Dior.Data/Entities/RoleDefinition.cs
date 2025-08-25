@@ -17,7 +17,7 @@ namespace Dior.Library.Entities
         }
 
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Required]
         [MaxLength(100)]
@@ -26,7 +26,7 @@ namespace Dior.Library.Entities
         [MaxLength(255)]
         public string? Description { get; set; }
 
-        public int? ParentRoleId { get; set; }
+        public long? ParentRoleId { get; set; }
 
         public bool IsActive { get; set; } = true;
 

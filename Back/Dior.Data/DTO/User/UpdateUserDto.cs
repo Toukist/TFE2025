@@ -17,8 +17,8 @@ namespace Dior.Library.DTO.User
         
         public string? Phone { get; set; }
         public bool? IsActive { get; set; }
-        public int? TeamId { get; set; }
-        public List<int>? RoleIds { get; set; }
+        public long? TeamId { get; set; }
+        public List<long>? RoleIds { get; set; }
         public string? BadgePhysicalNumber { get; set; }
     }
 }

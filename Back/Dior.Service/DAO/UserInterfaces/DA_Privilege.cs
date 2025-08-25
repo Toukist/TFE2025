@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 
 namespace Dior.Service.DAO.UserInterfaces
-
 {
     public class DA_Privilege : IDA_Privilege
     {
@@ -60,7 +59,7 @@ namespace Dior.Service.DAO.UserInterfaces
             cmd.ExecuteNonQuery();
         }
 
-        public Privilege Get(int id)
+        public Privilege Get(long id)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Privilege_Get", conn)
@@ -120,7 +119,7 @@ namespace Dior.Service.DAO.UserInterfaces
             return list;
         }
 
-        public void Del(int id)
+        public void Del(long id)
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_Privilege_Del", conn)
@@ -134,14 +133,29 @@ namespace Dior.Service.DAO.UserInterfaces
             cmd.ExecuteNonQuery();
         }
 
-        public long Add(Library.Entities.Privilege privilege, string editBy)
+        // Entities overloads: map to BO then reuse existing logic
+        public long Add(Dior.Library.Entities.Privilege privilege, string editBy)
         {
-            throw new NotImplementedException();
+            var bo = new Privilege
+            {
+                Id = (int)privilege.Id,
+                Name = privilege.Name,
+                Description = privilege.Description,
+                IsActive = privilege.IsActive
+            };
+            return Add(bo, editBy);
         }
 
-        public void Set(Library.Entities.Privilege privilege, string editBy)
+        public void Set(Dior.Library.Entities.Privilege privilege, string editBy)
         {
-            throw new NotImplementedException();
+            var bo = new Privilege
+            {
+                Id = (int)privilege.Id,
+                Name = privilege.Name,
+                Description = privilege.Description,
+                IsActive = privilege.IsActive
+            };
+            Set(bo, editBy);
         }
     }
 }

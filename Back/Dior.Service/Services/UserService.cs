@@ -4,17 +4,22 @@ using Dior.Service.Services.Interfaces;
 
 namespace Dior.Service.Services
 {
+    /// <summary>
+    /// Service utilisateur - opérations de gestion des utilisateurs
+    /// </summary>
     public class UserService : IUserService
     {
         private readonly DiorDbContext _context;
         private readonly ILogger<UserService> _logger;
 
+        /// <summary>Constructor</summary>
         public UserService(DiorDbContext context, ILogger<UserService> logger)
         {
             _context = context;
             _logger = logger;
         }
 
+        /// <summary>Retourne tous les utilisateurs</summary>
         public async Task<IEnumerable<UserDto>> GetAllAsync()
         {
             var users = await _context.Users
@@ -26,7 +31,8 @@ namespace Dior.Service.Services
             return users.Select(MapToDto);
         }
 
-        public async Task<UserDto?> GetByIdAsync(int id)
+        /// <summary>Retourne un utilisateur par id</summary>
+        public async Task<UserDto?> GetByIdAsync(long id)
         {
             var user = await _context.Users
                 .Include(u => u.Team)
@@ -37,6 +43,7 @@ namespace Dior.Service.Services
             return user == null ? null : MapToDto(user);
         }
 
+        /// <summary>Retourne un utilisateur par email</summary>
         public async Task<UserDto?> GetByEmailAsync(string email)
         {
             var user = await _context.Users
@@ -47,6 +54,7 @@ namespace Dior.Service.Services
             return user == null ? null : MapToDto(user);
         }
 
+        /// <summary>Retourne un utilisateur par username</summary>
         public async Task<UserDto?> GetByUsernameAsync(string username)
         {
             var user = await _context.Users
@@ -57,6 +65,7 @@ namespace Dior.Service.Services
             return user == null ? null : MapToDto(user);
         }
 
+        /// <summary>Crée un utilisateur</summary>
         public async Task<UserDto> CreateAsync(CreateUserDto createUserDto)
         {
             var user = new User
@@ -80,7 +89,8 @@ namespace Dior.Service.Services
             return MapToDto(user);
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateUserDto updateUserDto)
+        /// <summary>Met à jour un utilisateur</summary>
+        public async Task<bool> UpdateAsync(long id, UpdateUserDto updateUserDto)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return false;
@@ -109,7 +119,8 @@ namespace Dior.Service.Services
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        /// <summary>Supprime un utilisateur</summary>
+        public async Task<bool> DeleteAsync(long id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return false;
@@ -119,11 +130,13 @@ namespace Dior.Service.Services
             return true;
         }
 
-        public async Task<bool> ExistsAsync(int id)
+        /// <summary>Vérifie l'existence d'un utilisateur</summary>
+        public async Task<bool> ExistsAsync(long id)
         {
             return await _context.Users.AnyAsync(u => u.Id == id);
         }
 
+        /// <summary>Authentifie un utilisateur</summary>
         public async Task<bool> AuthenticateAsync(string email, string password)
         {
             var user = await _context.Users
@@ -132,6 +145,7 @@ namespace Dior.Service.Services
             return user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
         }
 
+        /// <summary>Retourne les utilisateurs complets</summary>
         public async Task<List<UserFullDto>> GetFullUsersAsync()
         {
             var users = await _context.Users
@@ -143,7 +157,8 @@ namespace Dior.Service.Services
             return users.Select(MapToFullDto).ToList();
         }
 
-        public async Task<List<string>> GetUserRolesAsync(int userId)
+        /// <summary>Retourne les rôles d'un utilisateur</summary>
+        public async Task<List<string>> GetUserRolesAsync(long userId)
         {
             var roles = await _context.UserRoles
                 .Where(ur => ur.UserId == userId)
@@ -154,7 +169,8 @@ namespace Dior.Service.Services
             return roles;
         }
 
-        public async Task<List<AccessCompetencyDto>> GetUserAccessCompetenciesAsync(int userId)
+        /// <summary>Retourne les compétences d'accès d'un utilisateur</summary>
+        public async Task<List<AccessCompetencyDto>> GetUserAccessCompetenciesAsync(long userId)
         {
             var competencies = await _context.UserAccessCompetencies
                 .Where(uac => uac.UserId == userId)

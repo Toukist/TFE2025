@@ -1,6 +1,11 @@
+<<<<<<< Updated upstream
 ﻿
 CREATE OR ALTER PROCEDURE dbo.sp_DeleteUserAccess
     @Id BIGINT
+=======
+﻿CREATE OR ALTER PROCEDURE [dbo].[sp_DeleteUserAccess]
+    @id BIGINT
+>>>>>>> Stashed changes
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -24,5 +29,9 @@ BEGIN
 
         RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState);
     END CATCH
+<<<<<<< Updated upstream
 END
 GO
+=======
+ENDEND
+>>>>>>> Stashed changes

@@ -7,16 +7,16 @@ namespace Dior.Library.Interfaces.UserInterface.Services
     public interface IUserService
     {
         Task<IEnumerable<UserDto>> GetAllAsync();
-        Task<UserDto?> GetByIdAsync(int id);
+        Task<UserDto?> GetByIdAsync(long id);
         Task<UserDto?> GetByEmailAsync(string email);
         Task<UserDto?> GetByUsernameAsync(string username);
         Task<UserDto> CreateAsync(CreateUserDto createUserDto);
-        Task<bool> UpdateAsync(int id, UpdateUserDto updateUserDto);
-        Task<bool> DeleteAsync(int id);
-        Task<bool> ExistsAsync(int id);
+        Task<bool> UpdateAsync(long id, UpdateUserDto updateUserDto);
+        Task<bool> DeleteAsync(long id);
+        Task<bool> ExistsAsync(long id);
         Task<bool> AuthenticateAsync(string email, string password);
         Task<List<UserFullDto>> GetFullUsersAsync();
-        Task<List<string>> GetUserRolesAsync(int userId);
-        Task<List<AccessCompetencyDto>> GetUserAccessCompetenciesAsync(int userId);
+        Task<List<string>> GetUserRolesAsync(long userId);
+        Task<List<AccessCompetencyDto>> GetUserAccessCompetenciesAsync(long userId);
     }
 }

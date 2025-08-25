@@ -19,7 +19,7 @@ namespace Dior.Service.DAOs
                 ?? throw new InvalidOperationException("Database connection string not found");
         }
 
-        public Access? GetAccessById(int id)
+        public Access? GetAccessById(long id)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace Dior.Service.DAOs
             }
         }
 
-        public void DeleteAccess(int id)
+        public void DeleteAccess(long id)
         {
             try
             {
@@ -142,7 +142,7 @@ namespace Dior.Service.DAOs
         {
             return new Access
             {
-                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                Id = reader.GetInt64(reader.GetOrdinal("Id")),
                 Name = reader["Name"]?.ToString() ?? string.Empty,
                 Description = reader["Description"]?.ToString(),
                 IsActive = !reader.IsDBNull(reader.GetOrdinal("IsActive")) && reader.GetBoolean(reader.GetOrdinal("IsActive")),

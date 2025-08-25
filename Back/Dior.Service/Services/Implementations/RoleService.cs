@@ -1,6 +1,6 @@
 using Dior.Library.DTO.Role;
 using Dior.Library.Interfaces.UserInterface.Services;
-using Dior.Service.Services;
+using Dior.Service.Host.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +8,22 @@ using System.Threading.Tasks;
 
 namespace Dior.Service.Services.Implementations
 {
+    /// <summary>
+    /// Service pour la gestion des rôles
+    /// </summary>
     public class RoleService : IRoleService
     {
         private readonly DiorDbContext _context;
         private readonly ILogger<RoleService> _logger;
 
+        /// <summary>Constructor</summary>
         public RoleService(DiorDbContext context, ILogger<RoleService> logger)
         {
             _context = context;
             _logger = logger;
         }
 
+        /// <summary>Retourne tous les rôles</summary>
         public async Task<IEnumerable<RoleDefinitionDto>> GetAllAsync()
         {
             var roles = await _context.RoleDefinitions
@@ -29,7 +34,8 @@ namespace Dior.Service.Services.Implementations
             return roles.Select(MapToDto);
         }
 
-        public async Task<RoleDefinitionDto?> GetByIdAsync(int id)
+        /// <summary>Retourne un rôle par id</summary>
+        public async Task<RoleDefinitionDto?> GetByIdAsync(long id)
         {
             var role = await _context.RoleDefinitions
                 .Include(r => r.RoleDefinitionPrivileges)
@@ -39,6 +45,7 @@ namespace Dior.Service.Services.Implementations
             return role != null ? MapToDto(role) : null;
         }
 
+        /// <summary>Crée un rôle</summary>
         public async Task<RoleDefinitionDto> CreateAsync(CreateRoleDefinitionDto createDto)
         {
             var role = new Dior.Library.Entities.RoleDefinition
@@ -57,7 +64,8 @@ namespace Dior.Service.Services.Implementations
             return MapToDto(role);
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateRoleDefinitionDto updateDto)
+        /// <summary>Met à jour un rôle</summary>
+        public async Task<bool> UpdateAsync(long id, UpdateRoleDefinitionDto updateDto)
         {
             var role = await _context.RoleDefinitions.FindAsync(id);
             if (role == null)
@@ -79,7 +87,8 @@ namespace Dior.Service.Services.Implementations
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        /// <summary>Supprime un rôle</summary>
+        public async Task<bool> DeleteAsync(long id)
         {
             var role = await _context.RoleDefinitions.FindAsync(id);
             if (role == null)
@@ -90,11 +99,13 @@ namespace Dior.Service.Services.Implementations
             return true;
         }
 
-        public async Task<bool> ExistsAsync(int id)
+        /// <summary>Vérifie l'existence d'un rôle</summary>
+        public async Task<bool> ExistsAsync(long id)
         {
             return await _context.RoleDefinitions.AnyAsync(r => r.Id == id);
         }
 
+        /// <summary>Retourne les noms des rôles actifs</summary>
         public async Task<List<string>> GetRoleNamesAsync()
         {
             return await _context.RoleDefinitions
@@ -103,7 +114,8 @@ namespace Dior.Service.Services.Implementations
                 .ToListAsync();
         }
 
-        public async Task<List<PrivilegeDto>> GetRolePrivilegesAsync(int roleId)
+        /// <summary>Retourne les privilèges d'un rôle</summary>
+        public async Task<List<PrivilegeDto>> GetRolePrivilegesAsync(long roleId)
         {
             var privileges = await _context.RoleDefinitionPrivileges
                 .Where(rp => rp.RoleDefinitionId == roleId)

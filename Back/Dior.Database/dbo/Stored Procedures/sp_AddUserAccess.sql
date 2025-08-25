@@ -1,6 +1,6 @@
-﻿CREATE   PROCEDURE dbo.sp_AddUserAccess
+﻿CREATE OR ALTER   PROCEDURE dbo.sp_AddUserAccess
   @userId   BIGINT,
-  @accessId INT,
+  @accessId BIGINT,
   @By       NVARCHAR(100)=NULL
 AS
 BEGIN
@@ -10,7 +10,7 @@ BEGIN
   INSERT INTO dbo.USER_ACCESS (userId, accessId, createdAt, createdBy, lastEditAt, lastEditBy)
   VALUES (@userId, @accessId, GETDATE(), @By, GETDATE(), @By);
 
-  DECLARE @newId INT = SCOPE_IDENTITY();
+  DECLARE @newId BIGINT = SCOPE_IDENTITY();
   DECLARE @details NVARCHAR(200) = N'accessId=' + CAST(@accessId AS NVARCHAR(50));
 
   EXEC dbo.sp_AddAuditLog

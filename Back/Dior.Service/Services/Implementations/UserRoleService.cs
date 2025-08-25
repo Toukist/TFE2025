@@ -1,34 +1,48 @@
 using AutoMapper;
+<<<<<<< Updated upstream
 using Dior.Database.Services.Interfaces;
 using Dior.Library.Entities;
+=======
+using Dior.Service.Host.Services;
+using Dior.Library.DTO.Role;
+using Dior.Library.Entities;
+using Dior.Service.Services.Interfaces;
+>>>>>>> Stashed changes
 using Microsoft.EntityFrameworkCore;
 
-namespace Dior.Database.Services.Implementations
+namespace Dior.Service.Services.Implementations
 {
+    /// <summary>
+    /// Service de gestion des liens utilisateur-rôle
+    /// </summary>
     public class UserRoleService : IUserRoleService
     {
         private readonly DiorDbContext _context;
         private readonly IMapper _mapper;
 
+        /// <summary>Constructor</summary>
         public UserRoleService(DiorDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
+        /// <summary>Retourne tous les liens</summary>
         public async Task<IEnumerable<UserRoleDto>> GetAllAsync()
         {
             var userRoles = await _context.UserRoles.ToListAsync();
             return _mapper.Map<IEnumerable<UserRoleDto>>(userRoles);
         }
 
-        public async Task<UserRoleDto> GetByIdAsync(int id)
+        /// <summary>Retourne un lien par id</summary>
+        public async Task<UserRoleDto?> GetByIdAsync(long id)
         {
             var userRole = await _context.UserRoles.FindAsync(id);
             return userRole != null ? _mapper.Map<UserRoleDto>(userRole) : null;
         }
 
-        public async Task<IEnumerable<UserRoleDto>> GetByUserIdAsync(int userId)
+        /// <summary>Retourne les liens pour un utilisateur</summary>
+        public async Task<IEnumerable<UserRoleDto>> GetByUserIdAsync(long userId)
         {
             var userRoles = await _context.UserRoles
                 .Where(ur => ur.UserId == userId)
@@ -37,6 +51,7 @@ namespace Dior.Database.Services.Implementations
             return _mapper.Map<IEnumerable<UserRoleDto>>(userRoles);
         }
 
+        /// <summary>Crée un lien</summary>
         public async Task<UserRoleDto> CreateAsync(CreateUserRoleDto createDto)
         {
             var userRole = _mapper.Map<UserRole>(createDto);
@@ -48,7 +63,8 @@ namespace Dior.Database.Services.Implementations
             return _mapper.Map<UserRoleDto>(userRole);
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateUserRoleDto updateDto)
+        /// <summary>Met à jour un lien</summary>
+        public async Task<bool> UpdateAsync(long id, UpdateUserRoleDto updateDto)
         {
             var userRole = await _context.UserRoles.FindAsync(id);
             if (userRole == null)
@@ -61,7 +77,8 @@ namespace Dior.Database.Services.Implementations
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        /// <summary>Supprime un lien</summary>
+        public async Task<bool> DeleteAsync(long id)
         {
             var userRole = await _context.UserRoles.FindAsync(id);
             if (userRole == null)

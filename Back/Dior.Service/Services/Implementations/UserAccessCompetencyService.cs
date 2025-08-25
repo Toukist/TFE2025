@@ -6,30 +6,37 @@ using Dior.Library.DTO.Access.Dior.Data.DTO.UserAccessCompetency;
 
 namespace Dior.Data.Services.Implementations
 {
+    /// <summary>
+    /// Service UserAccessCompetency
+    /// </summary>
     public class UserAccessCompetencyService : IUserAccessCompetencyService
     {
         private readonly DiorDbContext _context;
         private readonly IMapper _mapper;
 
+        /// <summary>Constructor</summary>
         public UserAccessCompetencyService(DiorDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
+        /// <summary>Retourne tout</summary>
         public async Task<IEnumerable<UserAccessCompetencyDto>> GetAllAsync()
         {
             var userAccessCompetencies = await _context.UserAccessCompetencies.ToListAsync();
             return _mapper.Map<IEnumerable<UserAccessCompetencyDto>>(userAccessCompetencies);
         }
 
-        public async Task<UserAccessCompetencyDto> GetByIdAsync(int id)
+        /// <summary>Retourne par id</summary>
+        public async Task<UserAccessCompetencyDto> GetByIdAsync(long id)
         {
             var userAccessCompetency = await _context.UserAccessCompetencies.FindAsync(id);
             return userAccessCompetency != null ? _mapper.Map<UserAccessCompetencyDto>(userAccessCompetency) : null;
         }
 
-        public async Task<IEnumerable<UserAccessCompetencyDto>> GetByUserIdAsync(int userId)
+        /// <summary>Retourne par userId</summary>
+        public async Task<IEnumerable<UserAccessCompetencyDto>> GetByUserIdAsync(long userId)
         {
             var userAccessCompetencies = await _context.UserAccessCompetencies
                 .Where(uac => uac.UserId == userId)
@@ -38,6 +45,7 @@ namespace Dior.Data.Services.Implementations
             return _mapper.Map<IEnumerable<UserAccessCompetencyDto>>(userAccessCompetencies);
         }
 
+        /// <summary>Crée</summary>
         public async Task<UserAccessCompetencyDto> CreateAsync(CreateUserAccessCompetencyDto createDto)
         {
             var userAccessCompetency = _mapper.Map<UserAccessCompetency>(createDto);
@@ -49,7 +57,8 @@ namespace Dior.Data.Services.Implementations
             return _mapper.Map<UserAccessCompetencyDto>(userAccessCompetency);
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateUserAccessCompetencyDto updateDto)
+        /// <summary>Met à jour</summary>
+        public async Task<bool> UpdateAsync(long id, UpdateUserAccessCompetencyDto updateDto)
         {
             var userAccessCompetency = await _context.UserAccessCompetencies.FindAsync(id);
             if (userAccessCompetency == null)
@@ -62,7 +71,8 @@ namespace Dior.Data.Services.Implementations
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        /// <summary>Supprime</summary>
+        public async Task<bool> DeleteAsync(long id)
         {
             var userAccessCompetency = await _context.UserAccessCompetencies.FindAsync(id);
             if (userAccessCompetency == null)

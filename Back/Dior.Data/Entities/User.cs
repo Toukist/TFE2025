@@ -18,7 +18,11 @@ public class User
     }
 
     [Key]
+<<<<<<< Updated upstream:Back/Dior.Data/Entities/User.cs
     public int Id { get; set; } // BIGINT IDENTITY dans la DB
+=======
+    public long Id { get; set; } // Changed from int to long
+>>>>>>> Stashed changes:Back/Dior.Library/Entities/User.cs
 
     [Required]
     [MaxLength(50)]
@@ -51,6 +55,11 @@ public class User
     [MaxLength(50)]
     public string? BadgePhysicalNumber { get; set; }
 
+<<<<<<< Updated upstream:Back/Dior.Data/Entities/User.cs
+=======
+    public long? TeamId { get; set; } // Changed from int? to long?
+
+>>>>>>> Stashed changes:Back/Dior.Library/Entities/User.cs
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     [MaxLength(100)]

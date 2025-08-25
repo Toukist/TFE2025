@@ -4,10 +4,10 @@ namespace Dior.Library.Interfaces.DAOs
 {
     public interface IDA_Access 
     {
-        Access? GetAccessById(int id);
+        Access? GetAccessById(long id);
         IEnumerable<Access> GetAllAccesses();
         void CreateAccess(Access access);
         void UpdateAccess(Access access);
-        void DeleteAccess(int id);
+        void DeleteAccess(long id);
     }
 }

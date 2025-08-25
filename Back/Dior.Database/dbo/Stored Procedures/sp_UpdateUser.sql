@@ -1,7 +1,13 @@
 ﻿/* =======================
+<<<<<<< Updated upstream
    UPDATE USER (password kept if NULL/empty)
    ======================= */
 CREATE OR ALTER PROCEDURE dbo.sp_UpdateUser
+=======
+   2) UPDATE USER (password kept if NULL/empty)
+   ======================= */
+CREATE OR ALTER   PROCEDURE dbo.sp_UpdateUser
+>>>>>>> Stashed changes
   @Id           BIGINT,
   @IsActive     BIT,
   @UserName     NVARCHAR(100),

@@ -74,9 +74,15 @@ namespace Dior.Service.DAO.UserInterfaces
             {
                 return new UserAccessCompetency
                 {
+<<<<<<< Updated upstream
                     Id = reader.GetInt32(reader.GetOrdinal("Id")),
                     UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
                     AccessCompetencyId = reader.GetInt32(reader.GetOrdinal("AccessCompetencyId")),
+=======
+                    Id = reader.GetInt64(reader.GetOrdinal("Id")),
+                    UserId = reader.GetInt64(reader.GetOrdinal("UserId")),
+                    AccessCompetencyId = reader.GetInt64(reader.GetOrdinal("AccessCompetencyId")),
+>>>>>>> Stashed changes
                     CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
                     CreatedBy = reader.GetString(reader.GetOrdinal("CreatedBy")),
                     LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? null : (DateTime?)reader.GetDateTime(reader.GetOrdinal("LastEditAt")),
@@ -104,9 +110,15 @@ namespace Dior.Service.DAO.UserInterfaces
             {
                 var entry = new UserAccessCompetency
                 {
+<<<<<<< Updated upstream
                     Id = reader.GetInt32(reader.GetOrdinal("Id")),
                     UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
                     AccessCompetencyId = reader.GetInt32(reader.GetOrdinal("AccessCompetencyId")),
+=======
+                    Id = reader.GetInt64(reader.GetOrdinal("Id")),
+                    UserId = reader.GetInt64(reader.GetOrdinal("UserId")),
+                    AccessCompetencyId = reader.GetInt64(reader.GetOrdinal("AccessCompetencyId")),
+>>>>>>> Stashed changes
                     CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
                     CreatedBy = reader.GetString(reader.GetOrdinal("CreatedBy")),
                     LastEditAt = reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? null : (DateTime?)reader.GetDateTime(reader.GetOrdinal("LastEditAt")),
@@ -119,7 +131,11 @@ namespace Dior.Service.DAO.UserInterfaces
             return list;
         }
 
+<<<<<<< Updated upstream
         public void Del(int id)
+=======
+        public void Del(long id)
+>>>>>>> Stashed changes
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand("SP_UserAccessCompetency_Del", conn)
@@ -132,8 +148,12 @@ namespace Dior.Service.DAO.UserInterfaces
             conn.Open();
             cmd.ExecuteNonQuery();
         }
+<<<<<<< Updated upstream
 
         public bool HasAccessCompetency(int userId, string competencyName)
+=======
+        public bool HasAccessCompetency(long userId, string competencyName)
+>>>>>>> Stashed changes
         {
             using var conn = new SqlConnection(_connectionString);
             using var cmd = new SqlCommand(@"

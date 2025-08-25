@@ -8,10 +8,10 @@ namespace Dior.Library.Entities
     public class RoleDefinitionPrivilege
     {
         [Key]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
-        public int RoleDefinitionId { get; set; }
-        public int PrivilegeId { get; set; }
+        public long RoleDefinitionId { get; set; }
+        public long PrivilegeId { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 ﻿CREATE OR ALTER PROCEDURE dbo.sp_AddUser
+=======
+﻿CREATE OR ALTER   PROCEDURE dbo.sp_AddUser
+>>>>>>> Stashed changes
   @UserName     NVARCHAR(100),
   @FirstName    NVARCHAR(100),
   @LastName     NVARCHAR(100),

@@ -9,6 +9,6 @@ namespace Dior.Library.Interfaces.UserInterface.Services
         long Add(UserAccess userAccess, string editBy);
         void Set(UserAccess userAccess, string editBy);
         void Del(long id);
-        int? GetActiveAccessIdByUserId(int userId);
+        int? GetActiveAccessIdByUserId(long userId);
     }
 }

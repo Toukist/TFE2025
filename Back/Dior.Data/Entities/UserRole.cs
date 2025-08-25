@@ -8,10 +8,10 @@ namespace Dior.Library.Entities
     public class UserRole
     {
         [Key]
-        public int Id { get; set; } // Changé de long à int pour cohérence
+        public long Id { get; set; } // Converti en long
 
-        public int RoleDefinitionId { get; set; } // Changé de long à int
-        public int UserId { get; set; } // Changé de long à int
+        public long RoleDefinitionId { get; set; } // Converti en long
+        public long UserId { get; set; } // Converti en long
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Ajouté
         

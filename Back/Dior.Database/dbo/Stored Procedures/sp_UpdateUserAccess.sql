@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 ﻿CREATE OR ALTER PROCEDURE dbo.sp_UpdateUserAccess
+=======
+﻿CREATE OR ALTER   PROCEDURE dbo.sp_UpdateUserAccess
+>>>>>>> Stashed changes
   @id       BIGINT,
   @userId   BIGINT,
   @accessId BIGINT,

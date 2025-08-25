@@ -9,29 +9,38 @@ using System.Threading.Tasks;
 
 namespace Dior.Service.Services.Implementations
 {
+    /// <summary>
+    /// Service pour la gestion des accès
+    /// </summary>
     public class AccessService : IAccessService
     {
         private readonly DiorDbContext _context;
         private readonly ILogger<AccessService> _logger;
 
+        /// <summary>
+        /// Ctor
+        /// </summary>
         public AccessService(DiorDbContext context, ILogger<AccessService> logger)
         {
             _context = context;
             _logger = logger;
         }
 
+        /// <summary>Retourne tous les accès</summary>
         public async Task<IEnumerable<AccessDto>> GetAllAsync()
         {
             var accesses = await _context.Accesses.ToListAsync();
             return accesses.Select(MapToDto);
         }
 
-        public async Task<AccessDto?> GetByIdAsync(int id)
+        /// <summary>Retourne un accès par id</summary>
+        public async Task<AccessDto?> GetByIdAsync(long id)
         {
             var access = await _context.Accesses.FindAsync(id);
             return access != null ? MapToDto(access) : null;
         }
 
+        /// <summary>Crée un accès</summary>
         public async Task<AccessDto> CreateAsync(CreateAccessDto createDto)
         {
             var access = new Dior.Library.Entities.Access
@@ -48,7 +57,8 @@ namespace Dior.Service.Services.Implementations
             return MapToDto(access);
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateAccessDto updateDto)
+        /// <summary>Met à jour un accès</summary>
+        public async Task<bool> UpdateAsync(long id, UpdateAccessDto updateDto)
         {
             var access = await _context.Accesses.FindAsync(id);
             if (access == null)
@@ -66,7 +76,8 @@ namespace Dior.Service.Services.Implementations
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        /// <summary>Supprime un accès</summary>
+        public async Task<bool> DeleteAsync(long id)
         {
             var access = await _context.Accesses.FindAsync(id);
             if (access == null)
@@ -77,7 +88,8 @@ namespace Dior.Service.Services.Implementations
             return true;
         }
 
-        public async Task<bool> ExistsAsync(int id)
+        /// <summary>Vérifie l'existence d'un accès</summary>
+        public async Task<bool> ExistsAsync(long id)
         {
             return await _context.Accesses.AnyAsync(a => a.Id == id);
         }

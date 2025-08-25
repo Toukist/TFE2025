@@ -34,7 +34,7 @@ namespace Dior.Service.DAO
             return list;
         }
 
-        public TaskBO? GetById(int id)
+        public TaskBO? GetById(long id)
         {
             TaskBO? result = null;
             using (var conn = new SqlConnection(_connectionString))
@@ -93,7 +93,7 @@ namespace Dior.Service.DAO
             }
         }
 
-        public void Delete(int id)
+        public void Delete(long id)
         {
             using (var conn = new SqlConnection(_connectionString))
             using (var cmd = new SqlCommand("DELETE FROM TASK WHERE ID = @Id", conn))
@@ -108,12 +108,12 @@ namespace Dior.Service.DAO
         {
             return new TaskBO
             {
-                Id = reader.GetInt32(reader.GetOrdinal("ID")),
+                Id = Convert.ToInt32(reader.GetInt64(reader.GetOrdinal("ID"))),
                 Title = reader.GetString(reader.GetOrdinal("Title")),
                 Description = !reader.IsDBNull(reader.GetOrdinal("Description")) ? reader.GetString(reader.GetOrdinal("Description")) : null,
                 Status = reader.GetString(reader.GetOrdinal("Status")),
-                AssignedToUserId = reader.GetInt32(reader.GetOrdinal("AssignedToUserId")),
-                CreatedByUserId = reader.GetInt32(reader.GetOrdinal("CreatedByUserId")),
+                AssignedToUserId = Convert.ToInt32(reader.GetInt64(reader.GetOrdinal("AssignedToUserId"))),
+                CreatedByUserId = Convert.ToInt32(reader.GetInt64(reader.GetOrdinal("CreatedByUserId"))),
                 CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
                 CreatedBy = reader.GetString(reader.GetOrdinal("CreatedBy")),
                 LastEditAt = !reader.IsDBNull(reader.GetOrdinal("LastEditAt")) ? reader.GetDateTime(reader.GetOrdinal("LastEditAt")) : null,
@@ -129,24 +129,12 @@ namespace Dior.Service.DAO
             cmd.Parameters.AddWithValue("@AssignedToUserId", task.AssignedToUserId);
             cmd.Parameters.AddWithValue("@CreatedByUserId", task.CreatedByUserId);
             cmd.Parameters.AddWithValue("@CreatedAt", task.CreatedAt);
-            cmd.Parameters.AddWithValue("@CreatedBy", task.CreatedBy);
+            cmd.Parameters.AddWithValue("@CreatedBy", task.CreatedBy ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@LastEditAt", task.LastEditAt ?? (object)DBNull.Value);
             cmd.Parameters.AddWithValue("@LastEditBy", task.LastEditBy ?? (object)DBNull.Value);
         }
 
-
-
-
-
-
-
-
-        // AJOUTER À LA CLASSE TaskDao EXISTANTE
-
-        /// <summary>
-        /// Récupérer les tâches assignées à un utilisateur spécifique
-        /// </summary>
-        public List<TaskBO> GetTasksAssignedToUser(int userId)
+        public List<TaskBO> GetTasksAssignedToUser(long userId)
         {
             var list = new List<TaskBO>();
             using (var conn = new SqlConnection(_connectionString))
@@ -168,10 +156,7 @@ namespace Dior.Service.DAO
             return list;
         }
 
-        /// <summary>
-        /// Récupérer les tâches créées par un utilisateur spécifique
-        /// </summary>
-        public List<TaskBO> GetTasksCreatedByUser(int userId)
+        public List<TaskBO> GetTasksCreatedByUser(long userId)
         {
             var list = new List<TaskBO>();
             using (var conn = new SqlConnection(_connectionString))
@@ -193,9 +178,6 @@ namespace Dior.Service.DAO
             return list;
         }
 
-        /// <summary>
-        /// Récupérer les tâches par statut
-        /// </summary>
         public List<TaskBO> GetTasksByStatus(string status)
         {
             var list = new List<TaskBO>();
@@ -218,10 +200,7 @@ namespace Dior.Service.DAO
             return list;
         }
 
-        /// <summary>
-        /// Compter les tâches par statut pour un utilisateur
-        /// </summary>
-        public int GetTaskCountByStatusForUser(int userId, string status)
+        public int GetTaskCountByStatusForUser(long userId, string status)
         {
             using (var conn = new SqlConnection(_connectionString))
             using (var cmd = new SqlCommand(@"
@@ -231,14 +210,11 @@ namespace Dior.Service.DAO
                 cmd.Parameters.AddWithValue("@UserId", userId);
                 cmd.Parameters.AddWithValue("@Status", status);
                 conn.Open();
-                return (int)cmd.ExecuteScalar();
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
-        /// <summary>
-        /// Mettre à jour uniquement le statut d'une tâche (optimisé)
-        /// </summary>
-        public void UpdateTaskStatus(int taskId, string newStatus, string lastEditBy)
+        public void UpdateTaskStatus(long taskId, string newStatus, string lastEditBy)
         {
             using (var conn = new SqlConnection(_connectionString))
             using (var cmd = new SqlCommand(@"

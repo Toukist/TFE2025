@@ -1,5 +1,5 @@
 using Dior.Library.DAO;
-using Dior.Service.Services; // Pour DiorDbContext
+using Dior.Service.Host.Services; // Pour DiorDbContext
 using BO = Dior.Library.BO;
 using EF = Dior.Library.Entities;
 
@@ -24,7 +24,7 @@ namespace Dior.Service.DAO
             }).ToList();
         }
 
-        public BO.Team? GetById(int id)
+        public BO.Team? GetById(long id)
         {
             var t = _context.Teams.FirstOrDefault(x => x.Id == id);
             if (t == null) return null;
@@ -59,7 +59,7 @@ namespace Dior.Service.DAO
             _context.SaveChanges();
         }
 
-        public void Delete(int id)
+        public void Delete(long id)
         {
             var entity = _context.Teams.FirstOrDefault(x => x.Id == id);
             if (entity == null) return;

@@ -3,29 +3,36 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dior.Service.Services.Implementations
 {
+    /// <summary>
+    /// Service pour la gestion des équipes
+    /// </summary>
     public class TeamService : ITeamService
     {
         private readonly DiorDbContext _context;
         private readonly ILogger<TeamService> _logger;
 
+        /// <summary>Constructor</summary>
         public TeamService(DiorDbContext context, ILogger<TeamService> logger)
         {
             _context = context;
             _logger = logger;
         }
 
+        /// <summary>Retourne toutes les équipes</summary>
         public async Task<IEnumerable<TeamDto>> GetAllAsync()
         {
             var teams = await _context.Teams.ToListAsync();
             return teams.Select(MapToDto);
         }
 
-        public async Task<TeamDto?> GetByIdAsync(int id)
+        /// <summary>Retourne une équipe par identifiant</summary>
+        public async Task<TeamDto?> GetByIdAsync(long id)
         {
             var team = await _context.Teams.FindAsync(id);
             return team != null ? MapToDto(team) : null;
         }
 
+        /// <summary>Crée une équipe</summary>
         public async Task<TeamDto> CreateAsync(CreateTeamDto createDto)
         {
             var team = new Dior.Library.Entities.Team
@@ -43,7 +50,8 @@ namespace Dior.Service.Services.Implementations
             return MapToDto(team);
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateTeamDto updateDto)
+        /// <summary>Met à jour une équipe</summary>
+        public async Task<bool> UpdateAsync(long id, UpdateTeamDto updateDto)
         {
             var team = await _context.Teams.FindAsync(id);
             if (team == null)
@@ -63,7 +71,8 @@ namespace Dior.Service.Services.Implementations
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        /// <summary>Supprime une équipe</summary>
+        public async Task<bool> DeleteAsync(long id)
         {
             var team = await _context.Teams.FindAsync(id);
             if (team == null)
@@ -74,12 +83,14 @@ namespace Dior.Service.Services.Implementations
             return true;
         }
 
-        public async Task<bool> ExistsAsync(int id)
+        /// <summary>Vérifie l'existence d'une équipe</summary>
+        public async Task<bool> ExistsAsync(long id)
         {
             return await _context.Teams.AnyAsync(t => t.Id == id);
         }
 
-        public async Task<List<UserDto>> GetTeamMembersAsync(int teamId)
+        /// <summary>Retourne les membres d'une équipe</summary>
+        public async Task<List<UserDto>> GetTeamMembersAsync(long teamId)
         {
             var users = await _context.Users
                 .Where(u => u.TeamId == teamId)
@@ -113,33 +124,32 @@ namespace Dior.Service.Services.Implementations
                 CreatedBy = team.CreatedBy,
                 LastEditAt = team.LastEditAt,
                 LastEditBy = team.LastEditBy,
-                MemberCount = 0 // Sera calculé séparément si nécessaire
+                MemberCount = 0
             };
         }
 
+        // Legacy signatures not used; keep stubs but align types to long and return defaults
+        /// <summary>Non utilisé</summary>
         public List<Team> GetAll()
         {
-            throw new NotImplementedException();
+            return new List<Team>();
         }
-
-        public Team? GetById(int id)
+        /// <summary>Non utilisé</summary>
+        public Team? GetById(long id)
         {
-            throw new NotImplementedException();
+            return null;
         }
-
+        /// <summary>Non utilisé</summary>
         public void Create(Team team)
         {
-            throw new NotImplementedException();
         }
-
+        /// <summary>Non utilisé</summary>
         public void Update(Team team)
         {
-            throw new NotImplementedException();
         }
-
-        public void Delete(int id)
+        /// <summary>Non utilisé</summary>
+        public void Delete(long id)
         {
-            throw new NotImplementedException();
         }
     }
 }

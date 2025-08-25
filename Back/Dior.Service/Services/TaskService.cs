@@ -3,59 +3,67 @@ using Dior.Library.DAO;
 
 namespace Dior.Service.Services
 {
+    /// <summary>
+    /// Service de gestion des tâches (wrapping DAO)
+    /// </summary>
     public class TaskService
     {
         private readonly ITaskDao _taskDao;
 
+        /// <summary>Constructor</summary>
         public TaskService(ITaskDao taskDao)
         {
             _taskDao = taskDao;
         }
 
+        /// <summary>Retourne toutes les tâches</summary>
         public List<TaskBO> GetAllTasks()
         {
             return _taskDao.GetAll();
         }
 
-        public TaskBO? GetTaskById(int id)
+        /// <summary>Retourne une tâche par id</summary>
+        public TaskBO? GetTaskById(long id)
         {
             return _taskDao.GetById(id);
         }
 
+        /// <summary>Crée une tâche</summary>
         public void CreateTask(TaskBO task)
         {
             _taskDao.Create(task);
         }
 
+        /// <summary>Met à jour une tâche</summary>
         public void UpdateTask(TaskBO task)
         {
             _taskDao.Update(task);
         }
 
-        public void DeleteTask(int id)
+        /// <summary>Supprime une tâche</summary>
+        public void DeleteTask(long id)
         {
             _taskDao.Delete(id);
         }
-        // AJOUTER À LA CLASSE TaskService EXISTANTE
 
         /// <summary>
-        /// Récupérer les tâches assignées à un utilisateur (pour opérateurs)
+        /// Récupère les tâches assignées à un utilisateur
         /// </summary>
-        public List<TaskBO> GetTasksAssignedToUser(int userId)
+        public List<TaskBO> GetTasksAssignedToUser(long userId)
         {
             return _taskDao.GetTasksAssignedToUser(userId);
         }
 
         /// <summary>
-        /// Récupérer les tâches créées par un utilisateur (pour managers)
+        /// Récupère les tâches créées par un utilisateur
         /// </summary>
-        public List<TaskBO> GetTasksCreatedByUser(int userId)
+        public List<TaskBO> GetTasksCreatedByUser(long userId)
         {
             return _taskDao.GetTasksCreatedByUser(userId);
         }
 
         /// <summary>
-        /// Récupérer les tâches par statut
+        /// Récupère les tâches par statut
         /// </summary>
         public List<TaskBO> GetTasksByStatus(string status)
         {
@@ -63,29 +71,29 @@ namespace Dior.Service.Services
         }
 
         /// <summary>
-        /// Compter les tâches par statut pour un utilisateur
+        /// Compte les tâches par statut pour un utilisateur
         /// </summary>
-        public int GetTaskCountByStatusForUser(int userId, string status)
+        public int GetTaskCountByStatusForUser(long userId, string status)
         {
             return _taskDao.GetTaskCountByStatusForUser(userId, status);
         }
 
-
-        public void UpdateTaskStatus(int taskId, string newStatus, string lastEditBy)
+        /// <summary>Met à jour le statut d'une tâche</summary>
+        public void UpdateTaskStatus(long taskId, string newStatus, string lastEditBy)
         {
             _taskDao.UpdateTaskStatus(taskId, newStatus, lastEditBy);
         }
 
-
-        public List<TaskBO> GetActiveTasksForUser(int userId)
+        /// <summary>Retourne les tâches actives d'un utilisateur</summary>
+        public List<TaskBO> GetActiveTasksForUser(long userId)
         {
             return _taskDao.GetTasksAssignedToUser(userId)
                 .Where(t => t.Status == "En attente" || t.Status == "En cours")
                 .ToList();
         }
 
-
-        public void ReassignTask(int taskId, int newAssignedToUserId, string reassignedBy)
+        /// <summary>Réassigne une tâche</summary>
+        public void ReassignTask(long taskId, long newAssignedToUserId, string reassignedBy)
         {
             var task = _taskDao.GetById(taskId);
             if (task != null)

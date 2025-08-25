@@ -4,12 +4,20 @@ using System.Threading.Tasks;
 
 namespace Dior.Data.Services.Interfaces
 {
+    /// <summary>
+    /// Service de gestion des privilèges
+    /// </summary>
     public interface IPrivilegeService
     {
+        /// <summary>Retourne tous les privilèges</summary>
         Task<IEnumerable<PrivilegeDto>> GetAllAsync();
-        Task<PrivilegeDto> GetByIdAsync(int id);
+        /// <summary>Retourne un privilège par id</summary>
+        Task<PrivilegeDto> GetByIdAsync(long id);
+        /// <summary>Crée un privilège</summary>
         Task<PrivilegeDto> CreateAsync(CreatePrivilegeDto createPrivilegeDto);
-        Task<bool> UpdateAsync(int id, UpdatePrivilegeDto updatePrivilegeDto);
-        Task<bool> DeleteAsync(int id);
+        /// <summary>Met à jour un privilège</summary>
+        Task<bool> UpdateAsync(long id, UpdatePrivilegeDto updatePrivilegeDto);
+        /// <summary>Supprime un privilège</summary>
+        Task<bool> DeleteAsync(long id);
     }
 }

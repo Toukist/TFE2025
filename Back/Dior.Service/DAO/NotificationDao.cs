@@ -13,15 +13,15 @@ namespace Dior.Service.DAO
             _context = context;
         }
 
-        public List<NotificationDto> GetByUserId(int userId)
+        public List<NotificationDto> GetByUserId(long userId)
         {
             return _context.Notifications
                 .Where(n => n.UserId == userId)
                 .OrderByDescending(n => n.CreatedAt)
                 .Select(n => new NotificationDto
                 {
-                    Id = n.Id,
-                    UserId = n.UserId, // long <- long maintenant
+                    Id = (int)n.Id, // Correction : cast explicite de long vers int
+                    UserId = (int?)n.UserId, // Correction : cast explicite de long vers int?
                     Type = n.Type,
                     Message = n.Message,
                     IsRead = n.IsRead,
@@ -30,7 +30,7 @@ namespace Dior.Service.DAO
                 .ToList();
         }
 
-        public void MarkAsRead(int id)
+        public void MarkAsRead(long id)
         {
             var notif = _context.Notifications.FirstOrDefault(n => n.Id == id);
             if (notif != null)
@@ -40,7 +40,7 @@ namespace Dior.Service.DAO
             }
         }
 
-        public void Delete(int id)
+        public void Delete(long id)
         {
             var notif = _context.Notifications.FirstOrDefault(n => n.Id == id);
             if (notif != null)
@@ -50,11 +50,11 @@ namespace Dior.Service.DAO
             }
         }
 
-        public int Add(NotificationDto dto, string createdBy)
+        public long Add(NotificationDto dto, string createdBy)
         {
             var notif = new Notification
             {
-                UserId = (int)dto.UserId, // Conversion explicite long -> int pour la DB
+                UserId = dto.UserId.HasValue ? dto.UserId.Value : 0, // Correction : conversion int? vers long
                 Type = dto.Type,
                 Message = dto.Message,
                 IsRead = false,

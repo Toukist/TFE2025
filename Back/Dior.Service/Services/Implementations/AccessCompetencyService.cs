@@ -6,31 +6,50 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Dior.Database.Services.Implementations
 {
+    /// <summary>
+    /// Service de gestion des AccessCompetency
+    /// </summary>
     public class AccessCompetencyService : IAccessCompetencyService
     {
         private readonly DiorDbContext _context;
         private readonly IMapper _mapper;
 
+        /// <summary>Constructor</summary>
         public AccessCompetencyService(DiorDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
+        /// <summary>Retourne toutes les compétences d'accès</summary>
         public async Task<IEnumerable<AccessCompetencyDto>> GetAllAsync()
         {
             var competencies = await _context.AccessCompetencies.ToListAsync();
             return _mapper.Map<IEnumerable<AccessCompetencyDto>>(competencies);
         }
 
-        public async Task<AccessCompetencyDto> GetByIdAsync(int id)
+        /// <summary>Retourne une compétence par id</summary>
+        public async Task<AccessCompetencyDto> GetByIdAsync(long id)
         {
             var competency = await _context.AccessCompetencies.FindAsync(id);
             return competency != null ? _mapper.Map<AccessCompetencyDto>(competency) : null;
         }
 
+<<<<<<< Updated upstream
         
+=======
+        /// <summary>Retourne les enfants d'une compétence</summary>
+        public async Task<IEnumerable<AccessCompetencyDto>> GetChildrenAsync(long parentId)
+        {
+            var children = await _context.AccessCompetencies
+                .Where(ac => ac.ParentId == parentId)
+                .ToListAsync();
 
+            return _mapper.Map<IEnumerable<AccessCompetencyDto>>(children);
+        }
+>>>>>>> Stashed changes
+
+        /// <summary>Crée une compétence</summary>
         public async Task<AccessCompetencyDto> CreateAsync(CreateAccessCompetencyDto createDto)
         {
             // Remplacez la ligne suivante :
@@ -45,7 +64,8 @@ namespace Dior.Database.Services.Implementations
             return _mapper.Map<AccessCompetencyDto>(competency);
         }
 
-        public async Task<bool> UpdateAsync(int id, UpdateAccessCompetencyDto updateDto)
+        /// <summary>Met à jour une compétence</summary>
+        public async Task<bool> UpdateAsync(long id, UpdateAccessCompetencyDto updateDto)
         {
             var competency = await _context.AccessCompetencies.FindAsync(id);
             if (competency == null)
@@ -58,7 +78,8 @@ namespace Dior.Database.Services.Implementations
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        /// <summary>Supprime une compétence</summary>
+        public async Task<bool> DeleteAsync(long id)
         {
             var competency = await _context.AccessCompetencies.FindAsync(id);
             if (competency == null)

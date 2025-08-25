@@ -11,9 +11,9 @@ namespace Dior.Service.Services
             _dao = dao;
         }
         public List<Team> GetAll() => _dao.GetAll();
-        public Team? GetById(int id) => _dao.GetById(id);
+        public Team? GetById(long id) => _dao.GetById(id);
         public void Create(Team team) => _dao.Create(team);
         public void Update(Team team) => _dao.Update(team);
-        public void Delete(int id) => _dao.Delete(id);
+        public void Delete(long id) => _dao.Delete(id);
     }
 }

@@ -8,17 +8,22 @@ using System.Threading.Tasks;
 
 namespace Dior.Service.Services.Implementations
 {
+    /// <summary>
+    /// Service d'audit (lecture/écriture)
+    /// </summary>
     public class AuditLogService : IAuditLogService
     {
         private readonly DiorDbContext _context;
         private readonly ILogger<AuditLogService> _logger;
 
+        /// <summary>Constructor</summary>
         public AuditLogService(DiorDbContext context, ILogger<AuditLogService> logger)
         {
             _context = context;
             _logger = logger;
         }
 
+        /// <summary>Retourne tous les logs</summary>
         public async Task<IEnumerable<AuditLogDto>> GetAllAsync()
         {
             var logs = await _context.AuditLogs
@@ -29,7 +34,8 @@ namespace Dior.Service.Services.Implementations
             return logs.Select(MapToDto);
         }
 
-        public async Task<AuditLogDto?> GetByIdAsync(int id)
+        /// <summary>Retourne un log par id</summary>
+        public async Task<AuditLogDto?> GetByIdAsync(long id)
         {
             var log = await _context.AuditLogs
                 .Include(al => al.User)
@@ -38,6 +44,7 @@ namespace Dior.Service.Services.Implementations
             return log != null ? MapToDto(log) : null;
         }
 
+        /// <summary>Crée un log</summary>
         public async Task<AuditLogDto> CreateAsync(CreateAuditLogDto createDto)
         {
             var auditLog = new Dior.Library.Entities.AuditLog
@@ -56,9 +63,8 @@ namespace Dior.Service.Services.Implementations
             return MapToDto(auditLog);
         }
 
-    
-
-        public async Task<List<AuditLogDto>> GetByUserAsync(int userId)
+        /// <summary>Retourne les logs d'un utilisateur</summary>
+        public async Task<List<AuditLogDto>> GetByUserAsync(long userId)
         {
             var logs = await _context.AuditLogs
                 .Where(al => al.UserId == userId)
@@ -69,6 +75,7 @@ namespace Dior.Service.Services.Implementations
             return logs.Select(MapToDto).ToList();
         }
 
+        /// <summary>Retourne les logs récents</summary>
         public async Task<List<AuditLogDto>> GetRecentAsync(int count = 50)
         {
             var logs = await _context.AuditLogs
@@ -93,7 +100,8 @@ namespace Dior.Service.Services.Implementations
             };
         }
 
-        public Task<List<AuditLogDto>> GetByEntityAsync(string entityType, int entityId)
+        /// <summary>Non implémenté</summary>
+        public Task<List<AuditLogDto>> GetByEntityAsync(string entityType, long entityId)
         {
             throw new NotImplementedException();
         }
