@@ -1,4 +1,4 @@
-using Dior.Database.DTOs.UserRole;
+using Dior.Data.DTOs.UserRole;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

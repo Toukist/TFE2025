@@ -25,13 +25,13 @@ namespace Dior.Service.Host.Services
 
             var logs = await query
                 .OrderByDescending(al => al.Timestamp)
-                .Take(100) // Limite pour performance
+                .Take(100)
                 .ToListAsync();
 
             return logs.Select(MapToDto).ToList();
         }
 
-        public async Task<List<AuditLogDto>> GetUserLogsAsync(int userId)
+        public async Task<List<AuditLogDto>> GetUserLogsAsync(long userId)
         {
             var logs = await _context.AuditLogs
                 .Where(al => al.UserId == userId)
@@ -50,7 +50,7 @@ namespace Dior.Service.Host.Services
             if (!string.IsNullOrEmpty(action))
                 query = query.Where(al => al.Action.Contains(action));
             if (!string.IsNullOrEmpty(table))
-                query = query.Where(al => al.EntityType.Contains(table));
+                query = query.Where(al => al.TableName.Contains(table));
 
             var logs = await query
                 .OrderByDescending(al => al.Timestamp)
@@ -66,15 +66,12 @@ namespace Dior.Service.Host.Services
             {
                 Id = auditLog.Id,
                 Action = auditLog.Action,
-                EntityType = auditLog.EntityType,
-                EntityId = auditLog.EntityId,
-                OldValues = auditLog.OldValues,
-                NewValues = auditLog.NewValues,
+                TableName = auditLog.TableName,
+                RecordId = auditLog.RecordId,
+                Details = auditLog.Details,
                 Timestamp = auditLog.Timestamp,
                 UserId = auditLog.UserId,
-                UserName = auditLog.User?.Username,
-                IpAddress = auditLog.IpAddress,
-                UserAgent = auditLog.UserAgent
+                UserName = auditLog.User?.UserName
             };
         }
     }

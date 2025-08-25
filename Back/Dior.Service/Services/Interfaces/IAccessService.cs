@@ -1,4 +1,4 @@
-using Dior.Database.DTOs.Access;
+using Dior.Data.DTOs.Access;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

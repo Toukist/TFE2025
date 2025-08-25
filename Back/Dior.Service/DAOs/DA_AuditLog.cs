@@ -1,4 +1,4 @@
-using Dior.Library.Interfaces.DAOs;
+﻿using Dior.Library.Interfaces.DAOs;
 using Dior.Library.Entities;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +16,7 @@ namespace Dior.Service.DAOs
             _connectionString = configuration.GetConnectionString(activeDbKey);
         }
 
-        public AuditLog GetAuditLogById(int id)
+        public AuditLog? GetAuditLogById(int id)
         {
             try
             {
@@ -27,6 +27,7 @@ namespace Dior.Service.DAOs
                 };
                 cmd.Parameters.AddWithValue("@Id", id);
                 conn.Open();
+
                 using var reader = cmd.ExecuteReader();
                 if (reader.Read())
                 {
@@ -46,8 +47,9 @@ namespace Dior.Service.DAOs
             try
             {
                 using var conn = new SqlConnection(_connectionString);
-                using var cmd = new SqlCommand("SELECT * FROM AUDIT_LOG", conn);
+                using var cmd = new SqlCommand("SELECT * FROM AUDITLOGS", conn); // ✅ nom corrigé
                 conn.Open();
+
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -70,13 +72,13 @@ namespace Dior.Service.DAOs
                 {
                     CommandType = CommandType.StoredProcedure
                 };
-                cmd.Parameters.AddWithValue("@TableName", auditLog.TableName);
+                cmd.Parameters.AddWithValue("@UserId", auditLog.UserId);
                 cmd.Parameters.AddWithValue("@Action", auditLog.Action);
-                cmd.Parameters.AddWithValue("@RecordId", auditLog.RecordId ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@Details", auditLog.Details ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@UserId", auditLog.UserId ?? (object)DBNull.Value);
-                cmd.Parameters.AddWithValue("@CreatedBy", auditLog.CreatedBy);
-                
+                cmd.Parameters.AddWithValue("@TableName", auditLog.TableName);
+                cmd.Parameters.AddWithValue("@RecordId", auditLog.RecordId);
+                cmd.Parameters.AddWithValue("@Details", (object?)auditLog.Details ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Timestamp", auditLog.Timestamp);
+
                 conn.Open();
                 cmd.ExecuteNonQuery();
             }
@@ -96,10 +98,13 @@ namespace Dior.Service.DAOs
                     CommandType = CommandType.StoredProcedure
                 };
                 cmd.Parameters.AddWithValue("@Id", auditLog.Id);
-                cmd.Parameters.AddWithValue("@TableName", auditLog.TableName);
+                cmd.Parameters.AddWithValue("@UserId", auditLog.UserId);
                 cmd.Parameters.AddWithValue("@Action", auditLog.Action);
-                cmd.Parameters.AddWithValue("@Details", auditLog.Details ?? (object)DBNull.Value);
-                
+                cmd.Parameters.AddWithValue("@TableName", auditLog.TableName);
+                cmd.Parameters.AddWithValue("@RecordId", auditLog.RecordId);
+                cmd.Parameters.AddWithValue("@Details", (object?)auditLog.Details ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Timestamp", auditLog.Timestamp);
+
                 conn.Open();
                 cmd.ExecuteNonQuery();
             }
@@ -133,14 +138,12 @@ namespace Dior.Service.DAOs
             return new AuditLog
             {
                 Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                TableName = reader["TableName"]?.ToString() ?? string.Empty,
+                UserId = reader.GetInt64(reader.GetOrdinal("UserId")),
                 Action = reader["Action"]?.ToString() ?? string.Empty,
-                RecordId = reader.IsDBNull(reader.GetOrdinal("RecordId")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("RecordId")),
+                TableName = reader["TableName"]?.ToString() ?? string.Empty,
+                RecordId = reader.GetInt32(reader.GetOrdinal("RecordId")),
                 Details = reader["Details"]?.ToString(),
-                UserId = reader.IsDBNull(reader.GetOrdinal("UserId")) ? (long?)null : reader.GetInt64(reader.GetOrdinal("UserId")),
-                Timestamp = reader.IsDBNull(reader.GetOrdinal("Timestamp")) ? DateTime.Now : reader.GetDateTime(reader.GetOrdinal("Timestamp")),
-                CreatedAt = reader.IsDBNull(reader.GetOrdinal("CreatedAt")) ? DateTime.Now : reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-                CreatedBy = reader["CreatedBy"]?.ToString() ?? string.Empty
+                Timestamp = reader.GetDateTime(reader.GetOrdinal("Timestamp"))
             };
         }
     }

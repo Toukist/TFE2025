@@ -1,7 +1,3 @@
-using Dior.Library.DTO.Team;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
 namespace Dior.Library.Interfaces.UserInterface.Services
 {
     public interface ITeamService
