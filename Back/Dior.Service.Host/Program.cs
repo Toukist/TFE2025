@@ -1,4 +1,4 @@
-using Dior.Database.Extensions;
+using Dior.Data.Extensions;
 using Dior.Service.Host.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);

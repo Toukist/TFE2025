@@ -1,3 +1,4 @@
+using Dior.Data.DTO.Access;
 using Dior.Library.DTO.Access;
 using Dior.Library.Interfaces.UserInterface.Services;
 using Dior.Service.Services;
@@ -93,6 +94,26 @@ namespace Dior.Service.Services.Implementations
                 LastEditAt = access.LastEditAt,
                 LastEditBy = access.LastEditBy
             };
+        }
+
+        Task<IEnumerable<AccessDto>> IAccessService.GetAllAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<AccessDto?> IAccessService.GetByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AccessDto> CreateAsync(CreateAccessDto createDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UpdateAsync(int id, UpdateAccessDto updateDto)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Dior.Library.DTO.Team
+namespace Dior.Data.DTO.Team
 {
     /// <summary>
     /// DTO pour les équipes

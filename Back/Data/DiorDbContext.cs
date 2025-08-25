@@ -1,4 +1,4 @@
-using Dior.Database.Entities;
+using Dior.Library.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dior.Database.Data

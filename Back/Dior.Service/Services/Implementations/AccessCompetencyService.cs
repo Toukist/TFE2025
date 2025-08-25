@@ -1,5 +1,7 @@
 using AutoMapper;
+using Dior.Data.Services.Interfaces;
 using Dior.Database.Services.Interfaces;
+using Dior.Library.BO.UserInterface;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dior.Database.Services.Implementations
@@ -27,18 +29,14 @@ namespace Dior.Database.Services.Implementations
             return competency != null ? _mapper.Map<AccessCompetencyDto>(competency) : null;
         }
 
-        public async Task<IEnumerable<AccessCompetencyDto>> GetChildrenAsync(int parentId)
-        {
-            var children = await _context.AccessCompetencies
-                .Where(ac => ac.ParentId == parentId)
-                .ToListAsync();
-
-            return _mapper.Map<IEnumerable<AccessCompetencyDto>>(children);
-        }
+        
 
         public async Task<AccessCompetencyDto> CreateAsync(CreateAccessCompetencyDto createDto)
         {
-            var competency = _mapper.Map<AccessCompetency>(createDto);
+            // Remplacez la ligne suivante :
+            // var competency = _mapper.Map<AccessCompetency>(createDto);
+            // par :
+            var competency = _mapper.Map<Dior.Library.Entities.AccessCompetency>(createDto);
             competency.CreatedAt = DateTime.UtcNow;
 
             _context.AccessCompetencies.Add(competency);
@@ -69,6 +67,11 @@ namespace Dior.Database.Services.Implementations
             _context.AccessCompetencies.Remove(competency);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public Task<IEnumerable<AccessCompetencyDto>> GetChildrenAsync(int parentId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

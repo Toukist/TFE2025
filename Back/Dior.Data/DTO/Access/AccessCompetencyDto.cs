@@ -94,4 +94,35 @@ namespace Dior.Library.DTO.Access
     {
         public int? AccessId { get; set; }
     }
+
+
+namespace Dior.Data.DTO.UserAccessCompetency
+    {
+        /// <summary>
+        /// DTO pour mettre à jour la liaison entre un utilisateur et une compétence d'accès
+        /// </summary>
+        public class UpdateUserAccessCompetencyDto
+        {
+            /// <summary>
+            /// Identifiant de l'utilisateur lié
+            /// </summary>
+            public int UserId { get; set; }
+
+            /// <summary>
+            /// Identifiant de la compétence d'accès liée
+            /// </summary>
+            public int AccessCompetencyId { get; set; }
+
+            /// <summary>
+            /// Date de la dernière modification (remplie automatiquement côté backend)
+            /// </summary>
+            public DateTime? LastEditAt { get; set; }
+
+            /// <summary>
+            /// Utilisateur qui a fait la dernière modification (backend / service)
+            /// </summary>
+            public string? LastEditBy { get; set; }
+        }
+    }
+
 }

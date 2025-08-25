@@ -1,12 +1,5 @@
 using Dior.Library.BO;
-using Dior.Library.DTO.Team;
-using Dior.Library.DTO.User;
-using Dior.Library.Interfaces.UserInterface.Services;
-using Dior.Service.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Dior.Service.Services.Implementations
 {
@@ -103,17 +96,10 @@ namespace Dior.Service.Services.Implementations
                 LastName = u.LastName,
                 Email = u.Email,
                 Phone = u.Phone,
-                IsActive = u.IsActive,
-                TeamId = u.TeamId,
-                TeamName = u.Team?.Name,
-                BadgePhysicalNumber = u.BadgePhysicalNumber,
-                CreatedAt = u.CreatedAt,
-                CreatedBy = u.CreatedBy,
-                LastEditAt = u.LastEditAt,
-                LastEditBy = u.LastEditBy,
-                Roles = u.UserRoles.Select(ur => ur.RoleDefinition.Name).ToList()
+                TeamName = u.Team?.Name
             }).ToList();
         }
+
 
         private static TeamDto MapToDto(Dior.Library.Entities.Team team)
         {

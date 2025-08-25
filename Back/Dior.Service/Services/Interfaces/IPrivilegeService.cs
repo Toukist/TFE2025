@@ -1,8 +1,8 @@
-using Dior.Database.DTOs.Privilege;
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Dior.Database.Services.Interfaces
+namespace Dior.Data.Services.Interfaces
 {
     public interface IPrivilegeService
     {

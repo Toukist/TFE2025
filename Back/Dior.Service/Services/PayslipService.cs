@@ -1,5 +1,5 @@
 using Dior.Library.BO;
-using Dior.Library.DTO;
+using Dior.Library.DTO.Payroll;
 using Dior.Service.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -294,7 +294,7 @@ namespace Dior.Service.Services
             // Simple calculation: 25% deductions (social security, taxes, etc.)
             return Math.Round(grossSalary * 0.25m, 2);
         }
-        
+
         private PayslipDto MapFromReader(SqlDataReader reader)
         {
             return new PayslipDto
@@ -307,13 +307,13 @@ namespace Dior.Service.Services
                 Year = reader.GetInt32(reader.GetOrdinal("Year")),
                 GrossSalary = reader.GetDecimal(reader.GetOrdinal("GrossSalary")),
                 NetSalary = reader.GetDecimal(reader.GetOrdinal("NetSalary")),
-                Deductions = reader.GetDecimal(reader.GetOrdinal("Deductions")),
-                Bonus = reader.GetDecimal(reader.GetOrdinal("Bonus")),
-                FileUrl = reader.GetString(reader.GetOrdinal("FileUrl")),
+                Deductions = SafeGetDecimal(reader, "Deductions") ?? 0,
+                Bonus = SafeGetDecimal(reader, "Bonus") ?? 0,
+                FileUrl = SafeGetString(reader, "FileUrl") ?? string.Empty,
                 IsSent = reader.GetBoolean(reader.GetOrdinal("IsSent")),
                 SentDate = SafeGetDateTime(reader, "SentDate"),
                 GeneratedAt = reader.GetDateTime(reader.GetOrdinal("GeneratedAt")),
-                GeneratedBy = reader.GetString(reader.GetOrdinal("GeneratedBy"))
+                GeneratedBy = SafeGetString(reader, "GeneratedBy") ?? string.Empty
             };
         }
         

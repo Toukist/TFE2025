@@ -1,8 +1,8 @@
-using Dior.Database.DTOs.RoleDefinitionPrivilege;
+using Dior.Data.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Dior.Database.Services.Interfaces
+namespace Dior.Data.DTO 
 {
     public interface IRoleDefinitionPrivilegeService
     {

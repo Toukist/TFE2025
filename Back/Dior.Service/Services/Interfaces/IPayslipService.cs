@@ -1,4 +1,4 @@
-using Dior.Library.DTO;
+using Dior.Library.DTO.Payroll;
 
 namespace Dior.Service.Services.Interfaces
 {

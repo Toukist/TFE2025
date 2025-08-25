@@ -1,7 +1,7 @@
 using Dior.Library.DTO.User;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using Dior.Library.DTO.Access;
 namespace Dior.Library.Interfaces.UserInterface.Services
 {
     public interface IUserService

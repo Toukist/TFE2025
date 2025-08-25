@@ -1,4 +1,4 @@
-using Dior.Library.DTOs;
+using Dior.Data.DTO;
 using Dior.Library.Entities;
 
 namespace Dior.Library.DAO

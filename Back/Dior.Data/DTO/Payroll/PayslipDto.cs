@@ -8,8 +8,10 @@ namespace Dior.Library.DTO.Payroll
     public class PayslipDto
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
+        public long UserId { get; set; }
         public string? UserName { get; set; }
+        public string? UserFullName { get; set; }
+        public string? UserTeamName { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
         public decimal GrossSalary { get; set; }
@@ -22,6 +24,11 @@ namespace Dior.Library.DTO.Payroll
         public bool IsValidated { get; set; }
         public DateTime? ValidatedAt { get; set; }
         public string? ValidatedBy { get; set; }
+        public string FileUrl { get; set; } = string.Empty;
+        public bool IsSent { get; set; }
+        public DateTime? SentDate { get; set; }
+        public DateTime GeneratedAt { get; set; }
+        public string GeneratedBy { get; set; } = string.Empty;
     }
 
     /// <summary>

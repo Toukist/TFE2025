@@ -1,8 +1,8 @@
-using Dior.Database.DTOs.UserAccess;
+using Dior.Library.Interfaces.UserInterface.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Dior.Database.Services.Interfaces
+namespace Dior.Library.Services.Interfaces
 {
     public interface IUserAccessService
     {

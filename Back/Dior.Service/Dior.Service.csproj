@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Dior.Database\Dior.Data.csproj" />
+		<ProjectReference Include="..\Dior.Data\Dior.Data.csproj" />
 		<ProjectReference Include="..\Dior.Library\Dior.Library.csproj" />
 	</ItemGroup>
 </Project>

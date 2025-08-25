@@ -1,6 +1,7 @@
-using Dior.Library.DTO.Access;
+using Dior.Data.DTO.Access;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 
 namespace Dior.Library.Interfaces.UserInterface.Services
 {

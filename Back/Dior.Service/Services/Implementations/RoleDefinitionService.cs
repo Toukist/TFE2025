@@ -1,15 +1,9 @@
 using AutoMapper;
-using Dior.Database.Data;
-using Dior.Data.DTOs.RoleDefinition;
-using Dior.Data.Entities;
-using Dior.Database.Services.Interfaces;
+using Dior.Data.Services.Interfaces;
+using Dior.Library.BO.UserInterface;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Dior.Database.Services.Implementations
+namespace Dior.Data.Services.Implementations
 {
     public class RoleDefinitionService : IRoleDefinitionService
     {
@@ -45,13 +39,14 @@ namespace Dior.Database.Services.Implementations
 
         public async Task<RoleDefinitionDto> CreateAsync(CreateRoleDefinitionDto createRoleDefinitionDto)
         {
-            var role = _mapper.Map<RoleDefinition>(createRoleDefinitionDto);
-            role.CreatedAt = DateTime.UtcNow;
+            // Correction : Utiliser le bon type d'entité pour l'ajout dans le DbSet
+            var roleEntity = _mapper.Map<Dior.Library.Entities.RoleDefinition>(createRoleDefinitionDto);
+            roleEntity.CreatedAt = DateTime.UtcNow;
 
-            _context.RoleDefinitions.Add(role);
+            _context.RoleDefinitions.Add(roleEntity);
             await _context.SaveChangesAsync();
 
-            return _mapper.Map<RoleDefinitionDto>(role);
+            return _mapper.Map<RoleDefinitionDto>(roleEntity);
         }
 
         public async Task<bool> UpdateAsync(int id, UpdateRoleDefinitionDto updateRoleDefinitionDto)

@@ -1,8 +1,8 @@
-using Dior.Data.DTOs.UserRole;
+using Dior.Data.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Dior.Database.Services.Interfaces
+namespace Dior.Data.Services.Interfaces
 {
     public interface IUserRoleService
     {

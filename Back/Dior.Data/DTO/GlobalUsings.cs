@@ -14,9 +14,9 @@ global using LoginResponseDto = Dior.Library.DTO.Auth.LoginResponseDto;
 global using LoginResponseCompleteDto = Dior.Library.DTO.Auth.LoginResponseCompleteDto;
 
 // Access DTOs
-global using AccessDto = Dior.Library.DTO.Access.AccessDto;
-global using CreateAccessDto = Dior.Library.DTO.Access.CreateAccessDto;
-global using UpdateAccessDto = Dior.Library.DTO.Access.UpdateAccessDto;
+global using AccessDto = Dior.Data.DTO.Access.AccessDto;
+global using CreateAccessDto = Dior.Data.DTO.Access.CreateAccessDto;
+global using UpdateAccessDto = Dior.Data.DTO.Access.UpdateAccessDto;
 global using AccessCompetencyDto = Dior.Library.DTO.Access.AccessCompetencyDto;
 global using CreateAccessCompetencyDto = Dior.Library.DTO.Access.CreateAccessCompetencyDto;
 global using UpdateAccessCompetencyDto = Dior.Library.DTO.Access.UpdateAccessCompetencyDto;
@@ -39,9 +39,9 @@ global using CreateRoleDefinitionPrivilegeDto = Dior.Library.DTO.Role.CreateRole
 global using UpdateRoleDefinitionPrivilegeDto = Dior.Library.DTO.Role.UpdateRoleDefinitionPrivilegeDto;
 
 // Team DTOs
-global using TeamDto = Dior.Library.DTO.Team.TeamDto;
-global using CreateTeamDto = Dior.Library.DTO.Team.CreateTeamDto;
-global using UpdateTeamDto = Dior.Library.DTO.Team.UpdateTeamDto;
+global using TeamDto = Dior.Data.DTO.Team.TeamDto;
+global using CreateTeamDto = Dior.Data.DTO.Team.CreateTeamDto;
+global using UpdateTeamDto = Dior.Data.DTO.Team.UpdateTeamDto;
 
 // Audit DTOs
 global using AuditLogDto = Dior.Library.DTO.Audit.AuditLogDto;

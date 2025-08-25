@@ -1,9 +1,10 @@
 using AutoMapper;
-using Dior.Database.Services.Interfaces;
-using Dior.Library.Entities;
 using Microsoft.EntityFrameworkCore;
+using Dior.Library.Interfaces.UserInterface.Services;
+using Dior.Library.Entities;
+using Dior.Library.DTO.Access.Dior.Data.DTO.UserAccessCompetency;
 
-namespace Dior.Database.Services.Implementations
+namespace Dior.Data.Services.Implementations
 {
     public class UserAccessCompetencyService : IUserAccessCompetencyService
     {
@@ -70,6 +71,41 @@ namespace Dior.Database.Services.Implementations
             _context.UserAccessCompetencies.Remove(userAccessCompetency);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public List<UserAccessCompetencyDto> GetList()
+        {
+            throw new NotImplementedException();
+        }
+
+        public UserAccessCompetencyDto? Get(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<UserAccessCompetencyDto> GetListByUserId(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Add(UserAccessCompetencyDto item, string editBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Set(UserAccessCompetencyDto item, string editBy)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Del(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool HasAccessCompetency(int userId, string competencyName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

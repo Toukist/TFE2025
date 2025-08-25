@@ -1,4 +1,4 @@
-using Dior.Database.DTOs.AuditLog;
+using Dior.Data.DTO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

@@ -3,7 +3,7 @@ global using Dior.Library.DTO;
 global using Dior.Library.DTO.User;
 global using Dior.Library.DTO.Access;
 global using Dior.Library.DTO.Role;
-global using Dior.Library.DTO.Team;
+global using Dior.Data.DTO.Team;
 global using Dior.Library.DTO.Audit;
 global using Dior.Library.DTO.Task;
 global using Dior.Library.DTO.Contract;

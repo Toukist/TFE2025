@@ -1,4 +1,5 @@
 using AutoMapper;
+using Dior.Data.Services.Interfaces;
 using Dior.Database.Services.Interfaces;
 using Dior.Library.BO.UserInterface;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +31,8 @@ namespace Dior.Database.Services.Implementations
 
         public async Task<PrivilegeDto> CreateAsync(CreatePrivilegeDto createPrivilegeDto)
         {
-            var privilege = _mapper.Map<Privilege>(createPrivilegeDto);
+            // Correction : utiliser le bon type d'entité pour l'ajout dans le DbSet
+            var privilege = _mapper.Map<Dior.Library.Entities.Privilege>(createPrivilegeDto);
 
             _context.Privileges.Add(privilege);
             await _context.SaveChangesAsync();

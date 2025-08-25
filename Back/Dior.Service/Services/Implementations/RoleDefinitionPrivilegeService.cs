@@ -1,4 +1,5 @@
 using AutoMapper;
+using Dior.Data.DTO;
 using Dior.Database.Services.Interfaces;
 using Dior.Library.BO.UserInterface;
 using Microsoft.EntityFrameworkCore;

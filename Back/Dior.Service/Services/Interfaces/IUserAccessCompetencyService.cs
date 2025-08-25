@@ -1,8 +1,8 @@
-using Dior.Database.DTOs.UserAccessCompetency;
+using Dior.Library.Interfaces.UserInterface.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Dior.Database.Services.Interfaces
+namespace Dior.Library.Services.Interfaces
 {
     public interface IUserAccessCompetencyService
     {
@@ -10,7 +10,6 @@ namespace Dior.Database.Services.Interfaces
         Task<UserAccessCompetencyDto> GetByIdAsync(int id);
         Task<IEnumerable<UserAccessCompetencyDto>> GetByUserIdAsync(int userId);
         Task<UserAccessCompetencyDto> CreateAsync(CreateUserAccessCompetencyDto createDto);
-        Task<bool> UpdateAsync(int id, UpdateUserAccessCompetencyDto updateDto);
         Task<bool> DeleteAsync(int id);
     }
 }

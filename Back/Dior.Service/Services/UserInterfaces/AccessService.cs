@@ -1,10 +1,9 @@
-using Dior.Library.DTO;
+using Dior.Data.DTO.Access;
+using Dior.Library.Entities;
+using Dior.Library.Interfaces.DAOs;
 using Dior.Library.Interfaces.UserInterface.Services;
-using Dior.Library.Interfaces.DAOs; // Nouvelle interface
-using Dior.Service.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Dior.Library.Entities;
 
 namespace Dior.Service.Services.UserInterfaces
 {
@@ -14,71 +13,127 @@ namespace Dior.Service.Services.UserInterfaces
         private readonly IDA_Access _daAccess;
         private readonly DiorDbContext _context;
 
-        public AccessService(IDA_Access dA_Access, IConfiguration configuration, DiorDbContext context)
+        public AccessService(IDA_Access daAccess, IConfiguration configuration, DiorDbContext context)
         {
-            _daAccess = dA_Access ?? throw new ArgumentNullException(nameof(dA_Access));
-            _connectionString = configuration?.GetConnectionString("Dior_DB") ?? throw new ArgumentNullException(nameof(configuration));
+            _daAccess = daAccess ?? throw new ArgumentNullException(nameof(daAccess));
+            _connectionString = configuration?.GetConnectionString("Dior_DB")
+                                ?? throw new ArgumentNullException(nameof(configuration));
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public List<AccessDto> GetList()
+        public async Task<IEnumerable<AccessDto>> GetAllAsync()
         {
-            var accesses = _daAccess.GetAllAccesses();
-            return accesses.Select(a => new AccessDto
-            {
-                Id = a.Id,
-                Name = a.Name ?? string.Empty,
-                Description = a.Description,
-                IsActive = a.IsActive
-            }).ToList();
+            return await _context.Access
+                .Select(a => new AccessDto
+                {
+                    Id = a.Id,
+                    BadgePhysicalNumber = a.BadgePhysicalNumber,
+                    IsActive = a.IsActive,
+                    CreatedAt = a.CreatedAt,
+                    CreatedBy = a.CreatedBy,
+                    LastEditAt = a.LastEditAt,
+                    LastEditBy = a.LastEditBy
+                })
+                .ToListAsync();
         }
-        
-        public long Add(Access item, string editBy) => throw new NotImplementedException();
-        public void Set(Access item, string editBy) => throw new NotImplementedException();
-        public void Del(long id) => throw new NotImplementedException();
 
-        public async Task<bool> SetActiveAsync(int id, bool isActive, CancellationToken ct)
+        public async Task<AccessDto?> GetByIdAsync(int id)
         {
-            var access = await _context.Access
-                .FirstOrDefaultAsync(a => a.Id == id, ct)
-                .ConfigureAwait(false);
-            
-            if (access == null)
-                return false;
+            return await _context.Access
+                .Where(a => a.Id == id)
+                .Select(a => new AccessDto
+                {
+                    Id = a.Id,
+                    BadgePhysicalNumber = a.BadgePhysicalNumber,
+                    IsActive = a.IsActive,
+                    CreatedAt = a.CreatedAt,
+                    CreatedBy = a.CreatedBy,
+                    LastEditAt = a.LastEditAt,
+                    LastEditBy = a.LastEditBy
+                })
+                .FirstOrDefaultAsync();
+        }
 
-            access.IsActive = isActive;
-            await _context.SaveChangesAsync(ct).ConfigureAwait(false);
+        public async Task<AccessDto> CreateAsync(CreateAccessDto createDto)
+        {
+            var entity = new Access
+            {
+                BadgePhysicalNumber = createDto.BadgePhysicalNumber,
+                IsActive = createDto.IsActive,
+                CreatedAt = DateTime.Now,
+                CreatedBy = "System"
+            };
+
+            _context.Access.Add(entity);
+            await _context.SaveChangesAsync();
+
+            return new AccessDto
+            {
+                Id = entity.Id,
+                BadgePhysicalNumber = entity.BadgePhysicalNumber,
+                IsActive = entity.IsActive,
+                CreatedAt = entity.CreatedAt,
+                CreatedBy = entity.CreatedBy
+            };
+        }
+
+        public async Task<bool> UpdateAsync(int id, UpdateAccessDto updateDto)
+        {
+            var access = await _context.Access.FindAsync(id);
+            if (access == null) return false;
+
+            if (!string.IsNullOrEmpty(updateDto.BadgePhysicalNumber))
+                access.BadgePhysicalNumber = updateDto.BadgePhysicalNumber;
+
+            if (updateDto.IsActive.HasValue)
+                access.IsActive = updateDto.IsActive.Value;
+
+            access.LastEditAt = DateTime.Now;
+            access.LastEditBy = "System";
+
+            await _context.SaveChangesAsync();
             return true;
         }
 
-        public Task<IEnumerable<AccessDto>> GetAllAsync()
+        public async Task<bool> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var access = await _context.Access.FindAsync(id);
+            if (access == null) return false;
+
+            _context.Access.Remove(access);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
-        public Task<AccessDto?> GetByIdAsync(int id)
+        public async Task<bool> ExistsAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Access.AnyAsync(a => a.Id == id);
         }
 
-        public Task<AccessDto> CreateAsync(CreateAccessDto createDto)
+        public async Task<bool> SetActiveAsync(int id, bool isActive, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            var access = await _context.Access.FirstOrDefaultAsync(a => a.Id == id, ct);
+            if (access == null) return false;
+
+            access.IsActive = isActive;
+            access.LastEditAt = DateTime.Now;
+            access.LastEditBy = "System";
+
+            await _context.SaveChangesAsync(ct);
+            return true;
         }
 
-        public Task<bool> UpdateAsync(int id, UpdateAccessDto updateDto)
+        public async Task<bool> DisableUserBadgeAsync(int userId, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
-        }
+            var access = await _context.Access.FirstOrDefaultAsync(a => a.Id == userId, ct);
+            if (access == null) return false;
 
-        public Task<bool> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
+            access.IsActive = false;
+            access.LastEditAt = DateTime.Now;
+            access.LastEditBy = "System";
 
-        public Task<bool> ExistsAsync(int id)
-        {
-            throw new NotImplementedException();
+            await _context.SaveChangesAsync(ct);
+            return true;
         }
     }
 }

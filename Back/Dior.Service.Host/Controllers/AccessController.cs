@@ -1,5 +1,5 @@
-using Dior.Library.DTO.Access;
-using Dior.Service.Host.Services;
+using Dior.Data.DTO.Access;
+using Dior.Library.Interfaces.UserInterface.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -10,10 +10,10 @@ namespace Dior.Service.Host.Controllers
     [Route("api/access")]
     public class AccessController : ControllerBase
     {
-        private readonly AccessService _accessService;
+        private readonly IAccessService _accessService;
         private readonly ILogger<AccessController> _logger;
 
-        public AccessController(AccessService accessService, ILogger<AccessController> logger)
+        public AccessController(IAccessService accessService, ILogger<AccessController> logger)
         {
             _accessService = accessService;
             _logger = logger;
@@ -21,7 +21,7 @@ namespace Dior.Service.Host.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<List<AccessDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<AccessDto>>> GetAll()
         {
             var accesses = await _accessService.GetAllAsync();
             return Ok(accesses);
@@ -59,8 +59,10 @@ namespace Dior.Service.Host.Controllers
         public async Task<IActionResult> DisableOwnBadge()
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
-            await _accessService.DisableUserBadgeAsync(userId);
+            var success = await _accessService.DisableUserBadgeAsync(userId);
+            if (!success) return NotFound();
             return NoContent();
         }
     }
 }
+

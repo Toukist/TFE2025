@@ -1,6 +1,6 @@
 using System;
 
-namespace Dior.Library.DTO.Access
+namespace Dior.Data.DTO.Access
 {
     /// <summary>
     /// DTO pour les accès
